@@ -2,6 +2,7 @@ package com.github.archtiger.core.support;
 
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
+import net.bytebuddy.jar.asm.Type;
 
 /**
  * 辅助类，用于 ASM 字节码生成时的一些辅助操作
@@ -10,6 +11,20 @@ import net.bytebuddy.jar.asm.Opcodes;
  * @datetime 2026/1/6 11:12
  */
 public class AsmUtil {
+    /**
+     * 自动拆箱或强制类型转换非primitive 类型
+     *
+     * @param mv   方法访问器
+     * @param type 字段类型
+     */
+    public static void unboxOrCast(MethodVisitor mv, Class<?> type) {
+        if (type.isPrimitive()) {
+            unboxIfNeeded(mv, type);
+        } else {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, Type.getInternalName(type));
+        }
+    }
+
     /**
      * 自动装箱 primitive 类型
      *
@@ -83,24 +98,9 @@ public class AsmUtil {
         } else if (type == short.class) {
             mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Short");
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false);
+        } else {
+            throw new UnsupportedOperationException(type.toString());
         }
-    }
-
-    /**
-     * 返回字段类型在栈上占用的 slot 数量
-     *
-     * @param type 字段类型
-     * @return 字段类型在栈上占用的 slot 数量
-     */
-    public static int slotSize(Class<?> type) {
-        if (!type.isPrimitive()) {
-            return 1;
-        }
-        if (type == long.class || type == double.class) {
-            return 2;
-        }
-
-        return 1;
     }
 
 }

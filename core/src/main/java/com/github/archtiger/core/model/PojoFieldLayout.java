@@ -79,9 +79,7 @@ public final class PojoFieldLayout implements FieldLayout {
      */
     private static boolean isFieldAccessible(Field field) {
         final int modifiers = field.getModifiers();
-        // 1. 排除 Private (剩下 Public, Protected, Default)
-        // 2. 排除 Static
-        return !Modifier.isPrivate(modifiers) && !Modifier.isStatic(modifiers);
+        return Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers);
     }
 
     @Override
