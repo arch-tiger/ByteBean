@@ -64,17 +64,28 @@ public final class StackUtil {
      * @return 栈大小
      */
     public static Size forInvoker(Method method) {
+        boolean returnsVoid = method.getReturnType() == void.class;
+        Class<?>[] params = method.getParameterTypes();
+
         int maxStack = 1; // target
-        for (Class<?> p : method.getParameterTypes()) {
-            maxStack += slotSize(p);
+        for (Class<?> p : params) {
+            maxStack += slotSize(p);       // 参数自身
             if (p.isPrimitive()) {
-                maxStack += 1; // 拆箱/装箱临时
+                maxStack += 1;            // 拆箱临时栈
             }
         }
-        if (method.getReturnType().isPrimitive() && method.getReturnType() != void.class) {
-            maxStack += 1; // 返回值装箱
+
+        // 额外计算 Object[] args 加载栈空间
+        if (params.length > 0) {
+            maxStack += 2; // ALOAD args + BIPUSH index
         }
-        int maxLocals = 3; // this + target + Object[] args
+
+        // 返回值装箱
+        if (!returnsVoid && method.getReturnType().isPrimitive()) {
+            maxStack += 1;
+        }
+
+        int maxLocals = 3; // this + target + args
         return new Size(maxStack, maxLocals);
     }
 

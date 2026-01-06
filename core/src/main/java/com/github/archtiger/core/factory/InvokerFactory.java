@@ -1,12 +1,13 @@
 package com.github.archtiger.core.factory;
 
 import com.github.archtiger.core.bytecode.InvokerAppender;
-import com.github.archtiger.core.engine.MethodInvoker;
+import com.github.archtiger.core.engine.Invoker;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.Implementation;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * 方法调用器工厂
@@ -26,10 +27,13 @@ public final class InvokerFactory {
      * @return 方法调用器
      * @throws Exception 异常
      */
-    public static MethodInvoker create(Class<?> targetClass, Method method) throws Exception {
-        Class<? extends MethodInvoker> invokerClass = new ByteBuddy()
-                .subclass(MethodInvoker.class)
-                .name(targetClass.getName() + "$$" + method.getName() + "Invoker")
+    public static Invoker create(Class<?> targetClass, Method method) throws Exception {
+        String paramsHash = Integer.toHexString(Arrays.hashCode(method.getParameterTypes()));
+        String className = targetClass.getName() + "$$" + method.getName() + "_" + paramsHash + "Invoker";
+
+        Class<? extends Invoker> invokerClass = new ByteBuddy()
+                .subclass(Invoker.class)
+                .name(className)
                 .method(m -> m.getName().equals("invoke"))
                 .intercept(new Implementation.Simple(new InvokerAppender(targetClass, method)))
                 .make()

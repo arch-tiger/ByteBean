@@ -7,7 +7,7 @@ package com.github.archtiger.core.engine;
  * @datetime 2026/1/6 16:49
  */
 @FunctionalInterface
-public interface MethodInvoker {
+public interface Invoker {
     /**
      * 调用目标方法
      *
