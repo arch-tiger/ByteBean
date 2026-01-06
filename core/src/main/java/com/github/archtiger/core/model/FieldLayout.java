@@ -1,6 +1,8 @@
 package com.github.archtiger.core.model;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 字段布局接口
@@ -72,4 +74,18 @@ public interface FieldLayout {
      * @return 所有字段名列表
      */
     List<String> fieldNames();
+
+    /**
+     * 获取字段名到索引的映射
+     *
+     * @return 字段名到索引的映射
+     */
+    Map<String, Integer> nameIndexMap();
+
+    /**
+     * 获取所有字段
+     *
+     * @return 所有字段列表
+     */
+    List<Field> fields();
 }

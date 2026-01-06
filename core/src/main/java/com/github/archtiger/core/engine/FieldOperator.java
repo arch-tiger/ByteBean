@@ -1,15 +1,15 @@
 package com.github.archtiger.core.engine;
 
-import com.github.archtiger.core.model.PojoFieldLayout;
+import com.github.archtiger.core.model.FieldLayout;
 
 public final class FieldOperator {
 
     private final FieldAccessor accessor;
-    private final PojoFieldLayout layout;
+    private final FieldLayout layout;
 
     public FieldOperator(FieldAccessor accessor) {
         this.accessor = accessor;
-        this.layout = accessor.layout();
+        this.layout = accessor.fieldLayout();
     }
 
     public Object get(Object bean, String field) {
@@ -22,7 +22,7 @@ public final class FieldOperator {
         accessor.set(bean, idx, value);
     }
 
-    public PojoFieldLayout layout() {
+    public FieldLayout layout() {
         return layout;
     }
 }

@@ -1,6 +1,6 @@
 package com.github.archtiger.core.engine;
 
-import com.github.archtiger.core.model.PojoFieldLayout;
+import com.github.archtiger.core.model.FieldLayout;
 
 /**
  * 字段访问器
@@ -13,5 +13,5 @@ public interface FieldAccessor {
 
     void set(Object target, int index, Object value);
 
-    PojoFieldLayout layout();
+    FieldLayout fieldLayout();
 }

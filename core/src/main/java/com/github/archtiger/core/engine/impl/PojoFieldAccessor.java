@@ -1,18 +1,24 @@
-package com.github.archtiger.core.engine;
+package com.github.archtiger.core.engine.impl;
 
+import com.github.archtiger.core.engine.FieldAccessor;
+import com.github.archtiger.core.model.FieldLayout;
 import com.github.archtiger.core.model.PojoFieldLayout;
 
 /**
+ * POJO 字段访问器
+ *
  * @author ZIJIDELU
  * @datetime 2026/1/6 11:12
  */
 public final class PojoFieldAccessor implements FieldAccessor {
-    private final PojoFieldLayout layout;
-    private final FieldAccessor accessor;
+    private final FieldLayout layout;
 
-    public PojoFieldAccessor(PojoFieldLayout layout, FieldAccessor accessor) {
+    private PojoFieldAccessor(FieldLayout layout) {
         this.layout = layout;
-        this.accessor = accessor;
+    }
+
+    public static FieldAccessor of(Class<?> clazz) {
+        return new PojoFieldAccessor(PojoFieldLayout.of(clazz));
     }
 
     @Override
@@ -26,7 +32,7 @@ public final class PojoFieldAccessor implements FieldAccessor {
     }
 
     @Override
-    public PojoFieldLayout layout() {
+    public FieldLayout fieldLayout() {
         return layout;
     }
 }

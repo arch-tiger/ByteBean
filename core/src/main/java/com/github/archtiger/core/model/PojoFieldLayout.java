@@ -36,7 +36,7 @@ public final class PojoFieldLayout implements FieldLayout {
      * @param clazz POJO 类
      * @return POJO 字段布局
      */
-    public static PojoFieldLayout of(Class<?> clazz) {
+    public static FieldLayout of(Class<?> clazz) {
         final Field[] declaredFields = clazz.getDeclaredFields();
         if (declaredFields.length == 0) {
             return new PojoFieldLayout(
@@ -79,7 +79,9 @@ public final class PojoFieldLayout implements FieldLayout {
      */
     private static boolean isFieldAccessible(Field field) {
         final int modifiers = field.getModifiers();
-        return Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers) && !Modifier.isStatic(modifiers);
+        // 1. 排除 Private (剩下 Public, Protected, Default)
+        // 2. 排除 Static
+        return !Modifier.isPrivate(modifiers) && !Modifier.isStatic(modifiers);
     }
 
     @Override
@@ -133,10 +135,18 @@ public final class PojoFieldLayout implements FieldLayout {
         return !Modifier.isFinal(field.getModifiers());
     }
 
-
     @Override
     public List<String> fieldNames() {
         return fieldNames;
     }
 
+    @Override
+    public Map<String, Integer> nameIndexMap() {
+        return nameIndexMap;
+    }
+
+    @Override
+    public List<Field> fields() {
+        return List.of(fields);
+    }
 }
