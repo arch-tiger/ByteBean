@@ -54,7 +54,8 @@ public class GetterFactory {
                             // 返回
                             mv.visitInsn(Opcodes.ARETURN);
                             // maxStack = 2 (target + long/double 1 slot counts as 2)
-                            return new Size(2, 2);
+                            final int maxStack = Math.max(2, AsmUtil.slotSize(field.getType()));
+                            return new Size(maxStack, 2);
                         }
                     }))
                     .make()

@@ -45,8 +45,12 @@ public class SetterFactory {
                             // 将 value 参数加载到栈上
                             mv.visitVarInsn(Opcodes.ALOAD, 2);
 
-                            // 如果是 primitive 字段，拆箱
-                            AsmUtil.unboxIfNeeded(mv, field.getType());
+                            if (field.getType().isPrimitive()) {
+                                // 如果是 primitive 字段，拆箱
+                                AsmUtil.unboxIfNeeded(mv, field.getType());
+                            } else {
+                                mv.visitTypeInsn(Opcodes.CHECKCAST, Type.getInternalName(field.getType()));
+                            }
 
                             // 执行 PUTFIELD 指令
                             mv.visitFieldInsn(Opcodes.PUTFIELD,
@@ -58,7 +62,8 @@ public class SetterFactory {
                             mv.visitInsn(Opcodes.RETURN);
 
                             // maxStack: target + value, primitive long/double 占两个 slot
-                            return new Size(2, 2);
+                            final int maxStack = 1 + AsmUtil.slotSize(field.getType());
+                            return new Size(maxStack, 3);
                         }
                     }))
                     .make()

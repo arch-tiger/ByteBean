@@ -56,7 +56,9 @@ public class AsmUtil {
      * @param type 字段类型
      */
     public static void unboxIfNeeded(MethodVisitor mv, Class<?> type) {
-        if (!type.isPrimitive()) return;
+        if (!type.isPrimitive()) {
+            return;
+        }
         if (type == int.class) {
             mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Integer");
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
@@ -82,6 +84,23 @@ public class AsmUtil {
             mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Short");
             mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false);
         }
+    }
+
+    /**
+     * 返回字段类型在栈上占用的 slot 数量
+     *
+     * @param type 字段类型
+     * @return 字段类型在栈上占用的 slot 数量
+     */
+    public static int slotSize(Class<?> type) {
+        if (!type.isPrimitive()) {
+            return 1;
+        }
+        if (type == long.class || type == double.class) {
+            return 2;
+        }
+
+        return 1;
     }
 
 }
