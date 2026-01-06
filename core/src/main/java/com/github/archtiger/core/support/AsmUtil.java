@@ -1,0 +1,87 @@
+package com.github.archtiger.core.support;
+
+import net.bytebuddy.jar.asm.MethodVisitor;
+import net.bytebuddy.jar.asm.Opcodes;
+
+/**
+ * 辅助类，用于 ASM 字节码生成时的一些辅助操作
+ *
+ * @author ZIJIDELU
+ * @datetime 2026/1/6 11:12
+ */
+public class AsmUtil {
+    /**
+     * 自动装箱 primitive 类型
+     *
+     * @param mv   方法访问器
+     * @param type 字段类型
+     */
+    public static void boxIfNeeded(MethodVisitor mv, Class<?> type) {
+        if (!type.isPrimitive()) {
+            return;
+        }
+        if (type == int.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+        } else if (type == long.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
+        } else if (type == boolean.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
+        } else if (type == double.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false);
+        } else if (type == float.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
+        } else if (type == char.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false);
+        } else if (type == byte.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false);
+        } else if (type == short.class) {
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                    "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;", false);
+        } else {
+            throw new UnsupportedOperationException(type.toString());
+        }
+    }
+
+    /**
+     * 自动拆箱 primitive 类型
+     *
+     * @param mv   方法访问器
+     * @param type 字段类型
+     */
+    public static void unboxIfNeeded(MethodVisitor mv, Class<?> type) {
+        if (!type.isPrimitive()) return;
+        if (type == int.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Integer");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
+        } else if (type == long.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Long");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
+        } else if (type == boolean.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Boolean");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+        } else if (type == double.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Double");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
+        } else if (type == float.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Float");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F", false);
+        } else if (type == char.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Character");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Character", "charValue", "()C", false);
+        } else if (type == byte.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Byte");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Byte", "byteValue", "()B", false);
+        } else if (type == short.class) {
+            mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Short");
+            mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false);
+        }
+    }
+
+}
