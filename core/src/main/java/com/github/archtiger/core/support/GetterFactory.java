@@ -1,6 +1,5 @@
 package com.github.archtiger.core.support;
 
-import com.github.archtiger.core.engine.Getter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;

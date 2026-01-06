@@ -1,6 +1,8 @@
-package com.github.archtiger.core.engine;
+package com.github.archtiger.core.support;
 
 /**
+ * 获取器接口
+ *
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */

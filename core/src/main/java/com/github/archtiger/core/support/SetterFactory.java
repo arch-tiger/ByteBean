@@ -1,6 +1,5 @@
 package com.github.archtiger.core.support;
 
-import com.github.archtiger.core.engine.Setter;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -18,7 +17,6 @@ import java.lang.reflect.Field;
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
-
 public class SetterFactory {
 
     /**
@@ -50,7 +48,7 @@ public class SetterFactory {
                             // 如果是 primitive 字段，拆箱
                             AsmUtil.unboxIfNeeded(mv, field.getType());
 
-                            // 执行 PUTFIELD
+                            // 执行 PUTFIELD 指令
                             mv.visitFieldInsn(Opcodes.PUTFIELD,
                                     Type.getInternalName(targetClass),
                                     field.getName(),
