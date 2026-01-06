@@ -22,18 +22,16 @@ public final class GetterFactory {
      * 创建 Getter
      *
      * @param targetClass 目标类
-     * @param fieldName   字段名
+     * @param field       字段
      * @return Getter 实例
      * @throws Exception 如果创建失败
      */
-    public static Getter createGetter(Class<?> targetClass, String fieldName) throws Exception {
+    public static Getter createGetter(Class<?> targetClass, Field field) throws Exception {
 
         try {
-            Field field = targetClass.getDeclaredField(fieldName);
-
             Class<? extends Getter> getterClass = new ByteBuddy()
                     .subclass(Getter.class)
-                    .name(targetClass.getName() + "$$" + fieldName + "Getter")
+                    .name(targetClass.getName() + "$$" + field.getName() + "Getter")
                     .method(m -> m.getName().equals("get"))
                     .intercept(new Implementation.Simple(new GetterAppender(targetClass, field)))
                     .make()

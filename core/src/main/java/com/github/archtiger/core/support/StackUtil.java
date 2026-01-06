@@ -2,6 +2,8 @@ package com.github.archtiger.core.support;
 
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender.Size;
 
+import java.lang.reflect.Method;
+
 /**
  * 栈大小工具类
  *
@@ -48,6 +50,25 @@ public final class StackUtil {
         // Setter maxStack: target + value, primitive long/double 占两个 slot
         final int maxStack = 1 + slotSize(type);
         return new Size(maxStack, 3);
+    }
+
+    /**
+     * 获取方法的栈大小
+     *
+     * @param method 方法
+     * @return 栈大小
+     */
+    public static Size forInvoker(Method method) {
+        boolean returnsVoid = method.getReturnType() == void.class;
+        int maxStack = 1; // target
+        for (Class<?> t : method.getParameterTypes()) {
+            maxStack += slotSize(t); // long/double 占 2
+        }
+        if (!returnsVoid && method.getReturnType().isPrimitive()) {
+            maxStack = Math.max(maxStack, 2); // 装箱需要额外栈
+        }
+
+        return new Size(maxStack, 3); // locals: target + args
     }
 
     /**

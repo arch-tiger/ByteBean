@@ -22,23 +22,14 @@ public final class CreatorFactory {
 
     public static Creator create(Class<?> targetClass,
                                  Constructor<?> constructor) {
-
-        // 生成类名（同包）
-        String name = targetClass.getName()
-                + "$$Creator$"
-                + constructor.getParameterCount();
-
         Class<? extends Creator> creatorClass =
                 new ByteBuddy()
                         .subclass(Creator.class)
-                        .name(name)
+                        .name(targetClass.getName() + "$$Creator$" + constructor.getParameterCount())
                         .method(ElementMatchers.named("newInstance"))
-                        .intercept(new Implementation.Simple(
-                                new CreatorAppender(targetClass, constructor)
-                        ))
+                        .intercept(new Implementation.Simple(new CreatorAppender(targetClass, constructor)))
                         .make()
-                        .load(targetClass.getClassLoader(),
-                                ClassLoadingStrategy.Default.INJECTION)
+                        .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                         .getLoaded();
 
         try {

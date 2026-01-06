@@ -19,11 +19,11 @@ import java.lang.reflect.Constructor;
  */
 public final class CreatorAppender implements ByteCodeAppender {
 
-    private final Class<?> owner;
+    private final Class<?> targetClass;
     private final Constructor<?> ctor;
 
-    public CreatorAppender(Class<?> owner, Constructor<?> ctor) {
-        this.owner = owner;
+    public CreatorAppender(Class<?> targetClass, Constructor<?> ctor) {
+        this.targetClass = targetClass;
         this.ctor = ctor;
     }
 
@@ -35,7 +35,7 @@ public final class CreatorAppender implements ByteCodeAppender {
         Class<?>[] params = ctor.getParameterTypes();
 
         // 在堆上分配一个新对象，类型为 owner（目标类）
-        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(owner));
+        mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(targetClass));
         // 复制栈顶的对象引用
         // 结果栈上有两个对象引用：一个用于调用 <init>，一个用于返回
         mv.visitInsn(Opcodes.DUP);
@@ -51,7 +51,7 @@ public final class CreatorAppender implements ByteCodeAppender {
         // 调用构造器 <init>
         // 参数顺序依次从栈顶取（由上面的循环生成）
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL,
-                Type.getInternalName(owner),
+                Type.getInternalName(targetClass),
                 "<init>",
                 Type.getConstructorDescriptor(ctor),
                 false);

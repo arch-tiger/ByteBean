@@ -22,17 +22,15 @@ public final class SetterFactory {
      * 创建 Setter
      *
      * @param targetClass 目标类
-     * @param fieldName   字段名
+     * @param field       字段
      * @return Setter 实例
      */
-    public static Setter createSetter(Class<?> targetClass, String fieldName) {
+    public static Setter createSetter(Class<?> targetClass, Field field) {
 
         try {
-            Field field = targetClass.getDeclaredField(fieldName);
-
             Class<? extends Setter> setterClass = new ByteBuddy()
                     .subclass(Setter.class)
-                    .name(targetClass.getName() + "$$" + fieldName + "Setter")
+                    .name(targetClass.getName() + "$$" + field.getName() + "Setter")
                     .method(m -> m.getName().equals("set"))
                     .intercept(new Implementation.Simple(new SetterAppender(targetClass, field)))
                     .make()
