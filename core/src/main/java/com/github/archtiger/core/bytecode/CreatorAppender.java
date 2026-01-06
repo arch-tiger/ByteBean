@@ -28,9 +28,7 @@ public final class CreatorAppender implements ByteCodeAppender {
     }
 
     @Override
-    public Size apply(MethodVisitor mv,
-                      Implementation.Context ctx,
-                      MethodDescription md) {
+    public Size apply(MethodVisitor mv, Implementation.Context ctx, MethodDescription md) {
 
         Class<?>[] params = ctor.getParameterTypes();
 
@@ -58,6 +56,6 @@ public final class CreatorAppender implements ByteCodeAppender {
 
         mv.visitInsn(Opcodes.ARETURN);
 
-        return StackUtil.forConstructor(params);
+        return StackUtil.forConstructor(ctor);
     }
 }

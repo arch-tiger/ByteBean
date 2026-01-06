@@ -20,8 +20,7 @@ public final class CreatorFactory {
     private CreatorFactory() {
     }
 
-    public static Creator create(Class<?> targetClass,
-                                 Constructor<?> constructor) {
+    public static Creator create(Class<?> targetClass, Constructor<?> constructor) {
         Class<? extends Creator> creatorClass =
                 new ByteBuddy()
                         .subclass(Creator.class)

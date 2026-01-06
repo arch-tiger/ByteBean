@@ -2,6 +2,7 @@ package com.github.archtiger.core.support;
 
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender.Size;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
@@ -18,13 +19,9 @@ public final class StackUtil {
      * @return 字段类型在栈上占用的 slot 数量
      */
     public static int slotSize(Class<?> type) {
-        if (!type.isPrimitive()) {
-            return 1;
-        }
         if (type == long.class || type == double.class) {
             return 2;
         }
-
         return 1;
     }
 
@@ -36,8 +33,12 @@ public final class StackUtil {
      */
     public static Size forGetter(Class<?> type) {
         // Getter maxStack = 2 (target + long/double 1 slot counts as 2)
-        final int maxStack = Math.max(2, slotSize(type));
-        return new Size(maxStack, 2);
+        int maxStack = 1 + slotSize(type);
+        if (type.isPrimitive()) {
+            maxStack += 1; // 装箱临时栈
+        }
+        int maxLocals = 2; // this + target
+        return new Size(maxStack, maxLocals);
     }
 
     /**
@@ -48,8 +49,12 @@ public final class StackUtil {
      */
     public static Size forSetter(Class<?> type) {
         // Setter maxStack: target + value, primitive long/double 占两个 slot
-        final int maxStack = 1 + slotSize(type);
-        return new Size(maxStack, 3);
+        int maxStack = 1 + slotSize(type);
+        if (type.isPrimitive()) {
+            maxStack += 1; // 拆箱临时栈
+        }
+        int maxLocals = 3; // this + target + value
+        return new Size(maxStack, maxLocals);
     }
 
     /**
@@ -59,29 +64,36 @@ public final class StackUtil {
      * @return 栈大小
      */
     public static Size forInvoker(Method method) {
-        boolean returnsVoid = method.getReturnType() == void.class;
         int maxStack = 1; // target
-        for (Class<?> t : method.getParameterTypes()) {
-            maxStack += slotSize(t); // long/double 占 2
+        for (Class<?> p : method.getParameterTypes()) {
+            maxStack += slotSize(p);
+            if (p.isPrimitive()) {
+                maxStack += 1; // 拆箱/装箱临时
+            }
         }
-        if (!returnsVoid && method.getReturnType().isPrimitive()) {
-            maxStack = Math.max(maxStack, 2); // 装箱需要额外栈
+        if (method.getReturnType().isPrimitive() && method.getReturnType() != void.class) {
+            maxStack += 1; // 返回值装箱
         }
-
-        return new Size(maxStack, 3); // locals: target + args
+        int maxLocals = 3; // this + target + Object[] args
+        return new Size(maxStack, maxLocals);
     }
 
     /**
      * 获取构造器的栈大小
      *
-     * @param params 构造器参数类型
+     * @param constructor 构造器
      * @return 栈大小
      */
-    public static Size forConstructor(Class<?>[] params) {
-        int stack = 2;
+    public static Size forConstructor(Constructor<?> constructor) {
+        Class<?>[] params = constructor.getParameterTypes();
+        int maxStack = 1 + 1; // NEW + DUP
         for (Class<?> p : params) {
-            stack += (p == long.class || p == double.class) ? 2 : 1;
+            maxStack += slotSize(p);
+            if (p.isPrimitive()) {
+                maxStack += 1; // 拆箱临时栈
+            }
         }
-        return new Size(stack, 2);
+        int maxLocals = 1 + params.length; // this + 参数数组
+        return new Size(maxStack, maxLocals);
     }
 }

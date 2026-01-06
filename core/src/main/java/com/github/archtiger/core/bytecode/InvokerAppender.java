@@ -20,18 +20,17 @@ import java.lang.reflect.Method;
 public final class InvokerAppender implements ByteCodeAppender {
     private final Class<?> targetClass;
     private final Method method;
-    private final Class<?>[] paramTypes;
-    private final boolean returnsVoid;
 
     public InvokerAppender(Class<?> targetClass, Method method) {
         this.targetClass = targetClass;
         this.method = method;
-        this.paramTypes = method.getParameterTypes();
-        this.returnsVoid = method.getReturnType() == void.class;
     }
 
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context, MethodDescription methodDescription) {
+        Class<?>[] paramTypes = method.getParameterTypes();
+        boolean returnsVoid = method.getReturnType() == void.class;
+
         // 加载 target
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 1);
         methodVisitor.visitTypeInsn(Opcodes.CHECKCAST, Type.getInternalName(targetClass));
