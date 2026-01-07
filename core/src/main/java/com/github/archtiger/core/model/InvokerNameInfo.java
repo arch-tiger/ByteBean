@@ -24,24 +24,9 @@ public record InvokerNameInfo(
     private static final String SEP = "$";
 
     /**
-     * Field Getter
+     * Field
      */
-    public static InvokerNameInfo forFieldGetter(
-            Class<?> targetClass, Field field, Class<?> invokerType) {
-
-        return new InvokerNameInfo(
-                targetClass,
-                field.getDeclaringClass(),
-                invokerType,
-                field.getName(),
-                new Class<?>[]{field.getType()}
-        );
-    }
-
-    /**
-     * Field Setter
-     */
-    public static InvokerNameInfo forFieldSetter(
+    public static InvokerNameInfo forField(
             Class<?> targetClass, Field field, Class<?> invokerType) {
 
         return new InvokerNameInfo(

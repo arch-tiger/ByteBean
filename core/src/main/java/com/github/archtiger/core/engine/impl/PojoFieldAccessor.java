@@ -27,7 +27,17 @@ public final class PojoFieldAccessor implements FieldAccessor {
     }
 
     @Override
+    public Object get(Object target, String fieldName) {
+        return null;
+    }
+
+    @Override
     public void set(Object target, int index, Object value) {
+
+    }
+
+    @Override
+    public void set(Object target, String fieldName, Object value) {
 
     }
 

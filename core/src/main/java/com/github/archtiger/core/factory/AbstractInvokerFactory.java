@@ -1,0 +1,81 @@
+package com.github.archtiger.core.factory;
+
+import com.github.archtiger.core.model.InvokerNameInfo;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
+
+import java.lang.reflect.InvocationTargetException;
+
+/**
+ * 抽象调用器工厂类
+ *
+ * @author ZIJIDELU
+ * @datetime 2026/1/7 20:40
+ */
+public abstract class AbstractInvokerFactory<T> {
+    private final Class<?> targetClass;
+
+    protected AbstractInvokerFactory(Class<?> targetClass) {
+        this.targetClass = targetClass;
+    }
+
+    protected Class<?> getTargetClass() {
+        return targetClass;
+    }
+
+    /**
+     * 定义调用器类
+     *
+     * @return 调用器类
+     */
+    abstract protected Class<T> defineInvokerClass();
+
+    /**
+     * 定义调用器名称
+     *
+     * @return 调用器名称
+     */
+    abstract protected InvokerNameInfo defineInvokerName();
+
+    /**
+     * 定义字节码追加器
+     *
+     * @return 字节码追加器
+     */
+    abstract protected ByteCodeAppender defineByteCodeAppender();
+
+    /**
+     * 定义调用器方法名
+     *
+     * @return 调用器方法名
+     */
+    abstract protected String defineInvokerMethodName();
+
+    /**
+     * 加载调用器
+     *
+     * @return 调用器
+     */
+    public T createInvoker() {
+        final Class<? extends T> invokerClass = new ByteBuddy()
+                .subclass(defineInvokerClass())
+                .name(defineInvokerName().calcInvokerClassName())
+                .method(m -> m.getName().equals(defineInvokerMethodName()))
+                .intercept(new Implementation.Simple(defineByteCodeAppender()))
+                .make()
+                .load(
+                        targetClass.getClassLoader(),
+                        ClassLoadingStrategy.Default.INJECTION
+                )
+                .getLoaded();
+
+        try {
+            return invokerClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
