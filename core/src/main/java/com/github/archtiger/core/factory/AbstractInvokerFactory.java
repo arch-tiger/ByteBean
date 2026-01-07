@@ -1,5 +1,6 @@
 package com.github.archtiger.core.factory;
 
+import com.github.archtiger.core.exception.UnsupportedCreateInvokerException;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -54,11 +55,22 @@ public abstract class AbstractInvokerFactory<T> {
     abstract protected String defineInvokerMethodName();
 
     /**
+     * 是否可以实例化调用器
+     *
+     * @return 是否可以实例化调用器
+     */
+    abstract protected boolean canInstantiate();
+
+    /**
      * 加载调用器
      *
      * @return 调用器
      */
     public T createInvoker() {
+        if (!canInstantiate()) {
+            throw new UnsupportedCreateInvokerException(defineInvokerClass());
+        }
+
         final Class<? extends T> invokerClass = new ByteBuddy()
                 .subclass(defineInvokerClass())
                 .name(defineInvokerName().calcInvokerClassName())

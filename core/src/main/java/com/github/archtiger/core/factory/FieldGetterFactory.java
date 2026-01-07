@@ -4,6 +4,7 @@ import com.github.archtiger.core.bytecode.FieldGetterAppender;
 import com.github.archtiger.core.invoke.field.FieldGetter;
 import com.github.archtiger.core.model.ByteBeanConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
+import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Field;
@@ -41,6 +42,11 @@ public final class FieldGetterFactory extends AbstractInvokerFactory<FieldGetter
     @Override
     protected String defineInvokerMethodName() {
         return ByteBeanConstant.FIELD_GETTER_METHOD_NAME;
+    }
+
+    @Override
+    protected boolean canInstantiate() {
+        return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 
 }

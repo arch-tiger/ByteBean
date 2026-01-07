@@ -4,6 +4,7 @@ import com.github.archtiger.core.invoke.method.MethodInvoker;
 import com.github.archtiger.core.bytecode.MethodInvokerAppender;
 import com.github.archtiger.core.model.ByteBeanConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
+import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Method;
@@ -39,5 +40,10 @@ public final class MethodInvokerFactory extends AbstractInvokerFactory<MethodInv
     @Override
     protected String defineInvokerMethodName() {
         return ByteBeanConstant.METHOD_INVOKER_METHOD_NAME;
+    }
+
+    @Override
+    protected boolean canInstantiate() {
+        return InvokerRule.canAccessMethod(getTargetClass(), method);
     }
 }

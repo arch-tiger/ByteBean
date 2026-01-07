@@ -4,9 +4,11 @@ import com.github.archtiger.core.invoke.constructor.ConstructorInvoker;
 import com.github.archtiger.core.bytecode.ConstructorAppender;
 import com.github.archtiger.core.model.ByteBeanConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
+import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 /**
  * 创建器工厂
@@ -40,5 +42,10 @@ public final class ConstructorInvokerFactory extends AbstractInvokerFactory<Cons
     @Override
     protected String defineInvokerMethodName() {
         return ByteBeanConstant.CONSTRUCTOR_INVOKER_METHOD_NAME;
+    }
+
+    @Override
+    protected boolean canInstantiate() {
+        return InvokerRule.canAccessConstructor(getTargetClass(), constructor);
     }
 }

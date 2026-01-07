@@ -4,6 +4,7 @@ import com.github.archtiger.core.bytecode.FieldSetterAppender;
 import com.github.archtiger.core.invoke.field.FieldSetter;
 import com.github.archtiger.core.model.ByteBeanConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
+import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Field;
@@ -40,5 +41,10 @@ public final class FieldSetterFactory extends AbstractInvokerFactory<FieldSetter
     @Override
     protected String defineInvokerMethodName() {
         return ByteBeanConstant.FIELD_SETTER_METHOD_NAME;
+    }
+
+    @Override
+    protected boolean canInstantiate() {
+        return InvokerRule.canWriteField(getTargetClass(), field);
     }
 }
