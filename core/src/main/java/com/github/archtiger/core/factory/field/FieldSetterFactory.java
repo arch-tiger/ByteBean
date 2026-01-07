@@ -1,6 +1,7 @@
-package com.github.archtiger.core.factory;
+package com.github.archtiger.core.factory.field;
 
-import com.github.archtiger.core.bytecode.FieldSetterAppender;
+import com.github.archtiger.core.bytecode.field.FieldSetterAppender;
+import com.github.archtiger.core.factory.AbstractInvokerFactory;
 import com.github.archtiger.core.invoke.field.FieldSetter;
 import com.github.archtiger.core.model.ByteBeanConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;

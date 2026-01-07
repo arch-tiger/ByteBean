@@ -1,4 +1,4 @@
-package com.github.archtiger.core.bytecode;
+package com.github.archtiger.core.bytecode.method;
 
 import com.github.archtiger.core.support.AsmUtil;
 import com.github.archtiger.core.support.StackUtil;

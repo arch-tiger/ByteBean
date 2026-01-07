@@ -1,14 +1,14 @@
-package com.github.archtiger.core.factory;
+package com.github.archtiger.core.factory.constructor;
 
+import com.github.archtiger.core.factory.AbstractInvokerFactory;
 import com.github.archtiger.core.invoke.constructor.ConstructorInvoker;
-import com.github.archtiger.core.bytecode.ConstructorAppender;
+import com.github.archtiger.core.bytecode.constructor.ConstructorInvokerAppender;
 import com.github.archtiger.core.model.ByteBeanConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 
 /**
  * 创建器工厂
@@ -36,7 +36,7 @@ public final class ConstructorInvokerFactory extends AbstractInvokerFactory<Cons
 
     @Override
     protected ByteCodeAppender defineByteCodeAppender() {
-        return new ConstructorAppender(getTargetClass(), constructor);
+        return new ConstructorInvokerAppender(getTargetClass(), constructor);
     }
 
     @Override

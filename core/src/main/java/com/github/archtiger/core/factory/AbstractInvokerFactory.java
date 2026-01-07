@@ -68,7 +68,7 @@ public abstract class AbstractInvokerFactory<T> {
      */
     public T createInvoker() {
         if (!canInstantiate()) {
-            throw new UnsupportedCreateInvokerException(defineInvokerClass());
+            return null;
         }
 
         final Class<? extends T> invokerClass = new ByteBuddy()
@@ -89,5 +89,18 @@ public abstract class AbstractInvokerFactory<T> {
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 加载调用器或抛出异常
+     *
+     * @return 调用器
+     */
+    public T createInvokerOrThrow() {
+        if (!canInstantiate()) {
+            throw new UnsupportedCreateInvokerException(targetClass, defineInvokerClass());
+        }
+
+        return createInvoker();
     }
 }

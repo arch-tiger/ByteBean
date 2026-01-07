@@ -98,14 +98,13 @@ public final class StackUtil {
      */
     public static Size forConstructorInvoker(Constructor<?> constructor) {
         Class<?>[] params = constructor.getParameterTypes();
-        int maxStack = 1 + 1; // NEW + DUP
+        int maxStack = 2; // NEW + DUP
         for (Class<?> p : params) {
             maxStack += slotSize(p);
-            if (p.isPrimitive()) {
-                maxStack += 1; // 拆箱临时栈
-            }
+            if (p.isPrimitive()) maxStack += 1; // 拆箱临时栈
         }
-        int maxLocals = 1 + params.length; // this + 参数数组
+        int maxLocals = 2; // 0=this, 1=args
         return new Size(maxStack, maxLocals);
     }
+
 }

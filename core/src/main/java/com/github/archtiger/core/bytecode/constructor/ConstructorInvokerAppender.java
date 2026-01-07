@@ -1,4 +1,4 @@
-package com.github.archtiger.core.bytecode;
+package com.github.archtiger.core.bytecode.constructor;
 
 import com.github.archtiger.core.support.AsmUtil;
 import com.github.archtiger.core.support.StackUtil;
@@ -17,12 +17,12 @@ import java.lang.reflect.Constructor;
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
-public final class ConstructorAppender implements ByteCodeAppender {
+public final class ConstructorInvokerAppender implements ByteCodeAppender {
 
     private final Class<?> targetClass;
     private final Constructor<?> ctor;
 
-    public ConstructorAppender(Class<?> targetClass, Constructor<?> ctor) {
+    public ConstructorInvokerAppender(Class<?> targetClass, Constructor<?> ctor) {
         this.targetClass = targetClass;
         this.ctor = ctor;
     }
