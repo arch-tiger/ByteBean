@@ -61,7 +61,7 @@ public final class MethodInvokerAppender implements ByteCodeAppender {
 
         methodVisitor.visitInsn(Opcodes.ARETURN);
 
-        return StackUtil.forInvoker(method);
+        return StackUtil.forMethodInvoker(method);
     }
 
 }

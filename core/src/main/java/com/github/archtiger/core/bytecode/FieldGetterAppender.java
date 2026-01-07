@@ -42,6 +42,6 @@ public final class FieldGetterAppender implements ByteCodeAppender {
         // 返回
         methodVisitor.visitInsn(Opcodes.ARETURN);
         // Getter maxStack = 2 (target + long/double 1 slot counts as 2)
-        return StackUtil.forGetter(field.getType());
+        return StackUtil.forFieldGetter(field);
     }
 }

@@ -48,7 +48,7 @@ public final class FieldSetterAppender implements ByteCodeAppender {
         methodVisitor.visitInsn(Opcodes.RETURN);
 
         // Setter maxStack: target + value, primitive long/double 占两个 slot
-        return StackUtil.forSetter(field.getType());
+        return StackUtil.forFieldSetter(field);
     }
 
 }

@@ -63,7 +63,7 @@ public record InvokerNameInfo(
                 targetClass,
                 ctor.getDeclaringClass(),
                 invokerType,
-                "<init>",
+                "new",
                 ctor.getParameterTypes()
         );
     }

@@ -2,10 +2,9 @@ package com.github.archtiger.core.factory;
 
 import com.github.archtiger.core.invoke.method.MethodInvoker;
 import com.github.archtiger.core.bytecode.MethodInvokerAppender;
-import com.github.archtiger.core.support.NameUtil;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.implementation.Implementation;
+import com.github.archtiger.core.model.ByteBeanConstant;
+import com.github.archtiger.core.model.InvokerNameInfo;
+import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Method;
 
@@ -15,28 +14,30 @@ import java.lang.reflect.Method;
  * @author ZIJIDELU
  * @datetime 2026/1/6 23:24
  */
-public final class MethodInvokerFactory {
-    private MethodInvokerFactory() {
+public final class MethodInvokerFactory extends AbstractInvokerFactory<MethodInvoker> {
+    private final Method method;
+    public MethodInvokerFactory(Class<?> targetClass, Method method) {
+        super(targetClass);
+        this.method = method;
     }
 
-    /**
-     * 创建方法调用器
-     *
-     * @param targetClass 目标类
-     * @param method      目标方法
-     * @return 方法调用器
-     * @throws Exception 异常
-     */
-    public static MethodInvoker create(Class<?> targetClass, Method method) throws Exception {
-        Class<? extends MethodInvoker> invokerClass = new ByteBuddy()
-                .subclass(MethodInvoker.class)
-                .name(NameUtil.calcForMethodInvoker(targetClass, method))
-                .method(m -> m.getName().equals("invoke"))
-                .intercept(new Implementation.Simple(new MethodInvokerAppender(targetClass, method)))
-                .make()
-                .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
-                .getLoaded();
+    @Override
+    protected Class<MethodInvoker> defineInvokerClass() {
+        return MethodInvoker.class;
+    }
 
-        return invokerClass.getDeclaredConstructor().newInstance();
+    @Override
+    protected InvokerNameInfo defineInvokerName() {
+        return InvokerNameInfo.forMethod(getTargetClass(), method, MethodInvoker.class);
+    }
+
+    @Override
+    protected ByteCodeAppender defineByteCodeAppender() {
+        return new MethodInvokerAppender(getTargetClass(), method);
+    }
+
+    @Override
+    protected String defineInvokerMethodName() {
+        return ByteBeanConstant.METHOD_INVOKER_METHOD_NAME;
     }
 }

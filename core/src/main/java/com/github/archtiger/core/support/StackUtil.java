@@ -3,6 +3,7 @@ package com.github.archtiger.core.support;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender.Size;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -31,10 +32,10 @@ public final class StackUtil {
      * @param type 字段类型
      * @return 栈大小
      */
-    public static Size forGetter(Class<?> type) {
+    public static Size forFieldGetter(Field field) {
         // Getter maxStack = 2 (target + long/double 1 slot counts as 2)
-        int maxStack = 1 + slotSize(type);
-        if (type.isPrimitive()) {
+        int maxStack = 1 + slotSize(field.getType());
+        if (field.getType().isPrimitive()) {
             maxStack += 1; // 装箱临时栈
         }
         int maxLocals = 2; // this + target
@@ -47,10 +48,10 @@ public final class StackUtil {
      * @param type 字段类型
      * @return 栈大小
      */
-    public static Size forSetter(Class<?> type) {
+    public static Size forFieldSetter(Field field) {
         // Setter maxStack: target + value, primitive long/double 占两个 slot
-        int maxStack = 1 + slotSize(type);
-        if (type.isPrimitive()) {
+        int maxStack = 1 + slotSize(field.getType());
+        if (field.getType().isPrimitive()) {
             maxStack += 1; // 拆箱临时栈
         }
         int maxLocals = 3; // this + target + value
@@ -63,7 +64,7 @@ public final class StackUtil {
      * @param method 方法
      * @return 栈大小
      */
-    public static Size forInvoker(Method method) {
+    public static Size forMethodInvoker(Method method) {
         boolean returnsVoid = method.getReturnType() == void.class;
         Class<?>[] params = method.getParameterTypes();
 
@@ -95,7 +96,7 @@ public final class StackUtil {
      * @param constructor 构造器
      * @return 栈大小
      */
-    public static Size forConstructor(Constructor<?> constructor) {
+    public static Size forConstructorInvoker(Constructor<?> constructor) {
         Class<?>[] params = constructor.getParameterTypes();
         int maxStack = 1 + 1; // NEW + DUP
         for (Class<?> p : params) {

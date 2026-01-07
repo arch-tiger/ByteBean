@@ -56,6 +56,6 @@ public final class ConstructorAppender implements ByteCodeAppender {
 
         mv.visitInsn(Opcodes.ARETURN);
 
-        return StackUtil.forConstructor(ctor);
+        return StackUtil.forConstructorInvoker(ctor);
     }
 }

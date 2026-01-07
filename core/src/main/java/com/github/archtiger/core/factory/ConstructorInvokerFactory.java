@@ -2,11 +2,9 @@ package com.github.archtiger.core.factory;
 
 import com.github.archtiger.core.invoke.constructor.ConstructorInvoker;
 import com.github.archtiger.core.bytecode.ConstructorAppender;
-import com.github.archtiger.core.support.NameUtil;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.matcher.ElementMatchers;
+import com.github.archtiger.core.model.ByteBeanConstant;
+import com.github.archtiger.core.model.InvokerNameInfo;
+import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.lang.reflect.Constructor;
 
@@ -16,25 +14,31 @@ import java.lang.reflect.Constructor;
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
-public final class ConstructorInvokerFactory {
+public final class ConstructorInvokerFactory extends AbstractInvokerFactory<ConstructorInvoker> {
+    private final Constructor<?> constructor;
 
-    private ConstructorInvokerFactory() {
+    public ConstructorInvokerFactory(Class<?> targetClass, Constructor<?> constructor) {
+        super(targetClass);
+        this.constructor = constructor;
     }
 
-    public static ConstructorInvoker create(Class<?> targetClass, Constructor<?> constructor) {
-        Class<? extends ConstructorInvoker> creatorClass = new ByteBuddy()
-                .subclass(ConstructorInvoker.class)
-                .name(NameUtil.calcForConstructorInvoker(targetClass, constructor))
-                .method(ElementMatchers.named("newInstance"))
-                .intercept(new Implementation.Simple(new ConstructorAppender(targetClass, constructor)))
-                .make()
-                .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
-                .getLoaded();
+    @Override
+    protected Class<ConstructorInvoker> defineInvokerClass() {
+        return ConstructorInvoker.class;
+    }
 
-        try {
-            return creatorClass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+    @Override
+    protected InvokerNameInfo defineInvokerName() {
+        return InvokerNameInfo.forConstructor(getTargetClass(), constructor, ConstructorInvoker.class);
+    }
+
+    @Override
+    protected ByteCodeAppender defineByteCodeAppender() {
+        return new ConstructorAppender(getTargetClass(), constructor);
+    }
+
+    @Override
+    protected String defineInvokerMethodName() {
+        return ByteBeanConstant.CONSTRUCTOR_INVOKER_METHOD_NAME;
     }
 }
