@@ -1,18 +1,18 @@
-package com.github.archtiger.core.invoke;
+package com.github.archtiger.core.invoke.field;
 
 /**
- * DOUBLE获取器接口
+ * 获取器接口
  *
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
 @FunctionalInterface
-public interface DoubleFieldGetter {
+public interface FieldGetter {
     /**
      * 获取字段值
      *
      * @param target 目标对象
      * @return 字段值
      */
-    double get(Object target);
+    Object get(Object target);
 }

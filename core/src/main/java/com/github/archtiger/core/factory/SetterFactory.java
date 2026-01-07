@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.invoke.FieldSetter;
+import com.github.archtiger.core.invoke.field.FieldSetter;
 import com.github.archtiger.core.bytecode.FieldSetterAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;

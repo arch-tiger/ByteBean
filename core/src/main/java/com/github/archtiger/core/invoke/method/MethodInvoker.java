@@ -1,4 +1,4 @@
-package com.github.archtiger.core.invoke;
+package com.github.archtiger.core.invoke.method;
 
 /**
  * 方法调用器接口

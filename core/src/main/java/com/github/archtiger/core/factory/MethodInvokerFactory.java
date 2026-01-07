@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.invoke.MethodInvoker;
+import com.github.archtiger.core.invoke.method.MethodInvoker;
 import com.github.archtiger.core.bytecode.MethodInvokerAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;

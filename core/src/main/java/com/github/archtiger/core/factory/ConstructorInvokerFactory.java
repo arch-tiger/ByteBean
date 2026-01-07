@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.invoke.ConstructorInvoker;
+import com.github.archtiger.core.invoke.constructor.ConstructorInvoker;
 import com.github.archtiger.core.bytecode.ConstructorAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
