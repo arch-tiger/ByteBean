@@ -1,7 +1,7 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.accessor.FieldSetter;
-import com.github.archtiger.core.bytecode.SetterAppender;
+import com.github.archtiger.core.invoke.FieldSetter;
+import com.github.archtiger.core.bytecode.FieldSetterAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -33,7 +33,7 @@ public final class SetterFactory {
                     .subclass(FieldSetter.class)
                     .name(NameUtil.calcForFieldSetter(targetClass, field))
                     .method(m -> m.getName().equals("set"))
-                    .intercept(new Implementation.Simple(new SetterAppender(targetClass, field)))
+                    .intercept(new Implementation.Simple(new FieldSetterAppender(targetClass, field)))
                     .make()
                     .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                     .getLoaded();

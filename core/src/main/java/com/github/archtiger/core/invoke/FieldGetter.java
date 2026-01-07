@@ -1,4 +1,4 @@
-package com.github.archtiger.core.accessor;
+package com.github.archtiger.core.invoke;
 
 /**
  * 获取器接口

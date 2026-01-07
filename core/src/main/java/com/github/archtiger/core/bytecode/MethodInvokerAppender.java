@@ -17,11 +17,11 @@ import java.lang.reflect.Method;
  * @author ZIJIDELU
  * @datetime 2026/1/6 23:24
  */
-public final class InvokerAppender implements ByteCodeAppender {
+public final class MethodInvokerAppender implements ByteCodeAppender {
     private final Class<?> targetClass;
     private final Method method;
 
-    public InvokerAppender(Class<?> targetClass, Method method) {
+    public MethodInvokerAppender(Class<?> targetClass, Method method) {
         this.targetClass = targetClass;
         this.method = method;
     }

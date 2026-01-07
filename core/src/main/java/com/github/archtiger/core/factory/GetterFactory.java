@@ -1,7 +1,7 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.accessor.FieldGetter;
-import com.github.archtiger.core.bytecode.GetterAppender;
+import com.github.archtiger.core.invoke.FieldGetter;
+import com.github.archtiger.core.bytecode.FieldGetterAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -34,7 +34,7 @@ public final class GetterFactory {
                     .subclass(FieldGetter.class)
                     .name(NameUtil.calcForFieldGetter(targetClass, field))
                     .method(m -> m.getName().equals("get"))
-                    .intercept(new Implementation.Simple(new GetterAppender(targetClass, field)))
+                    .intercept(new Implementation.Simple(new FieldGetterAppender(targetClass, field)))
                     .make()
                     .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                     .getLoaded();

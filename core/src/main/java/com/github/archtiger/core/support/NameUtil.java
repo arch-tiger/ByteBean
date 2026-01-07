@@ -1,9 +1,9 @@
 package com.github.archtiger.core.support;
 
-import com.github.archtiger.core.accessor.ConstructorInvoker;
-import com.github.archtiger.core.accessor.FieldGetter;
-import com.github.archtiger.core.accessor.FieldSetter;
-import com.github.archtiger.core.accessor.MethodInvoker;
+import com.github.archtiger.core.invoke.ConstructorInvoker;
+import com.github.archtiger.core.invoke.FieldGetter;
+import com.github.archtiger.core.invoke.FieldSetter;
+import com.github.archtiger.core.invoke.MethodInvoker;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

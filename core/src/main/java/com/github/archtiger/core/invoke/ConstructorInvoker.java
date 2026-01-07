@@ -1,4 +1,4 @@
-package com.github.archtiger.core.accessor;
+package com.github.archtiger.core.invoke;
 
 /**
  * 构造函数调用器

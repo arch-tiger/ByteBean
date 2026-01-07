@@ -1,7 +1,7 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.accessor.ConstructorInvoker;
-import com.github.archtiger.core.bytecode.CreatorAppender;
+import com.github.archtiger.core.invoke.ConstructorInvoker;
+import com.github.archtiger.core.bytecode.ConstructorAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -26,7 +26,7 @@ public final class ConstructorInvokerFactory {
                 .subclass(ConstructorInvoker.class)
                 .name(NameUtil.calcForConstructorInvoker(targetClass, constructor))
                 .method(ElementMatchers.named("newInstance"))
-                .intercept(new Implementation.Simple(new CreatorAppender(targetClass, constructor)))
+                .intercept(new Implementation.Simple(new ConstructorAppender(targetClass, constructor)))
                 .make()
                 .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                 .getLoaded();

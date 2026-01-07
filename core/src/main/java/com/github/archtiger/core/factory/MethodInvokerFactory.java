@@ -1,7 +1,7 @@
 package com.github.archtiger.core.factory;
 
-import com.github.archtiger.core.accessor.MethodInvoker;
-import com.github.archtiger.core.bytecode.InvokerAppender;
+import com.github.archtiger.core.invoke.MethodInvoker;
+import com.github.archtiger.core.bytecode.MethodInvokerAppender;
 import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -32,7 +32,7 @@ public final class MethodInvokerFactory {
                 .subclass(MethodInvoker.class)
                 .name(NameUtil.calcForMethodInvoker(targetClass, method))
                 .method(m -> m.getName().equals("invoke"))
-                .intercept(new Implementation.Simple(new InvokerAppender(targetClass, method)))
+                .intercept(new Implementation.Simple(new MethodInvokerAppender(targetClass, method)))
                 .make()
                 .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                 .getLoaded();
