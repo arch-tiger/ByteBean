@@ -1,4 +1,4 @@
-package com.github.archtiger.core.engine;
+package com.github.archtiger.core.accessor;
 
 /**
  * 获取器接口
@@ -7,7 +7,7 @@ package com.github.archtiger.core.engine;
  * @datetime 2026/1/6 16:49
  */
 @FunctionalInterface
-public interface Getter {
+public interface FieldGetter {
     /**
      * 获取字段值
      *

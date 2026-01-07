@@ -1,7 +1,8 @@
 package com.github.archtiger.core.factory;
 
+import com.github.archtiger.core.accessor.FieldGetter;
 import com.github.archtiger.core.bytecode.GetterAppender;
-import com.github.archtiger.core.engine.Getter;
+import com.github.archtiger.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.Implementation;
@@ -26,12 +27,12 @@ public final class GetterFactory {
      * @return Getter 实例
      * @throws Exception 如果创建失败
      */
-    public static Getter createGetter(Class<?> targetClass, Field field) throws Exception {
+    public static FieldGetter createGetter(Class<?> targetClass, Field field) throws Exception {
 
         try {
-            Class<? extends Getter> getterClass = new ByteBuddy()
-                    .subclass(Getter.class)
-                    .name(targetClass.getName() + "$$" + field.getName() + "Getter")
+            Class<? extends FieldGetter> getterClass = new ByteBuddy()
+                    .subclass(FieldGetter.class)
+                    .name(NameUtil.calcForFieldGetter(targetClass, field))
                     .method(m -> m.getName().equals("get"))
                     .intercept(new Implementation.Simple(new GetterAppender(targetClass, field)))
                     .make()

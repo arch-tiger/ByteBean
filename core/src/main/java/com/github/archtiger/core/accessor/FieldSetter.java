@@ -1,4 +1,4 @@
-package com.github.archtiger.core.engine;
+package com.github.archtiger.core.accessor;
 
 /**
  * 设置器接口
@@ -7,7 +7,7 @@ package com.github.archtiger.core.engine;
  * @datetime 2026/1/6 16:49
  */
 @FunctionalInterface
-public interface Setter {
+public interface FieldSetter {
     /**
      * 设置字段值
      *

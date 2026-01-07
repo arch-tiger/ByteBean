@@ -1,4 +1,4 @@
-package com.github.archtiger.core.engine;
+package com.github.archtiger.core.accessor;
 
 /**
  * 构造函数调用器
@@ -7,6 +7,6 @@ package com.github.archtiger.core.engine;
  * @datetime 2026/1/6 11:12
  */
 @FunctionalInterface
-public interface Creator {
+public interface ConstructorInvoker {
     Object newInstance(Object... args);
 }
