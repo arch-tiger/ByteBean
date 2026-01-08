@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory.method;
 
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
 import com.github.archtiger.definition.invoker.method.MethodInvoker;
 import com.github.archtiger.core.bytecode.method.MethodInvokerAppender;
 import com.github.archtiger.definition.model.InvokerConstant;
@@ -11,14 +11,15 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * 方法调用器工厂
+ * MethodInvoker
+ * 方法调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/6 23:24
  */
-public final class MethodInvokerFactory extends AbstractInvokerFactory<MethodInvoker> {
+public final class MethodInvokerLoader extends AbstractInvokerLoader<MethodInvoker> {
     private final Method method;
-    public MethodInvokerFactory(Class<?> targetClass, Method method) {
+    public MethodInvokerLoader(Class<?> targetClass, Method method) {
         super(targetClass);
         this.method = method;
     }

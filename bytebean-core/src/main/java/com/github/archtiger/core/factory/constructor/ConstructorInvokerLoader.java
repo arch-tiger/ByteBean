@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory.constructor;
 
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
 import com.github.archtiger.definition.invoker.constructor.ConstructorInvoker;
 import com.github.archtiger.core.bytecode.constructor.ConstructorInvokerAppender;
 import com.github.archtiger.definition.model.InvokerConstant;
@@ -11,15 +11,16 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Constructor;
 
 /**
- * 创建器工厂
+ * ConstructorInvoker
+ * 构造器调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
-public final class ConstructorInvokerFactory extends AbstractInvokerFactory<ConstructorInvoker> {
+public final class ConstructorInvokerLoader extends AbstractInvokerLoader<ConstructorInvoker> {
     private final Constructor<?> constructor;
 
-    public ConstructorInvokerFactory(Class<?> targetClass, Constructor<?> constructor) {
+    public ConstructorInvokerLoader(Class<?> targetClass, Constructor<?> constructor) {
         super(targetClass);
         this.constructor = constructor;
     }

@@ -1,8 +1,8 @@
 package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.PrimitiveMethodInvokerAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.definition.invoker.method.ShortMethodInvoker;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.definition.invoker.method.FloatMethodInvoker;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,27 +11,28 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * Short MethodInvoker 工厂
+ * FloatMethodInvoker
+ * float 类型方法调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/8
  */
-public final class ShortMethodInvokerFactory extends AbstractInvokerFactory<ShortMethodInvoker> {
+public final class FloatMethodInvokerLoader extends AbstractInvokerLoader<FloatMethodInvoker> {
     private final Method targetMethod;
 
-    public ShortMethodInvokerFactory(Class<?> targetClass, Method targetMethod) {
+    public FloatMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }
 
     @Override
-    protected Class<ShortMethodInvoker> defineInvokerClass() {
-        return ShortMethodInvoker.class;
+    protected Class<FloatMethodInvoker> defineInvokerClass() {
+        return FloatMethodInvoker.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, ShortMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, FloatMethodInvoker.class);
     }
 
     @Override

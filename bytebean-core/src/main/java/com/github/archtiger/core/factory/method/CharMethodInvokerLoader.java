@@ -1,8 +1,8 @@
 package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.PrimitiveMethodInvokerAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.definition.invoker.method.ByteMethodInvoker;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.definition.invoker.method.CharMethodInvoker;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,27 +11,28 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * Byte MethodInvoker 工厂
+ * CharMethodInvoker
+ * char 类型方法调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/8
  */
-public final class ByteMethodInvokerFactory extends AbstractInvokerFactory<ByteMethodInvoker> {
+public final class CharMethodInvokerLoader extends AbstractInvokerLoader<CharMethodInvoker> {
     private final Method targetMethod;
 
-    public ByteMethodInvokerFactory(Class<?> targetClass, Method targetMethod) {
+    public CharMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }
 
     @Override
-    protected Class<ByteMethodInvoker> defineInvokerClass() {
-        return ByteMethodInvoker.class;
+    protected Class<CharMethodInvoker> defineInvokerClass() {
+        return CharMethodInvoker.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, ByteMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, CharMethodInvoker.class);
     }
 
     @Override

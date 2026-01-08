@@ -11,18 +11,18 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * 抽象调用器工厂类
+ * 抽象调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/7 20:40
  */
-public abstract class AbstractInvokerFactory<T> {
+public abstract class AbstractInvokerLoader<T> {
     private static final TypeCache<String> TYPE_CACHE =
             new TypeCache.WithInlineExpunction<>(TypeCache.Sort.WEAK);
 
     private final Class<?> targetClass;
 
-    protected AbstractInvokerFactory(Class<?> targetClass) {
+    protected AbstractInvokerLoader(Class<?> targetClass) {
         this.targetClass = targetClass;
     }
 

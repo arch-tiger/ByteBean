@@ -1,8 +1,8 @@
 package com.github.archtiger.core.factory.field;
 
-import com.github.archtiger.core.bytecode.field.PrimitiveFieldSetterAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.definition.invoker.field.ShortFieldSetter;
+import com.github.archtiger.core.bytecode.field.FieldGetterAppender;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.definition.invoker.field.FieldGetter;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,41 +11,44 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Field;
 
 /**
- * Short FieldSetter 工厂
+ * FieldGetter
+ * 对象类型字段获取器加载器
  *
  * @author ZIJIDELU
- * @datetime 2026/1/8
+ * @datetime 2026/1/6 16:49
  */
-public final class ShortFieldSetterFactory extends AbstractInvokerFactory<ShortFieldSetter> {
+public final class FieldGetterLoader extends AbstractInvokerLoader<FieldGetter> {
     private final Field targetField;
 
-    public ShortFieldSetterFactory(Class<?> targetClass, Field targetField) {
+    public FieldGetterLoader(Class<?> targetClass,
+                             Field targetField) {
         super(targetClass);
         this.targetField = targetField;
     }
 
     @Override
-    protected Class<ShortFieldSetter> defineInvokerClass() {
-        return ShortFieldSetter.class;
+    protected Class<FieldGetter> defineInvokerClass() {
+        return FieldGetter.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forField(getTargetClass(), targetField, ShortFieldSetter.class);
+        return InvokerNameInfo.forField(getTargetClass(), targetField, FieldGetter.class);
     }
 
     @Override
     protected ByteCodeAppender defineByteCodeAppender() {
-        return new PrimitiveFieldSetterAppender(getTargetClass(), targetField);
+        return new FieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
     protected String defineInvokerMethodName() {
-        return InvokerConstant.FIELD_SETTER_METHOD_NAME;
+        return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 
     @Override
     protected boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
+
 }

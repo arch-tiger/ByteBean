@@ -1,7 +1,7 @@
 package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.PrimitiveMethodInvokerAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
 import com.github.archtiger.definition.invoker.method.LongMethodInvoker;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
@@ -11,15 +11,16 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * Long MethodInvoker 工厂
+ * LongMethodInvoker
+ * long 类型方法调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/8
  */
-public final class LongMethodInvokerFactory extends AbstractInvokerFactory<LongMethodInvoker> {
+public final class LongMethodInvokerLoader extends AbstractInvokerLoader<LongMethodInvoker> {
     private final Method targetMethod;
 
-    public LongMethodInvokerFactory(Class<?> targetClass, Method targetMethod) {
+    public LongMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }

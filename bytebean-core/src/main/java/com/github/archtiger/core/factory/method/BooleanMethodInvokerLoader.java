@@ -1,8 +1,8 @@
 package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.PrimitiveMethodInvokerAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.definition.invoker.method.CharMethodInvoker;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.definition.invoker.method.BooleanMethodInvoker;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,27 +11,28 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * Char MethodInvoker 工厂
+ * BooleanMethodInvoker
+ * boolean 类型方法调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/8
  */
-public final class CharMethodInvokerFactory extends AbstractInvokerFactory<CharMethodInvoker> {
+public final class BooleanMethodInvokerLoader extends AbstractInvokerLoader<BooleanMethodInvoker> {
     private final Method targetMethod;
 
-    public CharMethodInvokerFactory(Class<?> targetClass, Method targetMethod) {
+    public BooleanMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }
 
     @Override
-    protected Class<CharMethodInvoker> defineInvokerClass() {
-        return CharMethodInvoker.class;
+    protected Class<BooleanMethodInvoker> defineInvokerClass() {
+        return BooleanMethodInvoker.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, CharMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, BooleanMethodInvoker.class);
     }
 
     @Override

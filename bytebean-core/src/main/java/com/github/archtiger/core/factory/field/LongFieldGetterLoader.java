@@ -1,8 +1,8 @@
 package com.github.archtiger.core.factory.field;
 
 import com.github.archtiger.core.bytecode.field.PrimitiveFieldGetterAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.definition.invoker.field.DoubleFieldGetter;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.definition.invoker.field.LongFieldGetter;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,27 +11,28 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Field;
 
 /**
- * Double FieldGetter 工厂
+ * LongFieldGetter
+ * long 类型字段获取器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/8
  */
-public final class DoubleFieldGetterFactory extends AbstractInvokerFactory<DoubleFieldGetter> {
+public final class LongFieldGetterLoader extends AbstractInvokerLoader<LongFieldGetter> {
     private final Field targetField;
 
-    public DoubleFieldGetterFactory(Class<?> targetClass, Field targetField) {
+    public LongFieldGetterLoader(Class<?> targetClass, Field targetField) {
         super(targetClass);
         this.targetField = targetField;
     }
 
     @Override
-    protected Class<DoubleFieldGetter> defineInvokerClass() {
-        return DoubleFieldGetter.class;
+    protected Class<LongFieldGetter> defineInvokerClass() {
+        return LongFieldGetter.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forField(getTargetClass(), targetField, DoubleFieldGetter.class);
+        return InvokerNameInfo.forField(getTargetClass(), targetField, LongFieldGetter.class);
     }
 
     @Override

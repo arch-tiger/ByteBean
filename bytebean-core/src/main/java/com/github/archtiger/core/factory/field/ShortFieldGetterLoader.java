@@ -1,8 +1,8 @@
 package com.github.archtiger.core.factory.field;
 
-import com.github.archtiger.core.bytecode.field.PrimitiveFieldSetterAppender;
-import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.definition.invoker.field.DoubleFieldSetter;
+import com.github.archtiger.core.bytecode.field.PrimitiveFieldGetterAppender;
+import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.definition.invoker.field.ShortFieldGetter;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,37 +11,38 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Field;
 
 /**
- * Double FieldSetter 工厂
+ * ShortFieldGetter
+ * short 类型字段获取器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/8
  */
-public final class DoubleFieldSetterFactory extends AbstractInvokerFactory<DoubleFieldSetter> {
+public final class ShortFieldGetterLoader extends AbstractInvokerLoader<ShortFieldGetter> {
     private final Field targetField;
 
-    public DoubleFieldSetterFactory(Class<?> targetClass, Field targetField) {
+    public ShortFieldGetterLoader(Class<?> targetClass, Field targetField) {
         super(targetClass);
         this.targetField = targetField;
     }
 
     @Override
-    protected Class<DoubleFieldSetter> defineInvokerClass() {
-        return DoubleFieldSetter.class;
+    protected Class<ShortFieldGetter> defineInvokerClass() {
+        return ShortFieldGetter.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forField(getTargetClass(), targetField, DoubleFieldSetter.class);
+        return InvokerNameInfo.forField(getTargetClass(), targetField, ShortFieldGetter.class);
     }
 
     @Override
     protected ByteCodeAppender defineByteCodeAppender() {
-        return new PrimitiveFieldSetterAppender(getTargetClass(), targetField);
+        return new PrimitiveFieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
     protected String defineInvokerMethodName() {
-        return InvokerConstant.FIELD_SETTER_METHOD_NAME;
+        return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 
     @Override
