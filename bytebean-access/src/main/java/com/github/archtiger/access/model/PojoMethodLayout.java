@@ -1,6 +1,4 @@
-package com.github.archtiger.core.model;
-
-import java.lang.reflect.Method;
+package com.github.archtiger.access.model;
 
 /**
  * POJO 方法布局

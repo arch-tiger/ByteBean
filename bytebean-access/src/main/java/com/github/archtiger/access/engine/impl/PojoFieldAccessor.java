@@ -1,8 +1,8 @@
-package com.github.archtiger.core.engine.impl;
+package com.github.archtiger.access.engine.impl;
 
-import com.github.archtiger.core.engine.FieldAccessor;
-import com.github.archtiger.core.model.FieldLayout;
-import com.github.archtiger.core.model.PojoFieldLayout;
+import com.github.archtiger.access.engine.FieldAccessor;
+import com.github.archtiger.access.model.FieldLayout;
+import com.github.archtiger.access.model.PojoFieldLayout;
 
 /**
  * POJO 字段访问器

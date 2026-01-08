@@ -1,6 +1,6 @@
-package com.github.archtiger.core.engine;
+package com.github.archtiger.access.engine;
 
-import com.github.archtiger.core.model.FieldLayout;
+import com.github.archtiger.access.model.FieldLayout;
 
 /**
  * 字段访问器

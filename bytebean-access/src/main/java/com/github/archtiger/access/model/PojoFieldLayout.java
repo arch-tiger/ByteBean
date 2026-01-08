@@ -1,4 +1,4 @@
-package com.github.archtiger.core.model;
+package com.github.archtiger.access.model;
 
 import com.github.archtiger.core.exception.InvalidFieldIndexException;
 
