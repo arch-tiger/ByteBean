@@ -29,7 +29,7 @@ public final class StackUtil {
     /**
      * 获取获取器的栈大小
      *
-     * @param type 字段类型
+     * @param field 字段
      * @return 栈大小
      */
     public static Size forFieldGetter(Field field) {
@@ -45,7 +45,7 @@ public final class StackUtil {
     /**
      * 获取设置器的栈大小
      *
-     * @param type 字段类型
+     * @param field 字段
      * @return 栈大小
      */
     public static Size forFieldSetter(Field field) {
@@ -174,6 +174,35 @@ public final class StackUtil {
         // maxStack = 2 (target + value)
         // maxLocals = 3 (this + target + value)
         // 对于 long/double，value 占 2 个 slot，所以需要调整
+        return new Size(2, 3);
+    }
+
+    // ==================== 基本类型 Field 栈大小计算 ====================
+
+    /**
+     * 获取基本类型 Field Getter 的栈大小
+     * <p>
+     * 基本类型不需要装箱，栈空间较小
+     *
+     * @return 栈大小
+     */
+    public static Size forPrimitiveFieldGetter() {
+        // maxStack = 1 (target)
+        // maxLocals = 2 (this + target)
+        return new Size(1, 2);
+    }
+
+    /**
+     * 获取基本类型 Field Setter 的栈大小
+     * <p>
+     * 基本类型不需要拆箱，栈空间较小
+     *
+     * @return 栈大小
+     */
+    public static Size forPrimitiveFieldSetter() {
+        // maxStack = 2 (target + value)
+        // maxLocals = 3 (this + target + value)
+        // 对于 long/double，value 占 2 个 slot
         return new Size(2, 3);
     }
 
