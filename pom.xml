@@ -11,8 +11,9 @@
     <url>https://github.com/arch-tiger/ByteBean</url>
 
     <modules>
+        <module>bytebean-definition</module>
         <module>bytebean-core</module>
-        <module>bytebean-access</module>
+        <module>bytebean-extensions</module>
     </modules>
 
     <properties>
@@ -33,12 +34,17 @@
         <dependencies>
             <dependency>
                 <groupId>com.github.archtiger</groupId>
+                <artifactId>bytebean-definition</artifactId>
+                <version>${bytebean.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.archtiger</groupId>
                 <artifactId>bytebean-core</artifactId>
                 <version>${bytebean.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.archtiger</groupId>
-                <artifactId>bytebean-access</artifactId>
+                <artifactId>bytebean-extensions</artifactId>
                 <version>${bytebean.version}</version>
             </dependency>
             <dependency>

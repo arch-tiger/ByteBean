@@ -2,8 +2,8 @@ package com.github.archtiger.core.factory.field;
 
 import com.github.archtiger.core.bytecode.field.PrimitiveFieldSetterAppender;
 import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.core.invoke.field.CharFieldSetter;
-import com.github.archtiger.core.model.ByteBeanConstant;
+import com.github.archtiger.definition.invoker.field.CharFieldSetter;
+import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -41,7 +41,7 @@ public final class CharFieldSetterFactory extends AbstractInvokerFactory<CharFie
 
     @Override
     protected String defineInvokerMethodName() {
-        return ByteBeanConstant.FIELD_SETTER_METHOD_NAME;
+        return InvokerConstant.FIELD_SETTER_METHOD_NAME;
     }
 
     @Override

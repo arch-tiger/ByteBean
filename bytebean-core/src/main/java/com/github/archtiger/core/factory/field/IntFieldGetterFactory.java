@@ -2,8 +2,8 @@ package com.github.archtiger.core.factory.field;
 
 import com.github.archtiger.core.bytecode.field.PrimitiveFieldGetterAppender;
 import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.core.invoke.field.IntFieldGetter;
-import com.github.archtiger.core.model.ByteBeanConstant;
+import com.github.archtiger.definition.invoker.field.IntFieldGetter;
+import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -41,7 +41,7 @@ public final class IntFieldGetterFactory extends AbstractInvokerFactory<IntField
 
     @Override
     protected String defineInvokerMethodName() {
-        return ByteBeanConstant.FIELD_GETTER_METHOD_NAME;
+        return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 
     @Override

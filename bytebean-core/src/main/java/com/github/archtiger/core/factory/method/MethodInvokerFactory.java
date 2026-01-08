@@ -1,9 +1,9 @@
 package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.factory.AbstractInvokerFactory;
-import com.github.archtiger.core.invoke.method.MethodInvoker;
+import com.github.archtiger.definition.invoker.method.MethodInvoker;
 import com.github.archtiger.core.bytecode.method.MethodInvokerAppender;
-import com.github.archtiger.core.model.ByteBeanConstant;
+import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -40,7 +40,7 @@ public final class MethodInvokerFactory extends AbstractInvokerFactory<MethodInv
 
     @Override
     protected String defineInvokerMethodName() {
-        return ByteBeanConstant.METHOD_INVOKER_METHOD_NAME;
+        return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 
     @Override
