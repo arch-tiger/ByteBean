@@ -3,6 +3,7 @@ package com.github.archtiger.core.factory;
 import com.github.archtiger.core.exception.UnsupportedCreateInvokerException;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.TypeCache;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -16,6 +17,9 @@ import java.lang.reflect.InvocationTargetException;
  * @datetime 2026/1/7 20:40
  */
 public abstract class AbstractInvokerFactory<T> {
+    private static final TypeCache<String> TYPE_CACHE =
+            new TypeCache.WithInlineExpunction<>(TypeCache.Sort.WEAK);
+
     private final Class<?> targetClass;
 
     protected AbstractInvokerFactory(Class<?> targetClass) {
@@ -66,25 +70,26 @@ public abstract class AbstractInvokerFactory<T> {
      *
      * @return 调用器
      */
+    @SuppressWarnings("unchecked")
     public T createInvoker() {
         if (!canInstantiate()) {
             return null;
         }
+        final ClassLoader classLoader = getTargetClass().getClassLoader();
+        final String className = defineInvokerName().calcInvokerClassName();
 
-        final Class<? extends T> invokerClass = new ByteBuddy()
+        final Class<?> invokerClass = TYPE_CACHE.findOrInsert(classLoader, className, () -> new ByteBuddy()
                 .subclass(defineInvokerClass())
-                .name(defineInvokerName().calcInvokerClassName())
+                .name(className)
                 .method(m -> m.getName().equals(defineInvokerMethodName()))
                 .intercept(new Implementation.Simple(defineByteCodeAppender()))
                 .make()
-                .load(
-                        targetClass.getClassLoader(),
-                        ClassLoadingStrategy.Default.INJECTION
-                )
-                .getLoaded();
+                .load(classLoader, ClassLoadingStrategy.Default.INJECTION)
+                .getLoaded()
+        );
 
         try {
-            return invokerClass.getDeclaredConstructor().newInstance();
+            return (T) invokerClass.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
