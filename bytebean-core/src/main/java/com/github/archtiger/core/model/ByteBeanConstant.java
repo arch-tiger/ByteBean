@@ -11,4 +11,6 @@ public interface ByteBeanConstant {
     String FIELD_SETTER_METHOD_NAME = "set";
     String METHOD_INVOKER_METHOD_NAME = "invoke";
     String CONSTRUCTOR_INVOKER_METHOD_NAME = "newInstance";
+    String BEAN_GETTER_METHOD_NAME = "get";
+    String BEAN_SETTER_METHOD_NAME = "set";
 }

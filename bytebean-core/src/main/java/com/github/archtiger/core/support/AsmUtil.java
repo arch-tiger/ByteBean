@@ -103,4 +103,54 @@ public class AsmUtil {
         }
     }
 
+    /**
+     * 根据类型获取对应的加载指令
+     * <p>
+     * 适用于从局部变量加载基本类型或引用类型值的场景，支持 field、method、constructor、bean 等
+     *
+     * @param type 类型
+     * @return 加载指令 opcode (ILOAD, LLOAD, FLOAD, DLOAD, ALOAD)
+     */
+    public static int getLoadOpcode(Class<?> type) {
+        if (type == long.class) {
+            return Opcodes.LLOAD;
+        } else if (type == float.class) {
+            return Opcodes.FLOAD;
+        } else if (type == double.class) {
+            return Opcodes.DLOAD;
+        } else if (type.isPrimitive()) {
+            // byte, short, int, char, boolean 都使用 ILOAD
+            return Opcodes.ILOAD;
+        } else {
+            // 引用类型使用 ALOAD
+            return Opcodes.ALOAD;
+        }
+    }
+
+    /**
+     * 根据类型获取对应的返回指令
+     * <p>
+     * 适用于方法返回基本类型或引用类型值的场景，支持 field、method、constructor、bean 等
+     *
+     * @param type 类型
+     * @return 返回指令 opcode (IRETURN, LRETURN, FRETURN, DRETURN, RETURN, ARETURN)
+     */
+    public static int getReturnOpcode(Class<?> type) {
+        if (type == void.class) {
+            return Opcodes.RETURN;
+        } else if (type == long.class) {
+            return Opcodes.LRETURN;
+        } else if (type == float.class) {
+            return Opcodes.FRETURN;
+        } else if (type == double.class) {
+            return Opcodes.DRETURN;
+        } else if (type.isPrimitive()) {
+            // byte, short, int, char, boolean 都使用 IRETURN
+            return Opcodes.IRETURN;
+        } else {
+            // 引用类型使用 ARETURN
+            return Opcodes.ARETURN;
+        }
+    }
+
 }
