@@ -136,4 +136,26 @@ public final class StackUtil {
         return new Size(2, 3);
     }
 
+    // ==================== 基本类型 Method 栈大小计算 ====================
+
+    /**
+     * 获取一元基本类型 Method Invoker 的栈大小
+     * <p>
+     * 参数直接使用基本类型，无需拆箱，返回值需要装箱
+     *
+     * @param method 方法
+     * @return 栈大小
+     */
+    public static Size forUnaryMethodInvoker(Method method) {
+        boolean returnsVoid = method.getReturnType() == void.class;
+
+        int maxStack = 1 + slotSize(method.getParameterTypes()[0]); // target + param
+        if (!returnsVoid && method.getReturnType().isPrimitive()) {
+            maxStack += 1; // 返回值装箱临时栈
+        }
+
+        int maxLocals = 3; // this + target + param
+        return new Size(maxStack, maxLocals);
+    }
+
 }
