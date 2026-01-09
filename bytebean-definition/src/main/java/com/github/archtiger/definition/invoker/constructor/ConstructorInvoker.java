@@ -8,5 +8,11 @@ package com.github.archtiger.definition.invoker.constructor;
  */
 @FunctionalInterface
 public interface ConstructorInvoker {
+    /**
+     * 使用指定参数调用构造函数创建新实例
+     *
+     * @param args 构造函数参数
+     * @return 新创建的实例
+     */
     Object newInstance(Object... args);
 }
