@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author ZIJIDELU
  * @datetime 2026/1/7 20:40
  */
-public abstract class AbstractInvokerLoader<T> {
+public abstract class AbstractInvokerLoader<T> implements InvokerLoader<T> {
     private static final TypeCache<String> TYPE_CACHE =
             new TypeCache.WithInlineExpunction<>(TypeCache.Sort.WEAK);
 
