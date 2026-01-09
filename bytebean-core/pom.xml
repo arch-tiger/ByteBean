@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.archtiger</groupId>
-            <artifactId>bytebean-definition</artifactId>
+            <artifactId>bytebean-instructions</artifactId>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
