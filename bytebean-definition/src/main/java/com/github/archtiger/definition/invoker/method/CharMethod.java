@@ -1,15 +1,15 @@
 package com.github.archtiger.definition.invoker.method;
 
 /**
- * BYTE 方法调用器接口
+ * CHAR 方法调用器接口
  * <p>
- * 用于调用返回 byte 类型的方法，避免返回值装箱开销
+ * 用于调用返回 char 类型的方法，避免返回值装箱开销
  *
  * @author ZIJIDELU
- * @datetime 2026/1/8
+ * @datetime 2026/1/9
  */
 @FunctionalInterface
-public interface ByteMethodInvoker {
+public interface CharMethod {
     /**
      * 调用目标方法
      *
@@ -17,5 +17,5 @@ public interface ByteMethodInvoker {
      * @param args   方法参数
      * @return 方法返回值
      */
-    byte invoke(Object target, Object... args);
+    char invoke(Object target, Object... args);
 }

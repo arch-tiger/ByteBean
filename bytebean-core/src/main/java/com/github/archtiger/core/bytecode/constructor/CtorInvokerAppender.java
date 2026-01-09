@@ -17,12 +17,12 @@ import java.lang.reflect.Constructor;
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
-public final class ConstructorInvokerAppender implements ByteCodeAppender {
+public final class CtorInvokerAppender implements ByteCodeAppender {
 
     private final Class<?> targetClass;
     private final Constructor<?> ctor;
 
-    public ConstructorInvokerAppender(Class<?> targetClass, Constructor<?> ctor) {
+    public CtorInvokerAppender(Class<?> targetClass, Constructor<?> ctor) {
         this.targetClass = targetClass;
         this.ctor = ctor;
     }

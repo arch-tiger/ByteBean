@@ -2,7 +2,7 @@ package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.UnaryMethodInvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
-import com.github.archtiger.definition.invoker.method.FloatUnaryMethodInvoker;
+import com.github.archtiger.definition.invoker.method.MethodFloat1;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * @author ZIJIDELU
  * @datetime 2026/1/9
  */
-public final class FloatUnaryMethodInvokerLoader extends AbstractInvokerLoader<FloatUnaryMethodInvoker> {
+public final class FloatUnaryMethodInvokerLoader extends AbstractInvokerLoader<MethodFloat1> {
     private final Method targetMethod;
 
     public FloatUnaryMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
@@ -26,13 +26,13 @@ public final class FloatUnaryMethodInvokerLoader extends AbstractInvokerLoader<F
     }
 
     @Override
-    protected Class<FloatUnaryMethodInvoker> defineInvokerClass() {
-        return FloatUnaryMethodInvoker.class;
+    protected Class<MethodFloat1> defineInvokerClass() {
+        return MethodFloat1.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, FloatUnaryMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, MethodFloat1.class);
     }
 
     @Override

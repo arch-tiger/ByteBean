@@ -59,19 +59,13 @@ public abstract class AbstractInvokerLoader<T> implements InvokerLoader<T> {
     abstract protected String defineInvokerMethodName();
 
     /**
-     * 是否可以实例化调用器
-     *
-     * @return 是否可以实例化调用器
-     */
-    abstract protected boolean canInstantiate();
-
-    /**
      * 加载调用器
      *
      * @return 调用器
      */
     @SuppressWarnings("unchecked")
-    public T createInvoker() {
+    @Override
+    public T load() {
         if (!canInstantiate()) {
             return null;
         }
@@ -101,11 +95,12 @@ public abstract class AbstractInvokerLoader<T> implements InvokerLoader<T> {
      *
      * @return 调用器
      */
-    public T createInvokerOrThrow() {
+    @Override
+    public T loadOrFail() {
         if (!canInstantiate()) {
             throw new UnsupportedCreateInvokerException(targetClass, defineInvokerClass());
         }
 
-        return createInvoker();
+        return load();
     }
 }

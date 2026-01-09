@@ -1,4 +1,4 @@
-package com.github.archtiger.definition.invoker.copy;
+package com.github.archtiger.definition.invoker.ext.copy;
 
 /**
  * 方法到构造器复制器
@@ -10,7 +10,7 @@ package com.github.archtiger.definition.invoker.copy;
  * @datetime 2026/1/9
  */
 @FunctionalInterface
-public interface MethodToConstructorCopier extends ObjectCopier {
+public interface Method0ToCtorCopier extends ObjectCopier {
     /**
      * 通过方法方式将 source 的数据复制到 target
      * <p>

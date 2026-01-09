@@ -1,15 +1,15 @@
 package com.github.archtiger.definition.invoker.method;
 
 /**
- * INT 方法调用器接口
+ * LONG 方法调用器接口
  * <p>
- * 用于调用返回 int 类型的方法，避免返回值装箱开销
+ * 用于调用返回 long 类型的方法，避免返回值装箱开销
  *
  * @author ZIJIDELU
- * @datetime 2026/1/8
+ * @datetime 2026/1/9
  */
 @FunctionalInterface
-public interface IntMethodInvoker {
+public interface LongMethod {
     /**
      * 调用目标方法
      *
@@ -17,5 +17,5 @@ public interface IntMethodInvoker {
      * @param args   方法参数
      * @return 方法返回值
      */
-    int invoke(Object target, Object... args);
+    long invoke(Object target, Object... args);
 }

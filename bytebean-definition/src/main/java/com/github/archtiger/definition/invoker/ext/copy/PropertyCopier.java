@@ -1,4 +1,4 @@
-package com.github.archtiger.definition.invoker.copy;
+package com.github.archtiger.definition.invoker.ext.copy;
 
 /**
  * 属性复制器

@@ -10,16 +10,23 @@ package com.github.archtiger.core.factory;
  */
 public interface InvokerLoader<T> {
     /**
-     * 创建调用器
+     * 加载调用器，若已存在则复用，若不存在则创建
      *
-     * @return 调用器
+     * @return 调用器实例
      */
-    T createInvoker();
+    T load();
 
     /**
-     * 创建调用器或抛出异常
+     * 加载调用器或失败抛异常
      *
-     * @return 调用器
+     * @return 调用器实例
      */
-    T createInvokerOrThrow();
+    T loadOrFail();
+
+    /**
+     * 是否可以实例化调用器
+     *
+     * @return 是否可以实例化调用器
+     */
+    boolean canInstantiate();
 }

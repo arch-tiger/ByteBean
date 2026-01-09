@@ -7,7 +7,7 @@ package com.github.archtiger.definition.invoker.constructor;
  * @datetime 2026/1/6 11:12
  */
 @FunctionalInterface
-public interface ConstructorInvoker {
+public interface CtorInvoker {
     /**
      * 使用指定参数调用构造函数创建新实例
      *

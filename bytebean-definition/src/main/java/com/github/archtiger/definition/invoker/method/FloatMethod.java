@@ -1,15 +1,15 @@
 package com.github.archtiger.definition.invoker.method;
 
 /**
- * DOUBLE 方法调用器接口
+ * FLOAT 方法调用器接口
  * <p>
- * 用于调用返回 double 类型的方法，避免返回值装箱开销
+ * 用于调用返回 float 类型的方法，避免返回值装箱开销
  *
  * @author ZIJIDELU
- * @datetime 2026/1/8
+ * @datetime 2026/1/9
  */
 @FunctionalInterface
-public interface DoubleMethodInvoker {
+public interface FloatMethod {
     /**
      * 调用目标方法
      *
@@ -17,5 +17,5 @@ public interface DoubleMethodInvoker {
      * @param args   方法参数
      * @return 方法返回值
      */
-    double invoke(Object target, Object... args);
+    float invoke(Object target, Object... args);
 }
