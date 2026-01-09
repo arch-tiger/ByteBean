@@ -1,7 +1,7 @@
 package com.github.archtiger.definition.invoker.field;
 
 /**
- * SHORT获取器接口
+ * short获取器接口
  *
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49

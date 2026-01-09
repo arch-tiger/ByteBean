@@ -1,7 +1,7 @@
 package com.github.archtiger.definition.invoker.field;
 
 /**
- * DOUBLE设置器接口
+ * double设置器接口
  *
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49

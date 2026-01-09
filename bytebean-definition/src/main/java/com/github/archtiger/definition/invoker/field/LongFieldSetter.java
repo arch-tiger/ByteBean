@@ -1,10 +1,10 @@
 package com.github.archtiger.definition.invoker.field;
 
 /**
- * LONG设置器接口
+ * long设置器接口
  *
  * @author ZIJIDELU
- * @datetime 2026/1/6 16:49
+ * @datetime 2026/1 16:49
  */
 @FunctionalInterface
 public interface LongFieldSetter {

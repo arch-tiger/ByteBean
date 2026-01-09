@@ -1,7 +1,7 @@
 package com.github.archtiger.definition.invoker.method;
 
 /**
- * BOOLEAN 方法调用器接口
+ * boolean 方法调用器接口
  * <p>
  * 用于调用返回 boolean 类型的方法，避免返回值装箱开销
  *
