@@ -46,7 +46,7 @@ public final class ByteFieldSetterLoader extends AbstractInvokerLoader<ByteField
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 }

@@ -2,7 +2,7 @@ package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.PrimitiveMethodInvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
-import com.github.archtiger.definition.invoker.method.IntMethodInvoker;
+import com.github.archtiger.definition.invoker.method.ShortMethod;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,28 +11,28 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * IntMethodInvoker
- * int 类型方法调用器加载器
+ * ShortMethodLoader
+ * short 类型方法调用器加载器
  *
  * @author ZIJIDELU
- * @datetime 2026/1/8
+ * @datetime 2026/1/9
  */
-public final class IntMethodInvokerLoader extends AbstractInvokerLoader<IntMethodInvoker> {
+public final class ShortMethodLoader extends AbstractInvokerLoader<ShortMethod> {
     private final Method targetMethod;
 
-    public IntMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
+    public ShortMethodLoader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }
 
     @Override
-    protected Class<IntMethodInvoker> defineInvokerClass() {
-        return IntMethodInvoker.class;
+    protected Class<ShortMethod> defineInvokerClass() {
+        return ShortMethod.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, IntMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, ShortMethod.class);
     }
 
     @Override
@@ -46,7 +46,7 @@ public final class IntMethodInvokerLoader extends AbstractInvokerLoader<IntMetho
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessMethod(getTargetClass(), targetMethod);
     }
 }

@@ -2,7 +2,7 @@ package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.UnaryMethodInvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
-import com.github.archtiger.definition.invoker.method.BooleanUnaryMethodInvoker;
+import com.github.archtiger.definition.invoker.method.MethodLong1;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,33 +11,33 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * BooleanUnaryMethodInvoker
- * boolean 类型一元方法调用器加载器
+ * MethodLong1Loader
+ * long 类型一元方法调用器加载器
  *
  * @author ZIJIDELU
  * @datetime 2026/1/9
  */
-public final class BooleanUnaryMethodInvokerLoader extends AbstractInvokerLoader<BooleanUnaryMethodInvoker> {
+public final class MethodLong1Loader extends AbstractInvokerLoader<MethodLong1> {
     private final Method targetMethod;
 
-    public BooleanUnaryMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
+    public MethodLong1Loader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }
 
     @Override
-    protected Class<BooleanUnaryMethodInvoker> defineInvokerClass() {
-        return BooleanUnaryMethodInvoker.class;
+    protected Class<MethodLong1> defineInvokerClass() {
+        return MethodLong1.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, BooleanUnaryMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, MethodLong1.class);
     }
 
     @Override
     protected ByteCodeAppender defineByteCodeAppender() {
-        return new UnaryMethodInvokerAppender(getTargetClass(), targetMethod, boolean.class);
+        return new UnaryMethodInvokerAppender(getTargetClass(), targetMethod, long.class);
     }
 
     @Override
@@ -46,7 +46,7 @@ public final class BooleanUnaryMethodInvokerLoader extends AbstractInvokerLoader
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessMethod(getTargetClass(), targetMethod);
     }
 }

@@ -46,7 +46,7 @@ public final class ShortFieldSetterLoader extends AbstractInvokerLoader<ShortFie
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 }

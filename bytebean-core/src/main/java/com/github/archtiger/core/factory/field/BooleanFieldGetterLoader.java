@@ -46,7 +46,7 @@ public final class BooleanFieldGetterLoader extends AbstractInvokerLoader<Boolea
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 }

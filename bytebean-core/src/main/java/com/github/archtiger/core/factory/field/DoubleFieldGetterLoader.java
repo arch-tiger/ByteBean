@@ -46,7 +46,7 @@ public final class DoubleFieldGetterLoader extends AbstractInvokerLoader<DoubleF
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 }

@@ -46,7 +46,7 @@ public final class LongFieldGetterLoader extends AbstractInvokerLoader<LongField
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 }

@@ -46,7 +46,7 @@ public final class CtorInvokerLoader extends AbstractInvokerLoader<CtorInvoker> 
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessConstructor(getTargetClass(), constructor);
     }
 }

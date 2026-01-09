@@ -2,7 +2,7 @@ package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.bytecode.method.PrimitiveMethodInvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
-import com.github.archtiger.definition.invoker.method.DoubleMethodInvoker;
+import com.github.archtiger.definition.invoker.method.ByteMethod;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
 import com.github.archtiger.core.support.InvokerRule;
@@ -11,28 +11,28 @@ import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import java.lang.reflect.Method;
 
 /**
- * DoubleMethodInvoker
- * double 类型方法调用器加载器
+ * ByteMethodLoader
+ * byte 类型方法调用器加载器
  *
  * @author ZIJIDELU
- * @datetime 2026/1/8
+ * @datetime 2026/1/9
  */
-public final class DoubleMethodInvokerLoader extends AbstractInvokerLoader<DoubleMethodInvoker> {
+public final class ByteMethodLoader extends AbstractInvokerLoader<ByteMethod> {
     private final Method targetMethod;
 
-    public DoubleMethodInvokerLoader(Class<?> targetClass, Method targetMethod) {
+    public ByteMethodLoader(Class<?> targetClass, Method targetMethod) {
         super(targetClass);
         this.targetMethod = targetMethod;
     }
 
     @Override
-    protected Class<DoubleMethodInvoker> defineInvokerClass() {
-        return DoubleMethodInvoker.class;
+    protected Class<ByteMethod> defineInvokerClass() {
+        return ByteMethod.class;
     }
 
     @Override
     protected InvokerNameInfo defineInvokerName() {
-        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, DoubleMethodInvoker.class);
+        return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, ByteMethod.class);
     }
 
     @Override
@@ -46,7 +46,7 @@ public final class DoubleMethodInvokerLoader extends AbstractInvokerLoader<Doubl
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessMethod(getTargetClass(), targetMethod);
     }
 }

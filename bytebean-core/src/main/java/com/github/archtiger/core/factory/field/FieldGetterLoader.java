@@ -47,7 +47,7 @@ public final class FieldGetterLoader extends AbstractInvokerLoader<FieldGetter> 
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 

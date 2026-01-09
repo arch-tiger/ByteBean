@@ -46,7 +46,7 @@ public final class FieldSetterLoader extends AbstractInvokerLoader<FieldSetter> 
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canWriteField(getTargetClass(), field);
     }
 }

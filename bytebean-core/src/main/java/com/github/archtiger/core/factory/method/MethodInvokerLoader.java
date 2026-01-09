@@ -45,7 +45,7 @@ public final class MethodInvokerLoader extends AbstractInvokerLoader<MethodInvok
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessMethod(getTargetClass(), method);
     }
 }

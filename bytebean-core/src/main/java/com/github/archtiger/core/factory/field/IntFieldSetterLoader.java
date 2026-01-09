@@ -46,7 +46,7 @@ public final class IntFieldSetterLoader extends AbstractInvokerLoader<IntFieldSe
     }
 
     @Override
-    protected boolean canInstantiate() {
+    public boolean canInstantiate() {
         return InvokerRule.canAccessField(getTargetClass(), targetField);
     }
 }
