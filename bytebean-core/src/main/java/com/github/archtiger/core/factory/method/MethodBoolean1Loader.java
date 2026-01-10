@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory.method;
 
-import com.github.archtiger.core.bytecode.method.UnaryMethodInvokerAppender;
+import com.github.archtiger.core.bytecode.method.PrimitiveMethod1InvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
 import com.github.archtiger.definition.invoker.method.MethodBoolean1;
 import com.github.archtiger.definition.model.InvokerConstant;
@@ -37,7 +37,7 @@ public final class MethodBoolean1Loader extends AbstractInvokerLoader<MethodBool
 
     @Override
     protected ByteCodeAppender defineByteCodeAppender() {
-        return new UnaryMethodInvokerAppender(getTargetClass(), targetMethod, boolean.class);
+        return new PrimitiveMethod1InvokerAppender(getTargetClass(), targetMethod, boolean.class);
     }
 
     @Override

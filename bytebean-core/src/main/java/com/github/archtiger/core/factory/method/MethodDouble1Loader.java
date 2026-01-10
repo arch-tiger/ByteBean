@@ -1,6 +1,6 @@
 package com.github.archtiger.core.factory.method;
 
-import com.github.archtiger.core.bytecode.method.UnaryMethodInvokerAppender;
+import com.github.archtiger.core.bytecode.method.PrimitiveMethod1InvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
 import com.github.archtiger.definition.invoker.method.MethodDouble1;
 import com.github.archtiger.definition.model.InvokerConstant;
@@ -37,7 +37,7 @@ public final class MethodDouble1Loader extends AbstractInvokerLoader<MethodDoubl
 
     @Override
     protected ByteCodeAppender defineByteCodeAppender() {
-        return new UnaryMethodInvokerAppender(getTargetClass(), targetMethod, double.class);
+        return new PrimitiveMethod1InvokerAppender(getTargetClass(), targetMethod, double.class);
     }
 
     @Override
