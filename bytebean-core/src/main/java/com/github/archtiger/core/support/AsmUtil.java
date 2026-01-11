@@ -155,4 +155,53 @@ public class AsmUtil {
         }
     }
 
+    /**
+     * 生成抛出 IllegalArgumentException 的字节码
+     * <p>
+     * 生成的字节码等价于:
+     * <pre>
+     * throw new IllegalArgumentException("Invalid field index: " + index);
+     * </pre>
+     * </p>
+     *
+     * @param mv 方法访问器
+     */
+    public static void throwIAE(MethodVisitor mv) {
+        // ============================================================
+        // 步骤1: 创建 StringBuilder 用于构建异常信息
+        // ============================================================
+        mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+        mv.visitInsn(Opcodes.DUP);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+
+        // ============================================================
+        // 步骤2: 追加错误消息前缀
+        // ============================================================
+        mv.visitLdcInsn("Invalid field index: ");
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+
+        // ============================================================
+        // 步骤3: 追加索引值
+        // ============================================================
+        mv.visitVarInsn(Opcodes.ILOAD, 1);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false);
+
+        // ============================================================
+        // 步骤4: 转换为 String
+        // ============================================================
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+
+        // ============================================================
+        // 步骤5: 创建异常对象
+        // ============================================================
+        mv.visitTypeInsn(Opcodes.NEW, "java/lang/IllegalArgumentException");
+        mv.visitInsn(Opcodes.DUP_X1);
+        mv.visitInsn(Opcodes.SWAP);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
+
+        // ============================================================
+        // 步骤6: 抛出异常
+        // ============================================================
+        mv.visitInsn(Opcodes.ATHROW);
+    }
 }
