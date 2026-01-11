@@ -1,5 +1,6 @@
 package com.github.archtiger.core.access.field;
 
+import com.github.archtiger.core.model.FieldAccessInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,8 @@ class FieldAccessTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Class<? extends FieldAccess> accessClass = FieldAccessGenerator.generate(TestEntity.class);
-        fieldAccess = accessClass.getDeclaredConstructor().newInstance();
+        FieldAccessInfo accessInfo = FieldAccessGenerator.generate(TestEntity.class);
+        fieldAccess = accessInfo.fieldAccessClass().getDeclaredConstructor().newInstance();
         entity = new TestEntity();
     }
 
