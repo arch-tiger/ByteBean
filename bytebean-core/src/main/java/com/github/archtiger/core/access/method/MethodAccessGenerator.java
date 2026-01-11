@@ -1,5 +1,6 @@
 package com.github.archtiger.core.access.method;
 
+import com.github.archtiger.core.model.MethodAccessInfo;
 import com.github.archtiger.core.support.InvokerRule;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
@@ -33,9 +34,13 @@ public final class MethodAccessGenerator {
      * @param targetClass 目标类
      * @return 生成的 MethodAccess 实现类
      */
-    public static Class<? extends MethodAccess> generate(Class<?> targetClass) {
+    public static MethodAccessInfo generate(Class<?> targetClass) {
         // 步骤1: 收集目标类的所有非静态、可访问的方法
         List<Method> methods = new ArrayList<>();
+        Method[] declaredMethods = targetClass.getDeclaredMethods();
+        if (declaredMethods.length == 0) {
+            return MethodAccessInfo.fail();
+        }
         for (Method method : targetClass.getDeclaredMethods()) {
             int mods = method.getModifiers();
             // 跳过静态方法、私有方法
@@ -50,8 +55,7 @@ public final class MethodAccessGenerator {
 
         // 检查方法列表是否为空
         if (methods.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Target class " + targetClass.getName() + " has no accessible non-static methods");
+            return MethodAccessInfo.fail();
         }
 
         // 步骤2: 构造生成类的全限定名
@@ -123,6 +127,9 @@ public final class MethodAccessGenerator {
                         .getLoaded()
         );
 
-        return (Class<? extends MethodAccess>) invokerClass;
+        return MethodAccessInfo.success(
+                (Class<? extends MethodAccess>) invokerClass,
+                methods
+        );
     }
 }

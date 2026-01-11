@@ -1,5 +1,6 @@
 package com.github.archtiger.core.access.method;
 
+import com.github.archtiger.core.model.MethodAccessInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,8 @@ class MethodAccessTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Class<? extends MethodAccess> accessClass = MethodAccessGenerator.generate(TestMethodEntity.class);
-        methodAccess = accessClass.getDeclaredConstructor().newInstance();
+        MethodAccessInfo accessInfo = MethodAccessGenerator.generate(TestMethodEntity.class);
+        methodAccess = accessInfo.methodAccessClass().getDeclaredConstructor().newInstance();
         entity = new TestMethodEntity();
     }
 
