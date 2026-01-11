@@ -5,11 +5,13 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -55,6 +57,14 @@ public final class FieldAccessGenerator {
             return FieldAccessInfo.fail();
         }
 
+        // 步骤1.1: 对字段进行排序
+        // 排序规则: 先按字段名排序，再按字段类型描述符排序
+        // 例如: int a, long b, int c 会被排序为: a, c, b
+        fields.sort(
+                Comparator
+                        .comparing(Field::getName)
+                        .thenComparing(f -> Type.getDescriptor(f.getType()))
+        );
         // 步骤2: 构造生成类的全限定名
         // 例如: com.github.archtiger.extensions.User$$FieldAccess
         // $$ 是生成的类常用的命名约定，表示这是生成的辅助类

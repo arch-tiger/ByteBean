@@ -6,10 +6,13 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -58,6 +61,11 @@ public final class MethodAccessGenerator {
             return MethodAccessInfo.fail();
         }
 
+        // 步骤1.1: 对方法列表进行排序
+        methods.sort(Comparator
+                .comparing(Method::getName)
+                .thenComparing(m -> Type.getMethodDescriptor(m))
+        );
         // 步骤2: 构造生成类的全限定名
         String name = targetClass.getName() + "$$MethodAccess";
 
@@ -129,7 +137,7 @@ public final class MethodAccessGenerator {
 
         return MethodAccessInfo.success(
                 (Class<? extends MethodAccess>) invokerClass,
-                methods
+                Collections.unmodifiableList(methods)
         );
     }
 }
