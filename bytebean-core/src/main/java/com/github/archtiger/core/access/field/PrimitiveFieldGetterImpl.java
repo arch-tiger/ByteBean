@@ -5,7 +5,6 @@ import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import net.bytebuddy.jar.asm.Label;
-import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.jar.asm.Type;
 
@@ -16,10 +15,12 @@ public final class PrimitiveFieldGetterImpl implements Implementation {
 
     private final Class<?> targetClass;
     private final List<Field> fields;
+    private final Class<?> primitiveType;
 
-    public PrimitiveFieldGetterImpl(Class<?> targetClass, List<Field> fields) {
+    public PrimitiveFieldGetterImpl(Class<?> targetClass, List<Field> fields, Class<?> primitiveType) {
         this.targetClass = targetClass;
         this.fields = fields;
+        this.primitiveType = primitiveType;
     }
 
     @Override
@@ -53,8 +54,8 @@ public final class PrimitiveFieldGetterImpl implements Implementation {
                         owner
                 }, 0, new Object[0]);
 
-                // 只处理 int 类型的字段，其他类型跳转到 default 分支
-                if (f.getType() != int.class) {
+                // 只处理指定基本类型的字段，其他类型跳转到 default 分支
+                if (f.getType() != primitiveType) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
                 }
@@ -64,8 +65,8 @@ public final class PrimitiveFieldGetterImpl implements Implementation {
                 String desc = Type.getDescriptor(f.getType());
                 mv.visitFieldInsn(Opcodes.GETFIELD, owner, f.getName(), desc);
 
-                // int 类型使用 IRETURN
-                mv.visitInsn(Opcodes.IRETURN);
+                // 根据基本类型选择对应的 RETURN 指令
+                mv.visitInsn(AsmUtil.getReturnOpcode(primitiveType));
             }
 
             // default

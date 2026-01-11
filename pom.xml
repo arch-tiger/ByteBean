@@ -28,7 +28,7 @@
         <hutool.version>5.8.42</hutool.version>
         <bytebuddy.version>1.18.2</bytebuddy.version>
         <jmh.version>1.37</jmh.version>
-        <junit.version>5.10.2</junit.version>
+        <junit.version>5.14.2</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -122,11 +122,11 @@
                     </configuration>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                    <version>${maven-surefire-plugin.version}</version>-->
+<!--                </plugin>-->
 
             </plugins>
         </pluginManagement>
