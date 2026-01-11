@@ -26,22 +26,22 @@ public final class DoubleMethodLoader extends AbstractInvokerLoader<DoubleMethod
     }
 
     @Override
-    protected Class<DoubleMethod> defineInvokerClass() {
+    protected Class<DoubleMethod> getInvokerClass() {
         return DoubleMethod.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, DoubleMethod.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveMethodInvokerAppender(getTargetClass(), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

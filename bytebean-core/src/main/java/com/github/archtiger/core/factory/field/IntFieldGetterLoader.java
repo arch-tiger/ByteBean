@@ -26,22 +26,22 @@ public final class IntFieldGetterLoader extends AbstractInvokerLoader<IntFieldGe
     }
 
     @Override
-    protected Class<IntFieldGetter> defineInvokerClass() {
+    protected Class<IntFieldGetter> getInvokerClass() {
         return IntFieldGetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, IntFieldGetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 

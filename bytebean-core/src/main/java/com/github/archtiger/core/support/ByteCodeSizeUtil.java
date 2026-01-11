@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * @author archtiger
  * @datetime 2026/1/6 11:12
  */
-public final class StackUtil {
+public final class ByteCodeSizeUtil {
     /**
      * 返回字段类型在栈上占用的 slot 数量
      *

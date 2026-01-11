@@ -1,7 +1,7 @@
 package com.github.archtiger.core.bytecode.method;
 
 import com.github.archtiger.core.support.AsmUtil;
-import com.github.archtiger.core.support.StackUtil;
+import com.github.archtiger.core.support.ByteCodeSizeUtil;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -61,6 +61,6 @@ public final class PrimitiveMethodInvokerAppender implements ByteCodeAppender {
         methodVisitor.visitInsn(returnOpcode);
 
         // 栈大小计算与 MethodInvoker 相同，因为参数处理方式相同
-        return StackUtil.forMethodInvoker(method);
+        return ByteCodeSizeUtil.forMethodInvoker(method);
     }
 }

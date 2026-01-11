@@ -1,7 +1,7 @@
 package com.github.archtiger.core.bytecode.constructor;
 
 import com.github.archtiger.core.support.AsmUtil;
-import com.github.archtiger.core.support.StackUtil;
+import com.github.archtiger.core.support.ByteCodeSizeUtil;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -56,6 +56,6 @@ public final class CtorInvokerAppender implements ByteCodeAppender {
 
         mv.visitInsn(Opcodes.ARETURN);
 
-        return StackUtil.forConstructorInvoker(ctor);
+        return ByteCodeSizeUtil.forConstructorInvoker(ctor);
     }
 }

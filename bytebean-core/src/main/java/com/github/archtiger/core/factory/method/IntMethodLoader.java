@@ -26,22 +26,22 @@ public final class IntMethodLoader extends AbstractInvokerLoader<IntMethod> {
     }
 
     @Override
-    protected Class<IntMethod> defineInvokerClass() {
+    protected Class<IntMethod> getInvokerClass() {
         return IntMethod.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, IntMethod.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveMethodInvokerAppender(getTargetClass(), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

@@ -26,22 +26,22 @@ public final class ShortMethodLoader extends AbstractInvokerLoader<ShortMethod> 
     }
 
     @Override
-    protected Class<ShortMethod> defineInvokerClass() {
+    protected Class<ShortMethod> getInvokerClass() {
         return ShortMethod.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, ShortMethod.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveMethodInvokerAppender(getTargetClass(), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

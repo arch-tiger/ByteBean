@@ -26,22 +26,22 @@ public final class ByteFieldSetterLoader extends AbstractInvokerLoader<ByteField
     }
 
     @Override
-    protected Class<ByteFieldSetter> defineInvokerClass() {
+    protected Class<ByteFieldSetter> getInvokerClass() {
         return ByteFieldSetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, ByteFieldSetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldSetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_SETTER_METHOD_NAME;
     }
 

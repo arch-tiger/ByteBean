@@ -26,22 +26,22 @@ public final class DoubleFieldSetterLoader extends AbstractInvokerLoader<DoubleF
     }
 
     @Override
-    protected Class<DoubleFieldSetter> defineInvokerClass() {
+    protected Class<DoubleFieldSetter> getInvokerClass() {
         return DoubleFieldSetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, DoubleFieldSetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldSetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_SETTER_METHOD_NAME;
     }
 

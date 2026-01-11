@@ -26,22 +26,22 @@ public final class ByteMethodLoader extends AbstractInvokerLoader<ByteMethod> {
     }
 
     @Override
-    protected Class<ByteMethod> defineInvokerClass() {
+    protected Class<ByteMethod> getInvokerClass() {
         return ByteMethod.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, ByteMethod.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveMethodInvokerAppender(getTargetClass(), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

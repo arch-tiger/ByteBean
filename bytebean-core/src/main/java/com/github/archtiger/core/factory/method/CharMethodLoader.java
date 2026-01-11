@@ -26,22 +26,22 @@ public final class CharMethodLoader extends AbstractInvokerLoader<CharMethod> {
     }
 
     @Override
-    protected Class<CharMethod> defineInvokerClass() {
+    protected Class<CharMethod> getInvokerClass() {
         return CharMethod.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, CharMethod.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveMethodInvokerAppender(getTargetClass(), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

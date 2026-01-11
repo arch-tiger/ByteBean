@@ -26,22 +26,22 @@ public final class LongFieldGetterLoader extends AbstractInvokerLoader<LongField
     }
 
     @Override
-    protected Class<LongFieldGetter> defineInvokerClass() {
+    protected Class<LongFieldGetter> getInvokerClass() {
         return LongFieldGetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, LongFieldGetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 

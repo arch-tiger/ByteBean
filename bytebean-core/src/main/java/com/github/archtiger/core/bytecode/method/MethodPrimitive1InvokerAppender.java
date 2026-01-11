@@ -3,7 +3,7 @@ package com.github.archtiger.core.bytecode.method;
 import com.github.archtiger.core.bytecode.AbstractInvokerAppender;
 import com.github.archtiger.core.model.InvokerInfo;
 import com.github.archtiger.core.support.AsmUtil;
-import com.github.archtiger.core.support.StackUtil;
+import com.github.archtiger.core.support.ByteCodeSizeUtil;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
@@ -22,11 +22,11 @@ import java.lang.reflect.Method;
  * @author ZIJIDELU
  * @datetime 2026/1/9
  */
-public final class PrimitiveMethod1InvokerAppender extends AbstractInvokerAppender {
+public final class MethodPrimitive1InvokerAppender extends AbstractInvokerAppender {
     private final InvokerInfo invokerInfo;
     private final Method method;
 
-    public PrimitiveMethod1InvokerAppender(InvokerInfo invokerInfo, Method method) {
+    public MethodPrimitive1InvokerAppender(InvokerInfo invokerInfo, Method method) {
         super(invokerInfo);
         this.invokerInfo = invokerInfo;
         this.method = method;
@@ -52,10 +52,46 @@ public final class PrimitiveMethod1InvokerAppender extends AbstractInvokerAppend
                 false
         );
 
-        if (method.getReturnType() != invokerInfo.invokerReturnType()){
-            // box primitive return if needed
-            AsmUtil.boxIfNeeded(mv, method.getReturnType());
-        }
+//        // invoker 期望基本类型
+//        if (invokerInfo.invokerReturnType().isPrimitive()) {
+//
+//            if (method.getReturnType().isPrimitive()) {
+//                // primitive -> primitive
+//                if (!method.getReturnType().equals(invokerInfo.invokerReturnType())) {
+//                    AsmUtil.convertPrimitive(
+//                            mv,
+//                            method.getReturnType(),
+//                            invokerInfo.invokerReturnType()
+//                    );
+//                }
+//            } else {
+//                // object -> primitive
+//                AsmUtil.unboxIfNeeded(
+//                        mv,
+//                        invokerInfo.invokerReturnType()
+//                );
+//            }
+//
+//        }
+//        // invoker 期望对象
+//        else {
+//
+//            if (method.getReturnType().isPrimitive()) {
+//                // primitive -> object
+//                AsmUtil.boxIfNeeded(
+//                        mv,
+//                        method.getReturnType()
+//                );
+//            } else {
+//                // object -> object
+//                if (!method.getReturnType().equals(invokerInfo.invokerReturnType())) {
+//                    mv.visitTypeInsn(
+//                            Opcodes.CHECKCAST,
+//                            Type.getInternalName(invokerInfo.invokerReturnType())
+//                    );
+//                }
+//            }
+//        }
 
         // return value
         emitReturn(mv);
@@ -64,7 +100,7 @@ public final class PrimitiveMethod1InvokerAppender extends AbstractInvokerAppend
 
     @Override
     protected Size calcSize() {
-        return StackUtil.forUnaryMethodInvoker(method);
+        return ByteCodeSizeUtil.forUnaryMethodInvoker(method);
     }
 
 }

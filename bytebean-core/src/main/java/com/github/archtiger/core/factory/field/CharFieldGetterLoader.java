@@ -26,22 +26,22 @@ public final class CharFieldGetterLoader extends AbstractInvokerLoader<CharField
     }
 
     @Override
-    protected Class<CharFieldGetter> defineInvokerClass() {
+    protected Class<CharFieldGetter> getInvokerClass() {
         return CharFieldGetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, CharFieldGetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 

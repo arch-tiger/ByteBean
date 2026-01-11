@@ -6,9 +6,9 @@ package com.github.archtiger.core.model;
  * @author ZIJIDELU
  * @datetime 2026/1/9 20:24
  */
-public record InvokerInfo(
+public record InvokerInfo<T>(
         Class<?> targetClass,
-        Class<?> invokerClass,
+        Class<T> invokerClass,
         Class<?> invokerReturnType
 ) {
 }

@@ -1,7 +1,7 @@
 package com.github.archtiger.core.bytecode.field;
 
 import com.github.archtiger.core.support.AsmUtil;
-import com.github.archtiger.core.support.StackUtil;
+import com.github.archtiger.core.support.ByteCodeSizeUtil;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -52,6 +52,6 @@ public final class PrimitiveFieldSetterAppender implements ByteCodeAppender {
         // 返回
         methodVisitor.visitInsn(Opcodes.RETURN);
 
-        return StackUtil.forPrimitiveFieldSetter();
+        return ByteCodeSizeUtil.forPrimitiveFieldSetter();
     }
 }

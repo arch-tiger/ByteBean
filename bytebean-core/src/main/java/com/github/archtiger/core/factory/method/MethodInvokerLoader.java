@@ -1,6 +1,7 @@
 package com.github.archtiger.core.factory.method;
 
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.core.model.InvokerInfo;
 import com.github.archtiger.definition.invoker.method.MethodInvoker;
 import com.github.archtiger.core.bytecode.method.MethodInvokerAppender;
 import com.github.archtiger.definition.model.InvokerConstant;
@@ -19,28 +20,29 @@ import java.lang.reflect.Method;
  */
 public final class MethodInvokerLoader extends AbstractInvokerLoader<MethodInvoker> {
     private final Method method;
+
     public MethodInvokerLoader(Class<?> targetClass, Method method) {
         super(targetClass);
         this.method = method;
     }
 
     @Override
-    protected Class<MethodInvoker> defineInvokerClass() {
+    protected Class<MethodInvoker> getInvokerClass() {
         return MethodInvoker.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), method, MethodInvoker.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
-        return new MethodInvokerAppender(getTargetClass(), method);
+    protected ByteCodeAppender getByteCodeAppender() {
+        return new MethodInvokerAppender(new InvokerInfo<>(getTargetClass(), MethodInvoker.class, Object.class), method);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

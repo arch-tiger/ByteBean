@@ -1,7 +1,8 @@
 package com.github.archtiger.core.factory.method;
 
-import com.github.archtiger.core.bytecode.method.PrimitiveMethod1InvokerAppender;
+import com.github.archtiger.core.bytecode.method.MethodPrimitive1InvokerAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.core.model.InvokerInfo;
 import com.github.archtiger.definition.invoker.method.MethodByte1;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
@@ -26,22 +27,22 @@ public final class MethodByte1Loader extends AbstractInvokerLoader<MethodByte1> 
     }
 
     @Override
-    protected Class<MethodByte1> defineInvokerClass() {
+    protected Class<MethodByte1> getInvokerClass() {
         return MethodByte1.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, MethodByte1.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
-        return new PrimitiveMethod1InvokerAppender(getTargetClass(), targetMethod, byte.class);
+    protected ByteCodeAppender getByteCodeAppender() {
+        return new MethodPrimitive1InvokerAppender(new InvokerInfo(getTargetClass(), getInvokerClass(), byte.class), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

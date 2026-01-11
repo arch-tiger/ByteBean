@@ -26,22 +26,22 @@ public final class FloatFieldGetterLoader extends AbstractInvokerLoader<FloatFie
     }
 
     @Override
-    protected Class<FloatFieldGetter> defineInvokerClass() {
+    protected Class<FloatFieldGetter> getInvokerClass() {
         return FloatFieldGetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, FloatFieldGetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 

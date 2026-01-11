@@ -11,33 +11,6 @@ import net.bytebuddy.jar.asm.Type;
  * @datetime 2026/1/6 11:12
  */
 public class AsmUtil {
-    /**
-     * 根据目标类型和源类型智能处理返回值：
-     * 1. 类型相同 → 直接返回
-     * 2. 方法是基本类型，源是对象 → 拆箱
-     * 3. 方法是对象，源是基本类型 → 装箱
-     * 4. 方法是对象，源是对象但不同类型 → CHECKCAST
-     */
-    public static void handleReturnValue(MethodVisitor mv, Class<?> sourceType, Class<?> targetType) {
-        if (targetType.equals(sourceType)) {
-            // 类型相同，直接返回，不处理
-            return;
-        }
-
-        if (targetType.isPrimitive() && !sourceType.isPrimitive()) {
-            // 方法需要基本类型，源是对象 → 拆箱
-            AsmUtil.unboxIfNeeded(mv, targetType);
-        } else if (!targetType.isPrimitive() && sourceType.isPrimitive()) {
-            // 方法需要对象，源是基本类型 → 装箱
-            AsmUtil.boxIfNeeded(mv, sourceType);
-        } else if (!targetType.isPrimitive() && !sourceType.isPrimitive()) {
-            // 两者都是对象，但类型不同 → 强制类型转换
-            mv.visitTypeInsn(Opcodes.CHECKCAST, Type.getInternalName(targetType));
-        } else {
-            // 两者都是基本类型但不同 → 可选择强制转换
-//            AsmUtil.convertPrimitive(mv, sourceType, targetType);
-        }
-    }
 
 
     /**

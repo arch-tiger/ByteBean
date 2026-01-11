@@ -35,28 +35,28 @@ public abstract class AbstractInvokerLoader<T> implements InvokerLoader<T> {
      *
      * @return 调用器类
      */
-    abstract protected Class<T> defineInvokerClass();
+    abstract protected Class<T> getInvokerClass();
 
     /**
      * 定义调用器名称
      *
      * @return 调用器名称
      */
-    abstract protected InvokerNameInfo defineInvokerName();
+    abstract protected InvokerNameInfo getInvokerName();
 
     /**
      * 定义字节码追加器
      *
      * @return 字节码追加器
      */
-    abstract protected ByteCodeAppender defineByteCodeAppender();
+    abstract protected ByteCodeAppender getByteCodeAppender();
 
     /**
      * 定义调用器方法名
      *
      * @return 调用器方法名
      */
-    abstract protected String defineInvokerMethodName();
+    abstract protected String getInvokerMethodName();
 
     /**
      * 加载调用器
@@ -70,13 +70,15 @@ public abstract class AbstractInvokerLoader<T> implements InvokerLoader<T> {
             return null;
         }
         final ClassLoader classLoader = getTargetClass().getClassLoader();
-        final String className = defineInvokerName().calcInvokerClassName();
+        final String className = getInvokerName().calcInvokerClassName();
 
         final Class<?> invokerClass = TYPE_CACHE.findOrInsert(classLoader, className, () -> new ByteBuddy()
-                .subclass(defineInvokerClass())
+                .subclass(getInvokerClass())
                 .name(className)
-                .method(m -> m.getName().equals(defineInvokerMethodName()))
-                .intercept(new Implementation.Simple(defineByteCodeAppender()))
+                .method(m -> m.getName().equals(getInvokerMethodName()))
+                .intercept(new Implementation.Simple(
+                        getByteCodeAppender()
+                ))
                 .make()
                 .load(classLoader, ClassLoadingStrategy.Default.INJECTION)
                 .getLoaded()
@@ -98,7 +100,7 @@ public abstract class AbstractInvokerLoader<T> implements InvokerLoader<T> {
     @Override
     public T loadOrFail() {
         if (!canInstantiate()) {
-            throw new UnsupportedCreateInvokerException(targetClass, defineInvokerClass());
+            throw new UnsupportedCreateInvokerException(targetClass, getInvokerClass());
         }
 
         return load();

@@ -26,22 +26,22 @@ public final class IntFieldSetterLoader extends AbstractInvokerLoader<IntFieldSe
     }
 
     @Override
-    protected Class<IntFieldSetter> defineInvokerClass() {
+    protected Class<IntFieldSetter> getInvokerClass() {
         return IntFieldSetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, IntFieldSetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldSetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_SETTER_METHOD_NAME;
     }
 

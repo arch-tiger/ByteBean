@@ -26,22 +26,22 @@ public final class ShortFieldSetterLoader extends AbstractInvokerLoader<ShortFie
     }
 
     @Override
-    protected Class<ShortFieldSetter> defineInvokerClass() {
+    protected Class<ShortFieldSetter> getInvokerClass() {
         return ShortFieldSetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, ShortFieldSetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldSetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_SETTER_METHOD_NAME;
     }
 

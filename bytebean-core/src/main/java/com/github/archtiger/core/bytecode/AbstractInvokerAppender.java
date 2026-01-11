@@ -9,11 +9,15 @@ import net.bytebuddy.jar.asm.MethodVisitor;
  * @author ZIJIDELU
  * @datetime 2026/1/9 20:24
  */
-public abstract class AbstractInvokerAppender extends AbstractByteCodeAppender {
-    private final InvokerInfo invokerInfo;
+public abstract class AbstractInvokerAppender<T> extends AbstractByteCodeAppender {
+    private final InvokerInfo<T> invokerInfo;
 
-    public AbstractInvokerAppender(InvokerInfo invokerInfo) {
+    public AbstractInvokerAppender(InvokerInfo<T> invokerInfo) {
         this.invokerInfo = invokerInfo;
+    }
+
+    protected InvokerInfo<T> getInvokerInfo() {
+        return invokerInfo;
     }
 
     /**

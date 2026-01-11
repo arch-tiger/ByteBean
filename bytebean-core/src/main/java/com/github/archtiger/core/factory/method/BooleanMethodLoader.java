@@ -26,22 +26,22 @@ public final class BooleanMethodLoader extends AbstractInvokerLoader<BooleanMeth
     }
 
     @Override
-    protected Class<BooleanMethod> defineInvokerClass() {
+    protected Class<BooleanMethod> getInvokerClass() {
         return BooleanMethod.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forMethod(getTargetClass(), targetMethod, BooleanMethod.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveMethodInvokerAppender(getTargetClass(), targetMethod);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.METHOD_INVOKER_METHOD_NAME;
     }
 

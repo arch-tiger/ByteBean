@@ -26,22 +26,22 @@ public final class BooleanFieldGetterLoader extends AbstractInvokerLoader<Boolea
     }
 
     @Override
-    protected Class<BooleanFieldGetter> defineInvokerClass() {
+    protected Class<BooleanFieldGetter> getInvokerClass() {
         return BooleanFieldGetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), targetField, BooleanFieldGetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new PrimitiveFieldGetterAppender(getTargetClass(), targetField);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_GETTER_METHOD_NAME;
     }
 

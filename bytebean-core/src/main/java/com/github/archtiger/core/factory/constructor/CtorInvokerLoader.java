@@ -26,22 +26,22 @@ public final class CtorInvokerLoader extends AbstractInvokerLoader<CtorInvoker> 
     }
 
     @Override
-    protected Class<CtorInvoker> defineInvokerClass() {
+    protected Class<CtorInvoker> getInvokerClass() {
         return CtorInvoker.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forConstructor(getTargetClass(), constructor, CtorInvoker.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
+    protected ByteCodeAppender getByteCodeAppender() {
         return new CtorInvokerAppender(getTargetClass(), constructor);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.CONSTRUCTOR_INVOKER_METHOD_NAME;
     }
 

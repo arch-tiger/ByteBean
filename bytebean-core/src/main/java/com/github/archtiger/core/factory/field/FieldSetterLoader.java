@@ -2,6 +2,7 @@ package com.github.archtiger.core.factory.field;
 
 import com.github.archtiger.core.bytecode.field.FieldSetterAppender;
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
+import com.github.archtiger.core.model.InvokerInfo;
 import com.github.archtiger.definition.invoker.field.FieldSetter;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
@@ -26,22 +27,22 @@ public final class FieldSetterLoader extends AbstractInvokerLoader<FieldSetter> 
     }
 
     @Override
-    protected Class<FieldSetter> defineInvokerClass() {
+    protected Class<FieldSetter> getInvokerClass() {
         return FieldSetter.class;
     }
 
     @Override
-    protected InvokerNameInfo defineInvokerName() {
+    protected InvokerNameInfo getInvokerName() {
         return InvokerNameInfo.forField(getTargetClass(), field, FieldSetter.class);
     }
 
     @Override
-    protected ByteCodeAppender defineByteCodeAppender() {
-        return new FieldSetterAppender(getTargetClass(), field);
+    protected ByteCodeAppender getByteCodeAppender() {
+        return new FieldSetterAppender(new InvokerInfo<>(getTargetClass(), FieldSetter.class, void.class), field);
     }
 
     @Override
-    protected String defineInvokerMethodName() {
+    protected String getInvokerMethodName() {
         return InvokerConstant.FIELD_SETTER_METHOD_NAME;
     }
 
