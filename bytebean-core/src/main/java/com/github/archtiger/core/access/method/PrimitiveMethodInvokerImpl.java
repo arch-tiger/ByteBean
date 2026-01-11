@@ -110,7 +110,7 @@ public final class PrimitiveMethodInvokerImpl implements Implementation {
                     },
                     0, new Object[0]);
 
-            AsmUtil.throwIAE(mv);
+            AsmUtil.throwIAEForMethod(mv);
 
             // 计算最大栈深度
             int maxStack = 0;

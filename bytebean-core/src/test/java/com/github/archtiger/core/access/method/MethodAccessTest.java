@@ -19,13 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * 7. 极端场景测试
  */
 class MethodAccessTest {
-
+    private MethodAccessInfo methodAccessInfo;
     private MethodAccess methodAccess;
     private TestMethodEntity entity;
 
     @BeforeEach
     void setUp() throws Exception {
         MethodAccessInfo accessInfo = MethodAccessGenerator.generate(TestMethodEntity.class);
+        this.methodAccessInfo = accessInfo;
         methodAccess = accessInfo.methodAccessClass().getDeclaredConstructor().newInstance();
         entity = new TestMethodEntity();
     }
@@ -47,8 +48,10 @@ class MethodAccessTest {
 
     @Test
     void testInvokeVoidMethod() {
+        assertEquals("voidMethod", methodAccessInfo.methods().get(9).getName());
         // 测试 void 方法
         Object result = methodAccess.invoke(9, entity); // voidMethod()
+
         assertNull(result);
     }
 

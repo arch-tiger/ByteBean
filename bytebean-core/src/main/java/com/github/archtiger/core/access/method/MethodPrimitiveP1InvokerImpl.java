@@ -65,7 +65,9 @@ public final class MethodPrimitiveP1InvokerImpl implements Implementation {
 
                 // 获取基本类型的 Frame 描述符
                 Object primitiveFrameType = getPrimitiveFrameType(primitiveType);
-                int frameLocals = 4 + (valueSlotSize == 2 ? 1 : 0); // Frame 中 long/double 只占一个元素
+                // Frame 有 5 个元素: [this, index, instance, arg, castedInstance]
+                // long/double 在 frame 中只占一个元素，但实际占用 2 个 slot
+                int frameLocals = 5;
                 mv.visitFrame(Opcodes.F_NEW, frameLocals, new Object[]{
                         generatedClassName,
                         Opcodes.INTEGER,
@@ -110,7 +112,8 @@ public final class MethodPrimitiveP1InvokerImpl implements Implementation {
             // default
             mv.visitLabel(defaultLabel);
             Object primitiveFrameType = getPrimitiveFrameType(primitiveType);
-            int frameLocals = 4 + (valueSlotSize == 2 ? 1 : 0);
+            // Frame 有 5 个元素: [this, index, instance, arg, castedInstance]
+            int frameLocals = 5;
             mv.visitFrame(Opcodes.F_NEW, frameLocals, new Object[]{
                     generatedClassName,
                     Opcodes.INTEGER,
@@ -119,7 +122,7 @@ public final class MethodPrimitiveP1InvokerImpl implements Implementation {
                     owner
             }, 0, new Object[0]);
 
-            AsmUtil.throwIAE(mv);
+            AsmUtil.throwIAEForMethod(mv);
 
             // 计算最大栈深度
             int maxStack = 0;

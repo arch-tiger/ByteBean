@@ -144,7 +144,7 @@ public final class FieldSetterImpl implements Implementation {
                     },
                     0, new Object[0]);
 
-            AsmUtil.throwIAE(mv);
+            AsmUtil.throwIAEForField(mv);
 
             // ============================================================
             // 步骤6: 计算并返回方法的栈和局部变量大小

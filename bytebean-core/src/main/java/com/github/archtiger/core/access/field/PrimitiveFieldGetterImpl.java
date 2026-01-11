@@ -79,7 +79,7 @@ public final class PrimitiveFieldGetterImpl implements Implementation {
             }, 0, new Object[0]);
 
             // 抛出 IllegalArgumentException 异常
-            AsmUtil.throwIAE(mv);
+            AsmUtil.throwIAEForField(mv);
 
             return new ByteCodeAppender.Size(4, 4); // maxStack=4, maxLocals=4
         };

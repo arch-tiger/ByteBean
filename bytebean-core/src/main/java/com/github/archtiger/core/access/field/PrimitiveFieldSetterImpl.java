@@ -97,7 +97,7 @@ public final class PrimitiveFieldSetterImpl implements Implementation {
             }, 0, new Object[0]);
 
             // 抛出 IllegalArgumentException 异常
-            AsmUtil.throwIAE(mv);
+            AsmUtil.throwIAEForField(mv);
 
             // maxStack = 4 (PUTFIELD路径需要2, throwIAE需要4)
             // maxLocals 根据基本类型计算: 对于 long/double 为 6，其他为 5

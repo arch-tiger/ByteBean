@@ -166,7 +166,32 @@ public class AsmUtil {
      *
      * @param mv 方法访问器
      */
-    public static void throwIAE(MethodVisitor mv) {
+    public static void throwIAEForField(MethodVisitor mv) {
+        throwIAE(mv, "Invalid field index: ");
+    }
+
+    /**
+     * 生成抛出 IllegalArgumentException 的字节码
+     *
+     * @param mv 方法访问器
+     */
+    public static void throwIAEForMethod(MethodVisitor mv) {
+        throwIAE(mv, "Invalid method index: ");
+    }
+
+    /**
+     * 生成抛出 IllegalArgumentException 的字节码
+     * <p>
+     * 生成的字节码等价于:
+     * <pre>
+     * throw new IllegalArgumentException(messagePrefix + index);
+     * </pre>
+     * </p>
+     *
+     * @param mv            方法访问器
+     * @param messagePrefix 错误消息前缀
+     */
+    public static void throwIAE(MethodVisitor mv, String messagePrefix) {
         // ============================================================
         // 步骤1: 创建 StringBuilder 用于构建异常信息
         // ============================================================
@@ -177,7 +202,7 @@ public class AsmUtil {
         // ============================================================
         // 步骤2: 追加错误消息前缀
         // ============================================================
-        mv.visitLdcInsn("Invalid field index: ");
+        mv.visitLdcInsn(messagePrefix);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
 
         // ============================================================
