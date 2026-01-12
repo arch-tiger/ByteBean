@@ -19,15 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * 7. 极端场景测试
  */
 class MethodAccessTest {
-    private MethodAccessInfo methodAccessInfo;
+    private MethodAccessHelper methodAccessHelper;
     private MethodAccess methodAccess;
     private TestMethodEntity entity;
 
     @BeforeEach
     void setUp() throws Exception {
-        MethodAccessInfo accessInfo = MethodAccessGenerator.generate(TestMethodEntity.class);
-        this.methodAccessInfo = accessInfo;
-        methodAccess = accessInfo.methodAccessClass().getDeclaredConstructor().newInstance();
+        methodAccessHelper = MethodAccessHelper.of(TestMethodEntity.class);
+        methodAccess = methodAccessHelper.getMethodAccess();
         entity = new TestMethodEntity();
     }
 
@@ -35,22 +34,25 @@ class MethodAccessTest {
 
     @Test
     void testInvokeNoArgs() {
+        int index = methodAccessHelper.getMethodIndex("getInt");
+
         // 测试无参数方法
         entity.setInt(42);
-        Object result = methodAccess.invoke(0, entity); // getInt()
+        Object result = methodAccess.invoke(index, entity); // getInt()
         assertNotNull(result);
         assertEquals(42, ((Integer) result).intValue());
 
+        int index_2 = methodAccessHelper.getMethodIndex("getString");
         entity.setString("test");
-        result = methodAccess.invoke(8, entity); // getString()
+        result = methodAccess.invoke(index_2, entity); // getString()
         assertEquals("test", result);
     }
 
     @Test
     void testInvokeVoidMethod() {
-        assertEquals("voidMethod", methodAccessInfo.methods().get(9).getName());
+        int index = methodAccessHelper.getMethodIndex("voidMethod");
         // 测试 void 方法
-        Object result = methodAccess.invoke(9, entity); // voidMethod()
+        Object result = methodAccess.invoke(index, entity); // voidMethod()
 
         assertNull(result);
     }

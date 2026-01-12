@@ -17,8 +17,10 @@ public record MethodAccessInfo(
         List<Method> methods,
         boolean ok
 ) {
+    private static final MethodAccessInfo FAIL = new MethodAccessInfo(null, Collections.emptyList(), false);
+
     public static MethodAccessInfo fail() {
-        return new MethodAccessInfo(null, Collections.emptyList(), false);
+        return FAIL;
     }
 
     public static MethodAccessInfo success(Class<? extends MethodAccess> methodAccessClass, List<Method> methods) {
