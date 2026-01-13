@@ -1,6 +1,6 @@
 package com.github.archtiger.core.invoker.method;
 
-import com.github.archtiger.definition.invoker.method.MethodInvoker;
+import com.github.archtiger.definition.method.MethodInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -9,6 +9,7 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 public final class FieldSetterImpl implements Implementation {
@@ -85,6 +86,14 @@ public final class FieldSetterImpl implements Implementation {
                                 owner
                         },
                         0, new Object[0]);  // 操作数栈为空
+
+                final boolean isFinalField = Modifier.isFinal(f.getModifiers());
+
+                // reject: final field
+                if (isFinalField) {
+                    mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
+                    continue;
+                }
 
                 // ========================================================
                 // 步骤4.2: 准备字段赋值

@@ -2,7 +2,7 @@ package com.github.archtiger.core.invoker.method;
 
 import cn.hutool.core.util.ClassUtil;
 import com.github.archtiger.core.model.MethodInvokerResult;
-import com.github.archtiger.definition.invoker.method.MethodInvoker;
+import com.github.archtiger.definition.method.MethodInvoker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

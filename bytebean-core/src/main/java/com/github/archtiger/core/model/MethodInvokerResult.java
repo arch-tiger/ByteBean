@@ -1,6 +1,6 @@
 package com.github.archtiger.core.model;
 
-import com.github.archtiger.definition.invoker.method.MethodInvoker;
+import com.github.archtiger.definition.method.MethodInvoker;
 
 import java.lang.reflect.Method;
 import java.util.Collections;

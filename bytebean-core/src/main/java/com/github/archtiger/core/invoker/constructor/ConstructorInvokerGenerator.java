@@ -2,8 +2,8 @@ package com.github.archtiger.core.invoker.constructor;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.ConstructorInvokerResult;
-import com.github.archtiger.core.support.InvokerRule;
-import com.github.archtiger.definition.invoker.constructor.ConstructorInvoker;
+import com.github.archtiger.core.support.NameUtil;
+import com.github.archtiger.definition.constructor.ConstructorInvoker;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -52,10 +52,7 @@ public final class ConstructorInvokerGenerator {
                 if (Modifier.isPrivate(mods)) {
                     continue;
                 }
-                // 使用 InvokerRule 验证构造器是否可访问
-                if (InvokerRule.canAccessConstructor(targetClass, constructor)) {
-                    constructors.add(constructor);
-                }
+                constructors.add(constructor);
             }
 
             // 检查构造器列表是否为空
@@ -67,24 +64,17 @@ public final class ConstructorInvokerGenerator {
             // 排序规则: 先按参数数量排序，再按参数类型描述符排序
             constructors.sort(Comparator
                     .comparing((Constructor<?> c) -> c.getParameterTypes().length)
-                    .thenComparing(c -> {
-                        StringBuilder sb = new StringBuilder();
-                        for (Class<?> paramType : c.getParameterTypes()) {
-                            sb.append(Type.getDescriptor(paramType));
-                        }
-                        return sb.toString();
-                    })
+                    .thenComparing(Type::getConstructorDescriptor)
             );
 
             // 步骤2: 构造生成类的全限定名
-            // 例如: com.github.archtiger.extensions.User$$ConstructorAccess
-            String name = targetClass.getName() + "$$ConstructorAccess";
+            String invokerName = NameUtil.calcInvokerName(targetClass, ConstructorInvoker.class);
 
             // 步骤3: 使用 ByteBuddy 动态生成类
             Class<? extends ConstructorInvoker> invokerClass = new ByteBuddy()
                     .subclass(ConstructorInvoker.class)
                     // 设置生成类的名称
-                    .name(name)
+                    .name(invokerName)
                     // 定义 newInstance 方法: Object newInstance(int index, Object target, Object... args)
                     .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
                     .withParameters(int.class, Object[].class)
@@ -94,7 +84,6 @@ public final class ConstructorInvokerGenerator {
                     .make()
                     .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                     .getLoaded();
-
 
             return ConstructorInvokerResult.success(invokerClass, Collections.unmodifiableList(constructors));
         });

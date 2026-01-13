@@ -1,6 +1,6 @@
 package com.github.archtiger.core.model;
 
-import com.github.archtiger.definition.invoker.constructor.ConstructorInvoker;
+import com.github.archtiger.definition.constructor.ConstructorInvoker;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;

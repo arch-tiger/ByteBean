@@ -1,4 +1,4 @@
-package com.github.archtiger.definition.invoker.constructor;
+package com.github.archtiger.definition.constructor;
 
 /**
  * 构造器访问

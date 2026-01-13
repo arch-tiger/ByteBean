@@ -1,6 +1,6 @@
 package com.github.archtiger.core.model;
 
-import com.github.archtiger.definition.invoker.field.FieldInvoker;
+import com.github.archtiger.definition.field.FieldInvoker;
 
 import java.lang.reflect.Field;
 import java.util.Collections;

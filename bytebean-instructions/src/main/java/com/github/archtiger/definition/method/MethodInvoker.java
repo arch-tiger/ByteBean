@@ -1,4 +1,4 @@
-package com.github.archtiger.definition.invoker.method;
+package com.github.archtiger.definition.method;
 
 /**
  * 方法访问器接口，定义了对类方法的通用访问方法。

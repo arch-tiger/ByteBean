@@ -10,6 +10,7 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 public final class PrimitiveFieldSetterImpl implements Implementation {
@@ -64,8 +65,11 @@ public final class PrimitiveFieldSetterImpl implements Implementation {
                         owner
                 }, 0, new Object[0]);
 
-                // 只处理指定基本类型的字段，其他类型跳转到 default 分支
-                if (f.getType() != primitiveType) {
+                final boolean notPrimitive = f.getType() != primitiveType;
+                final boolean isFinalField = Modifier.isFinal(f.getModifiers());
+
+                // reject: non-primitive or final field
+                if (notPrimitive || isFinalField) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
                 }

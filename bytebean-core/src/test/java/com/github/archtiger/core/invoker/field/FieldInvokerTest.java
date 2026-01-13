@@ -1,7 +1,7 @@
 package com.github.archtiger.core.invoker.field;
 
 import com.github.archtiger.core.model.FieldInvokerResult;
-import com.github.archtiger.definition.invoker.field.FieldInvoker;
+import com.github.archtiger.definition.field.FieldInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

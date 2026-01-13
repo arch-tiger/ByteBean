@@ -1,4 +1,4 @@
-package com.github.archtiger.definition.invoker.ext.copy;
+package com.github.archtiger.definition.bean;
 
 /**
  * 字段复制器

@@ -2,7 +2,8 @@ package com.github.archtiger.core.invoker.method;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.MethodInvokerResult;
-import com.github.archtiger.definition.invoker.method.MethodInvoker;
+import com.github.archtiger.core.support.NameUtil;
+import com.github.archtiger.definition.method.MethodInvoker;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -62,12 +63,12 @@ public final class MethodInvokerGenerator {
                     .thenComparing(m -> Type.getMethodDescriptor(m))
             );
             // 步骤2: 构造生成类的全限定名
-            String name = targetClass.getName() + "$$MethodAccess";
+            String invokerName = NameUtil.calcInvokerName(targetClass, MethodInvoker.class);
 
             // 步骤3: 使用 ByteBuddy 动态生成类
             Class<? extends MethodInvoker> invokerClass = new ByteBuddy()
                     .subclass(MethodInvoker.class)
-                    .name(name)
+                    .name(invokerName)
                     // 定义 invoke 方法: Object invoke(int index, Object instance, Object... arguments)
                     .defineMethod("invoke", Object.class, Visibility.PUBLIC)
                     .withParameters(int.class, Object.class, Object[].class)

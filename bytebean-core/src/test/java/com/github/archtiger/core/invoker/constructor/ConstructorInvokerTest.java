@@ -1,6 +1,6 @@
 package com.github.archtiger.core.invoker.constructor;
 
-import com.github.archtiger.definition.invoker.constructor.ConstructorInvoker;
+import com.github.archtiger.definition.constructor.ConstructorInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
