@@ -1,4 +1,4 @@
-package com.github.archtiger.core.invoker;
+package com.github.archtiger.definition;
 
 import com.github.archtiger.definition.constructor.ConstructorExecutor;
 import com.github.archtiger.definition.field.FieldGetter;

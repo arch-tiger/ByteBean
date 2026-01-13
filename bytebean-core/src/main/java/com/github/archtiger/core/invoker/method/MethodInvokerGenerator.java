@@ -2,6 +2,7 @@ package com.github.archtiger.core.invoker.method;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.MethodInvokerResult;
+import com.github.archtiger.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.core.support.NameUtil;
 import com.github.archtiger.definition.method.MethodInvoker;
 import net.bytebuddy.ByteBuddy;
@@ -10,8 +11,10 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 方法访问生成器
@@ -38,19 +41,7 @@ public final class MethodInvokerGenerator {
     public static MethodInvokerResult generate(Class<?> targetClass) {
         return CACHE.computeIfAbsent(targetClass, k -> {
             // 步骤1: 收集目标类的所有非静态、可访问的方法
-            List<Method> methods = new ArrayList<>();
-            Method[] declaredMethods = targetClass.getDeclaredMethods();
-            if (declaredMethods.length == 0) {
-                return MethodInvokerResult.fail();
-            }
-            for (Method method : targetClass.getDeclaredMethods()) {
-                int mods = method.getModifiers();
-                // 跳过静态方法、私有方法
-                if (Modifier.isStatic(mods) || Modifier.isPrivate(mods)) {
-                    continue;
-                }
-                methods.add(method);
-            }
+            List<Method> methods = ByteBeanReflectUtil.getMethods(targetClass);
 
             // 检查方法列表是否为空
             if (methods.isEmpty()) {

@@ -2,6 +2,7 @@ package com.github.archtiger.core.invoker.field;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.FieldInvokerResult;
+import com.github.archtiger.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.core.support.NameUtil;
 import com.github.archtiger.definition.field.FieldInvoker;
 import net.bytebuddy.ByteBuddy;
@@ -10,8 +11,10 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -40,20 +43,7 @@ public final class FieldInvokerGenerator {
         return CACHE.computeIfAbsent(targetClass, k -> {
 
             // 步骤1: 收集目标类的所有非静态字段
-            List<Field> fields = new ArrayList<>();
-            Field[] declaredFields = targetClass.getDeclaredFields();
-            if (declaredFields.length == 0) {
-                return FieldInvokerResult.fail();
-            }
-
-            for (Field f : declaredFields) {
-                // 跳过静态字段，因为字段访问器是针对实例字段的
-                if (Modifier.isStatic(f.getModifiers()) || Modifier.isPrivate(f.getModifiers())) continue;
-                fields.add(f);
-            }
-
-            // 检查字段列表是否为空
-            // 如果字段列表为空，无法生成有效的 FieldAccess（tableswitch 要求 min <= max）
+            List<Field> fields = ByteBeanReflectUtil.getFields(targetClass);
             if (fields.isEmpty()) {
                 return FieldInvokerResult.fail();
             }

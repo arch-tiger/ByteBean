@@ -1,6 +1,7 @@
-package com.github.archtiger.core.invoker.method;
+package com.github.archtiger.core.invoker;
 
 import cn.hutool.core.util.ClassUtil;
+import com.github.archtiger.core.invoker.method.MethodInvokerGenerator;
 import com.github.archtiger.core.model.MethodInvokerResult;
 import com.github.archtiger.definition.method.MethodInvoker;
 
@@ -45,7 +46,7 @@ public class MethodInvokerHelper {
     /**
      * 获取方法访问器
      */
-    public MethodInvoker getMethodAccess() {
+    public MethodInvoker getMethodInvoker() {
         return methodInvoker;
     }
 

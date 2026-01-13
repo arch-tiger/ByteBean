@@ -2,6 +2,7 @@ package com.github.archtiger.core.invoker.constructor;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.ConstructorInvokerResult;
+import com.github.archtiger.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.core.support.NameUtil;
 import com.github.archtiger.definition.constructor.ConstructorInvoker;
 import net.bytebuddy.ByteBuddy;
@@ -10,8 +11,10 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 构造器访问生成器
@@ -40,20 +43,7 @@ public final class ConstructorInvokerGenerator {
         return CACHE.computeIfAbsent(targetClass, k -> {
 
             // 步骤1: 收集目标类的所有可访问的构造器
-            List<Constructor<?>> constructors = new ArrayList<>();
-            Constructor<?>[] declaredConstructors = targetClass.getDeclaredConstructors();
-            if (declaredConstructors.length == 0) {
-                return ConstructorInvokerResult.fail();
-            }
-
-            for (Constructor<?> constructor : declaredConstructors) {
-                int mods = constructor.getModifiers();
-                // 跳过私有构造器
-                if (Modifier.isPrivate(mods)) {
-                    continue;
-                }
-                constructors.add(constructor);
-            }
+            List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
 
             // 检查构造器列表是否为空
             if (constructors.isEmpty()) {

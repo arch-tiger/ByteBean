@@ -1,5 +1,6 @@
 package com.github.archtiger.core.invoker.method;
 
+import com.github.archtiger.core.invoker.MethodInvokerHelper;
 import com.github.archtiger.definition.method.MethodInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class MethodInvokerTest {
     @BeforeEach
     void setUp() throws Exception {
         methodInvokerHelper = MethodInvokerHelper.of(TestMethodEntity.class);
-        methodInvoker = methodInvokerHelper.getMethodAccess();
+        methodInvoker = methodInvokerHelper.getMethodInvoker();
         entity = new TestMethodEntity();
     }
 

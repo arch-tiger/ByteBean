@@ -1,6 +1,7 @@
-package com.github.archtiger.core.invoker.constructor;
+package com.github.archtiger.core.invoker;
 
 import cn.hutool.core.util.ClassUtil;
+import com.github.archtiger.core.invoker.constructor.ConstructorInvokerGenerator;
 import com.github.archtiger.core.model.ConstructorInvokerResult;
 import com.github.archtiger.definition.constructor.ConstructorInvoker;
 
@@ -51,7 +52,7 @@ public class ConstructorInvokerHelper {
      *
      * @return 构造器访问实例
      */
-    public ConstructorInvoker getConstructorAccess() {
+    public ConstructorInvoker getConstructorInvoker() {
         return constructorInvoker;
     }
 

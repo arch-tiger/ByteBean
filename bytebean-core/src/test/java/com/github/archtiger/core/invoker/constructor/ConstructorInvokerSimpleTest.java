@@ -1,5 +1,6 @@
 package com.github.archtiger.core.invoker.constructor;
 
+import com.github.archtiger.core.invoker.ConstructorInvokerHelper;
 import com.github.archtiger.definition.constructor.ConstructorInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ConstructorInvokerSimpleTest {
     @BeforeEach
     void setUp() {
         constructorInvokerHelper = ConstructorInvokerHelper.of(TestConstructorEntity.class);
-        constructorInvoker = constructorInvokerHelper.getConstructorAccess();
+        constructorInvoker = constructorInvokerHelper.getConstructorInvoker();
     }
 
     @Test
