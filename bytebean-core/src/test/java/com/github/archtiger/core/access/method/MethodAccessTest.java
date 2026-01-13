@@ -1,5 +1,6 @@
 package com.github.archtiger.core.access.method;
 
+import com.github.archtiger.definition.invoker.MethodAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

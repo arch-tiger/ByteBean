@@ -1,6 +1,6 @@
 package com.github.archtiger.core.model;
 
-import com.github.archtiger.core.access.field.FieldAccess;
+import com.github.archtiger.definition.invoker.FieldAccess;
 
 import java.lang.reflect.Field;
 import java.util.Collections;

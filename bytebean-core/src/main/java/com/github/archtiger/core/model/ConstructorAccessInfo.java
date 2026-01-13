@@ -1,6 +1,6 @@
 package com.github.archtiger.core.model;
 
-import com.github.archtiger.core.access.constructor.ConstructorAccess;
+import com.github.archtiger.definition.invoker.ConstructorAccess;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;

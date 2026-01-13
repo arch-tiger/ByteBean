@@ -3,6 +3,7 @@ package com.github.archtiger.core.access.constructor;
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.ConstructorAccessInfo;
 import com.github.archtiger.core.support.InvokerRule;
+import com.github.archtiger.definition.invoker.ConstructorAccess;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;

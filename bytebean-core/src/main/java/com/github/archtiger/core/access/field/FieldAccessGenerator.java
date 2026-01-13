@@ -1,6 +1,7 @@
 package com.github.archtiger.core.access.field;
 
 import com.github.archtiger.core.model.FieldAccessInfo;
+import com.github.archtiger.definition.invoker.FieldAccess;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.TypeCache;
 import net.bytebuddy.description.modifier.Visibility;

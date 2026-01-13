@@ -1,4 +1,4 @@
-package com.github.archtiger.core.access.field;
+package com.github.archtiger.definition.invoker;
 
 /**
  * 字段访问器接口，定义了对类字段的通用访问方法。

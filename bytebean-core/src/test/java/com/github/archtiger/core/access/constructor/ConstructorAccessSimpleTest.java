@@ -1,5 +1,6 @@
 package com.github.archtiger.core.access.constructor;
 
+import com.github.archtiger.definition.invoker.ConstructorAccess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

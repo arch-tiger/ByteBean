@@ -1,6 +1,6 @@
 package com.github.archtiger.core.model;
 
-import com.github.archtiger.core.access.method.MethodAccess;
+import com.github.archtiger.definition.invoker.MethodAccess;
 
 import java.lang.reflect.Method;
 import java.util.Collections;

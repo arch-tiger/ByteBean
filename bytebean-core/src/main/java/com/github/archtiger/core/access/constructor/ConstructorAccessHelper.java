@@ -2,6 +2,7 @@ package com.github.archtiger.core.access.constructor;
 
 import cn.hutool.core.util.ClassUtil;
 import com.github.archtiger.core.model.ConstructorAccessInfo;
+import com.github.archtiger.definition.invoker.ConstructorAccess;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

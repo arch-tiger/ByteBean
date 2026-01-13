@@ -2,6 +2,7 @@ package com.github.archtiger.core.access.method;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.core.model.MethodAccessInfo;
+import com.github.archtiger.definition.invoker.MethodAccess;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;

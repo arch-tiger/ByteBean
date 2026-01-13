@@ -2,6 +2,7 @@ package com.github.archtiger.core.access.method;
 
 import cn.hutool.core.util.ClassUtil;
 import com.github.archtiger.core.model.MethodAccessInfo;
+import com.github.archtiger.definition.invoker.MethodAccess;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
