@@ -21,13 +21,13 @@ public class ByteBeanReflectUtil {
     /**
      * 获取指定类的字段集合
      * <p>
-     * 获取当前类所有，非static，非private字段，同时也需要父类，非static，public 字段。
+     * 获取当前类所有，非static，非private字段
      *
      * @param targetClass 目标类
      * @return Field 字段列表
      */
     public static List<Field> getFields(Class<?> targetClass) {
-        Field[] fields = ReflectUtil.getFields(targetClass);
+        Field[] fields = targetClass.getDeclaredFields();
         if (fields.length == 0) {
             return Collections.emptyList();
         }
@@ -42,13 +42,6 @@ public class ByteBeanReflectUtil {
             // 跳过私有字段
             if (Modifier.isPrivate(field.getModifiers())) {
                 continue;
-            }
-
-            // 排除父类非public 字段
-            if (!targetClass.equals(field.getDeclaringClass())) {
-                if (!Modifier.isPublic(field.getModifiers())) {
-                    continue;
-                }
             }
 
             fieldList.add(field);

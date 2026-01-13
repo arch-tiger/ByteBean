@@ -7,6 +7,12 @@ import java.lang.reflect.Method;
 
 public class SimpleTest {
     static class A {
+        public int age;
+
+        public int getAge() {
+            return age;
+        }
+
         public void aPublic() {
         }
 
@@ -21,6 +27,8 @@ public class SimpleTest {
     }
 
     static class B extends A {
+        public int age;
+
         public void bPublic() {
         }
 
@@ -28,7 +36,10 @@ public class SimpleTest {
         }
 
         void bDefault() {
-         } void aPrivate() {}
+        }
+
+        void aPrivate() {
+        }
 
         private void bPrivate() {
         }

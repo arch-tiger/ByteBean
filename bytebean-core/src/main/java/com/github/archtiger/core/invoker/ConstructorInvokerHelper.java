@@ -3,6 +3,8 @@ package com.github.archtiger.core.invoker;
 import cn.hutool.core.util.ClassUtil;
 import com.github.archtiger.core.invoker.constructor.ConstructorInvokerGenerator;
 import com.github.archtiger.core.model.ConstructorInvokerResult;
+import com.github.archtiger.core.support.ExceptionCode;
+import com.github.archtiger.core.support.ExceptionUtil;
 import com.github.archtiger.definition.constructor.ConstructorInvoker;
 
 import java.lang.reflect.Constructor;
@@ -69,7 +71,22 @@ public class ConstructorInvokerHelper {
             }
         }
 
-        return -1;
+        return ExceptionCode.INVALID_INDEX;
+    }
+
+    /**
+     * 获取构造器索引或抛出异常
+     *
+     * @param paramTypes 构造器参数类型
+     * @return 构造器索引
+     */
+    public int getConstructorIndexOrThrow(Class<?>... paramTypes) {
+        int constructorIndex = getConstructorIndex(paramTypes);
+        if (constructorIndex == ExceptionCode.INVALID_INDEX) {
+            throw ExceptionUtil.constructorNotFound(paramTypes);
+        }
+
+        return constructorIndex;
     }
 
     /**
@@ -79,8 +96,9 @@ public class ConstructorInvokerHelper {
      * @return 新实例
      */
     public Object newInstance(Object... args) {
-        Class<?>[] classes = ClassUtil.getClasses(args);
-        return constructorInvoker.newInstance(getConstructorIndex(classes), args);
+        int constructorIndex = getConstructorIndexOrThrow(ClassUtil.getClasses(args));
+
+        return constructorInvoker.newInstance(constructorIndex, args);
     }
 
 }

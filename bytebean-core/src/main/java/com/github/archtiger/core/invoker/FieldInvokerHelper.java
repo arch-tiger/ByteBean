@@ -2,6 +2,8 @@ package com.github.archtiger.core.invoker;
 
 import com.github.archtiger.core.invoker.field.FieldInvokerGenerator;
 import com.github.archtiger.core.model.FieldInvokerResult;
+import com.github.archtiger.core.support.ExceptionCode;
+import com.github.archtiger.core.support.ExceptionUtil;
 import com.github.archtiger.definition.field.FieldInvoker;
 
 import java.lang.reflect.Field;
@@ -30,6 +32,12 @@ public class FieldInvokerHelper {
         }
     }
 
+    /**
+     * 创建 FieldInvokerHelper 实例
+     *
+     * @param targetClass 目标类
+     * @return FieldInvokerHelper 实例，若生成失败则返回 null
+     */
     public static FieldInvokerHelper of(Class<?> targetClass) {
         FieldInvokerResult fieldInvokerResult = FieldInvokerGenerator.generate(targetClass);
         if (!fieldInvokerResult.ok()) {
@@ -39,31 +47,95 @@ public class FieldInvokerHelper {
         return new FieldInvokerHelper(fieldInvokerResult);
     }
 
+    /**
+     * 获取字段访问器
+     *
+     * @return 字段访问器
+     */
     public FieldInvoker getFieldInvoker() {
         return fieldInvoker;
     }
 
-    public int getFieldIndex(String fieldName) {
+    /**
+     * 获取字段索引
+     *
+     * @param fieldName 字段名
+     * @return 字段索引，若不存在则返回 -1
+     */
+    public int getFieldGetterIndex(String fieldName) {
         for (int i = 0; i < fieldNames.length; i++) {
             if (fieldNames[i].equals(fieldName)) {
                 return i;
             }
         }
 
-        return -1;
+        return ExceptionCode.INVALID_INDEX;
     }
 
-    public Object get(Object instance, String fieldName) {
-        return fieldInvoker.get(getFieldIndex(fieldName), instance);
-    }
-
-    public void set(Object instance, String fieldName, Object value) {
-        int index = getFieldIndex(fieldName);
-        int modifier = modifiers[index];
-        if (Modifier.isFinal(modifier)) {
-            throw new UnsupportedOperationException("final field cannot be set");
+    /**
+     * 获取字段获取器索引，若不存在则抛出异常
+     */
+    public int getFieldGetterIndexOrThrow(String fieldName) {
+        int fieldGetterIndex = getFieldGetterIndex(fieldName);
+        if (fieldGetterIndex == ExceptionCode.INVALID_INDEX) {
+            throw ExceptionUtil.fieldNotGet(fieldName);
         }
 
-        fieldInvoker.set(getFieldIndex(fieldName), instance, value);
+        return fieldGetterIndex;
+    }
+
+    /**
+     * 获取字段设置器索引
+     *
+     * @param fieldName 字段名
+     * @return 字段设置器索引，若不存在则返回 -1
+     */
+    public int getFieldSetterIndex(String fieldName) {
+        for (int i = 0; i < fieldNames.length; i++) {
+            // 跳过final字段
+            if (!Modifier.isFinal(modifiers[i]) && fieldNames[i].equals(fieldName)) {
+                return i;
+            }
+        }
+
+        return ExceptionCode.INVALID_INDEX;
+    }
+
+    /**
+     * 获取字段设置器索引，若不存在则抛出异常
+     */
+    public int getFieldSetterIndexOrThrow(String fieldName) {
+        int fieldSetterIndex = getFieldSetterIndex(fieldName);
+        if (fieldSetterIndex == ExceptionCode.INVALID_INDEX) {
+            throw ExceptionUtil.fieldNotSet(fieldName);
+        }
+
+        return fieldSetterIndex;
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param instance  实例对象
+     * @param fieldName 字段名
+     * @return 字段值
+     */
+    public Object get(Object instance, String fieldName) {
+        int fieldGetterIndex = getFieldGetterIndexOrThrow(fieldName);
+
+        return fieldInvoker.get(fieldGetterIndex, instance);
+    }
+
+    /**
+     * 设置字段值
+     *
+     * @param instance  实例对象
+     * @param fieldName 字段名
+     * @param value     字段值
+     */
+    public void set(Object instance, String fieldName, Object value) {
+        int fieldSetterIndex = getFieldSetterIndexOrThrow(fieldName);
+
+        fieldInvoker.set(fieldSetterIndex, instance, value);
     }
 }
