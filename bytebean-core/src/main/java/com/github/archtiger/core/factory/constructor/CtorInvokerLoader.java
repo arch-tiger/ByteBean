@@ -1,7 +1,7 @@
 package com.github.archtiger.core.factory.constructor;
 
 import com.github.archtiger.core.factory.AbstractInvokerLoader;
-import com.github.archtiger.definition.invoker.constructor.CtorInvoker;
+import com.github.archtiger.definition.invoker.constructor.ConstructorInvoker;
 import com.github.archtiger.core.bytecode.constructor.CtorInvokerAppender;
 import com.github.archtiger.definition.model.InvokerConstant;
 import com.github.archtiger.core.model.InvokerNameInfo;
@@ -17,7 +17,7 @@ import java.lang.reflect.Constructor;
  * @author ZIJIDELU
  * @datetime 2026/1/6 16:49
  */
-public final class CtorInvokerLoader extends AbstractInvokerLoader<CtorInvoker> {
+public final class CtorInvokerLoader extends AbstractInvokerLoader<ConstructorInvoker> {
     private final Constructor<?> constructor;
 
     public CtorInvokerLoader(Class<?> targetClass, Constructor<?> constructor) {
@@ -26,13 +26,13 @@ public final class CtorInvokerLoader extends AbstractInvokerLoader<CtorInvoker> 
     }
 
     @Override
-    protected Class<CtorInvoker> getInvokerClass() {
-        return CtorInvoker.class;
+    protected Class<ConstructorInvoker> getInvokerClass() {
+        return ConstructorInvoker.class;
     }
 
     @Override
     protected InvokerNameInfo getInvokerName() {
-        return InvokerNameInfo.forConstructor(getTargetClass(), constructor, CtorInvoker.class);
+        return InvokerNameInfo.forConstructor(getTargetClass(), constructor, ConstructorInvoker.class);
     }
 
     @Override

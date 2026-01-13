@@ -1,6 +1,5 @@
 package com.github.archtiger.core.access.constructor;
 
-import com.github.archtiger.core.model.ConstructorAccessInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,23 +19,23 @@ import static org.junit.jupiter.api.Assertions.*;
  * 8. 极端场景测试
  */
 class ConstructorAccessTest {
-    private ConstructorAccessInfo constructorAccessInfo;
     private ConstructorAccess constructorAccess;
+    private ConstructorAccessHelper constructorAccessHelper;
 
     @BeforeEach
-    void setUp() throws Exception {
-        ConstructorAccessInfo accessInfo = ConstructorAccessGenerator.generate(TestConstructorEntity.class);
-        this.constructorAccessInfo = accessInfo;
-        assertTrue(accessInfo.ok(), "ConstructorAccess generation should succeed");
-        constructorAccess = accessInfo.constructorAccessClass().getDeclaredConstructor().newInstance();
+    void setUp() {
+        constructorAccessHelper = ConstructorAccessHelper.of(TestConstructorEntity.class);
+        constructorAccess = constructorAccessHelper.getConstructorAccess();
     }
+
+
 
     // ==================== 无参构造器测试 ====================
 
     @Test
     void testNoArgsConstructor() {
         // 测试无参构造器
-        Object instance = constructorAccess.newInstance(0, null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex());
         assertNotNull(instance);
         assertTrue(instance instanceof TestConstructorEntity);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
@@ -57,7 +56,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleIntConstructor() {
         // 测试 int 参数构造器
-        Object instance = constructorAccess.newInstance(1, null, 42);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), 42);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(42, entity.getIntValue());
@@ -66,7 +65,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleIntConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Integer 对象
-        Object instance = constructorAccess.newInstance(1, null, Integer.valueOf(100));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), Integer.valueOf(100));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(100, entity.getIntValue());
@@ -75,7 +74,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleLongConstructor() {
         // 测试 long 参数构造器
-        Object instance = constructorAccess.newInstance(2, null, 1000L);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(long.class), 1000L);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(1000L, entity.getLongValue());
@@ -84,7 +83,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleLongConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Long 对象
-        Object instance = constructorAccess.newInstance(2, null, Long.valueOf(2000L));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(long.class), Long.valueOf(2000L));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(2000L, entity.getLongValue());
@@ -93,7 +92,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleFloatConstructor() {
         // 测试 float 参数构造器
-        Object instance = constructorAccess.newInstance(3, null, 3.14f);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), 3.14f);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(3.14f, entity.getFloatValue(), 0.0001f);
@@ -102,7 +101,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleFloatConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Float 对象
-        Object instance = constructorAccess.newInstance(3, null, Float.valueOf(2.5f));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), Float.valueOf(2.5f));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(2.5f, entity.getFloatValue(), 0.0001f);
@@ -111,7 +110,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleDoubleConstructor() {
         // 测试 double 参数构造器
-        Object instance = constructorAccess.newInstance(4, null, 2.71828);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(double.class), 2.71828);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(2.71828, entity.getDoubleValue(), 0.000001);
@@ -120,7 +119,8 @@ class ConstructorAccessTest {
     @Test
     void testSingleDoubleConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Double 对象
-        Object instance = constructorAccess.newInstance(4, null, Double.valueOf(1.5));
+        int constructorIndex = constructorAccessHelper.getConstructorIndex(double.class);
+        Object instance = constructorAccess.newInstance(constructorIndex, Double.valueOf(1.5));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(1.5, entity.getDoubleValue(), 0.000001);
@@ -129,12 +129,12 @@ class ConstructorAccessTest {
     @Test
     void testSingleBooleanConstructor() {
         // 测试 boolean 参数构造器
-        Object instance = constructorAccess.newInstance(5, null, true);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(boolean.class), true);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertTrue(entity.isBooleanValue());
 
-        instance = constructorAccess.newInstance(5, null, false);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(boolean.class), false);
         entity = (TestConstructorEntity) instance;
         assertFalse(entity.isBooleanValue());
     }
@@ -142,7 +142,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleBooleanConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Boolean 对象
-        Object instance = constructorAccess.newInstance(5, null, Boolean.valueOf(true));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(boolean.class), Boolean.valueOf(true));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertTrue(entity.isBooleanValue());
@@ -151,7 +151,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleByteConstructor() {
         // 测试 byte 参数构造器
-        Object instance = constructorAccess.newInstance(6, null, (byte) 42);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class), (byte) 42);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals((byte) 42, entity.getByteValue());
@@ -160,7 +160,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleByteConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Byte 对象
-        Object instance = constructorAccess.newInstance(6, null, Byte.valueOf((byte) 100));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class), Byte.valueOf((byte) 100));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals((byte) 100, entity.getByteValue());
@@ -169,7 +169,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleShortConstructor() {
         // 测试 short 参数构造器
-        Object instance = constructorAccess.newInstance(7, null, (short) 123);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(short.class), (short) 123);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals((short) 123, entity.getShortValue());
@@ -178,7 +178,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleShortConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Short 对象
-        Object instance = constructorAccess.newInstance(7, null, Short.valueOf((short) 200));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(short.class), Short.valueOf((short) 200));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals((short) 200, entity.getShortValue());
@@ -187,7 +187,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleCharConstructor() {
         // 测试 char 参数构造器
-        Object instance = constructorAccess.newInstance(8, null, 'A');
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(char.class), 'A');
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals('A', entity.getCharValue());
@@ -196,7 +196,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleCharConstructorWithBoxedValue() {
         // 测试自动拆箱：传入 Character 对象
-        Object instance = constructorAccess.newInstance(8, null, Character.valueOf('Z'));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(char.class), Character.valueOf('Z'));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals('Z', entity.getCharValue());
@@ -205,7 +205,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleStringConstructor() {
         // 测试 String 参数构造器
-        Object instance = constructorAccess.newInstance(9, null, "test");
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(String.class), "test");
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals("test", entity.getStringValue());
@@ -214,7 +214,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleStringConstructorWithNull() {
         // 测试 String 参数为 null
-        Object instance = constructorAccess.newInstance(9, null, (String) null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(String.class), (String) null);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertNull(entity.getStringValue());
@@ -223,7 +223,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleIntegerConstructor() {
         // 测试 Integer 参数构造器
-        Object instance = constructorAccess.newInstance(10, null, 42);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(Integer.class), 42);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(42, entity.getIntegerValue().intValue());
@@ -232,7 +232,7 @@ class ConstructorAccessTest {
     @Test
     void testSingleIntegerConstructorWithNull() {
         // 测试 Integer 参数为 null
-        Object instance = constructorAccess.newInstance(10, null, (Integer) null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(Integer.class), (Integer) null);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertNull(entity.getIntegerValue());
@@ -243,7 +243,7 @@ class ConstructorAccessTest {
     @Test
     void testTwoIntLongConstructor() {
         // 测试 int, long 参数构造器
-        Object instance = constructorAccess.newInstance(11, null, 10, 20L);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class), 10, 20L);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(10, entity.getIntValue());
@@ -253,7 +253,7 @@ class ConstructorAccessTest {
     @Test
     void testTwoIntLongConstructorWithBoxedValues() {
         // 测试自动拆箱：传入包装类型
-        Object instance = constructorAccess.newInstance(11, null, Integer.valueOf(100), Long.valueOf(200L));
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class), Integer.valueOf(100), Long.valueOf(200L));
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(100, entity.getIntValue());
@@ -263,7 +263,7 @@ class ConstructorAccessTest {
     @Test
     void testTwoIntStringConstructor() {
         // 测试 int, String 参数构造器
-        Object instance = constructorAccess.newInstance(12, null, 42, "hello");
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, String.class), 42, "hello");
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(42, entity.getIntValue());
@@ -273,7 +273,7 @@ class ConstructorAccessTest {
     @Test
     void testTwoStringIntConstructor() {
         // 测试 String, int 参数构造器（参数顺序不同）
-        Object instance = constructorAccess.newInstance(13, null, "world", 99);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(String.class, int.class), "world", 99);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals("world", entity.getStringValue());
@@ -283,7 +283,7 @@ class ConstructorAccessTest {
     @Test
     void testThreeIntLongDoubleConstructor() {
         // 测试 int, long, double 参数构造器
-        Object instance = constructorAccess.newInstance(14, null, 1, 2L, 3.0);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class, double.class), 1, 2L, 3.0);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(1, entity.getIntValue());
@@ -294,7 +294,7 @@ class ConstructorAccessTest {
     @Test
     void testFourByteShortIntLongConstructor() {
         // 测试 byte, short, int, long 参数构造器
-        Object instance = constructorAccess.newInstance(15, null, (byte) 1, (short) 2, 3, 4L);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class, short.class, int.class, long.class), (byte) 1, (short) 2, 3, 4L);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals((byte) 1, entity.getByteValue());
@@ -306,7 +306,7 @@ class ConstructorAccessTest {
     @Test
     void testFourFloatDoubleBooleanCharConstructor() {
         // 测试 float, double, boolean, char 参数构造器
-        Object instance = constructorAccess.newInstance(16, null, 1.0f, 2.0, true, 'X');
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class, double.class, boolean.class, char.class), 1.0f, 2.0, true, 'X');
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(1.0f, entity.getFloatValue(), 0.0001f);
@@ -318,7 +318,7 @@ class ConstructorAccessTest {
     @Test
     void testEightPrimitivesConstructor() {
         // 测试所有基本类型参数构造器
-        Object instance = constructorAccess.newInstance(17, null,
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class, short.class, int.class, long.class, float.class, double.class, boolean.class, char.class),
                 (byte) 1, (short) 2, 3, 4L, 5.0f, 6.0, true, 'A');
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
@@ -335,7 +335,7 @@ class ConstructorAccessTest {
     @Test
     void testEightPrimitivesConstructorWithBoxedValues() {
         // 测试所有基本类型参数构造器（使用包装类型，测试自动拆箱）
-        Object instance = constructorAccess.newInstance(17, null,
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class, short.class, int.class, long.class, float.class, double.class, boolean.class, char.class),
                 Byte.valueOf((byte) 10), Short.valueOf((short) 20), Integer.valueOf(30),
                 Long.valueOf(40L), Float.valueOf(50.0f), Double.valueOf(60.0),
                 Boolean.valueOf(true), Character.valueOf('Z'));
@@ -356,19 +356,19 @@ class ConstructorAccessTest {
     @Test
     void testIntBoundaryValues() {
         // 测试 int 边界值
-        Object instance = constructorAccess.newInstance(1, null, Integer.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), Integer.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Integer.MIN_VALUE, entity.getIntValue());
 
-        instance = constructorAccess.newInstance(1, null, Integer.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), Integer.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Integer.MAX_VALUE, entity.getIntValue());
 
-        instance = constructorAccess.newInstance(1, null, 0);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), 0);
         entity = (TestConstructorEntity) instance;
         assertEquals(0, entity.getIntValue());
 
-        instance = constructorAccess.newInstance(1, null, -1);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), -1);
         entity = (TestConstructorEntity) instance;
         assertEquals(-1, entity.getIntValue());
     }
@@ -376,15 +376,15 @@ class ConstructorAccessTest {
     @Test
     void testLongBoundaryValues() {
         // 测试 long 边界值
-        Object instance = constructorAccess.newInstance(2, null, Long.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(long.class), Long.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Long.MIN_VALUE, entity.getLongValue());
 
-        instance = constructorAccess.newInstance(2, null, Long.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(long.class), Long.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Long.MAX_VALUE, entity.getLongValue());
 
-        instance = constructorAccess.newInstance(2, null, 0L);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(long.class), 0L);
         entity = (TestConstructorEntity) instance;
         assertEquals(0L, entity.getLongValue());
     }
@@ -392,29 +392,29 @@ class ConstructorAccessTest {
     @Test
     void testFloatBoundaryValues() {
         // 测试 float 边界值
-        Object instance = constructorAccess.newInstance(3, null, Float.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), Float.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Float.MIN_VALUE, entity.getFloatValue());
 
-        instance = constructorAccess.newInstance(3, null, Float.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), Float.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Float.MAX_VALUE, entity.getFloatValue());
 
-        instance = constructorAccess.newInstance(3, null, Float.POSITIVE_INFINITY);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), Float.POSITIVE_INFINITY);
         entity = (TestConstructorEntity) instance;
         assertTrue(Float.isInfinite(entity.getFloatValue()));
         assertTrue(entity.getFloatValue() > 0);
 
-        instance = constructorAccess.newInstance(3, null, Float.NEGATIVE_INFINITY);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), Float.NEGATIVE_INFINITY);
         entity = (TestConstructorEntity) instance;
         assertTrue(Float.isInfinite(entity.getFloatValue()));
         assertTrue(entity.getFloatValue() < 0);
 
-        instance = constructorAccess.newInstance(3, null, Float.NaN);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), Float.NaN);
         entity = (TestConstructorEntity) instance;
         assertTrue(Float.isNaN(entity.getFloatValue()));
 
-        instance = constructorAccess.newInstance(3, null, 0.0f);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(float.class), 0.0f);
         entity = (TestConstructorEntity) instance;
         assertEquals(0.0f, entity.getFloatValue(), 0.0f);
     }
@@ -422,25 +422,25 @@ class ConstructorAccessTest {
     @Test
     void testDoubleBoundaryValues() {
         // 测试 double 边界值
-        Object instance = constructorAccess.newInstance(4, null, Double.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(double.class), Double.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Double.MIN_VALUE, entity.getDoubleValue(), 0.0);
 
-        instance = constructorAccess.newInstance(4, null, Double.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(double.class), Double.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Double.MAX_VALUE, entity.getDoubleValue(), 0.0);
 
-        instance = constructorAccess.newInstance(4, null, Double.POSITIVE_INFINITY);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(double.class), Double.POSITIVE_INFINITY);
         entity = (TestConstructorEntity) instance;
         assertTrue(Double.isInfinite(entity.getDoubleValue()));
         assertTrue(entity.getDoubleValue() > 0);
 
-        instance = constructorAccess.newInstance(4, null, Double.NEGATIVE_INFINITY);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(double.class), Double.NEGATIVE_INFINITY);
         entity = (TestConstructorEntity) instance;
         assertTrue(Double.isInfinite(entity.getDoubleValue()));
         assertTrue(entity.getDoubleValue() < 0);
 
-        instance = constructorAccess.newInstance(4, null, Double.NaN);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(double.class), Double.NaN);
         entity = (TestConstructorEntity) instance;
         assertTrue(Double.isNaN(entity.getDoubleValue()));
     }
@@ -448,15 +448,15 @@ class ConstructorAccessTest {
     @Test
     void testByteBoundaryValues() {
         // 测试 byte 边界值
-        Object instance = constructorAccess.newInstance(6, null, Byte.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class), Byte.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Byte.MIN_VALUE, entity.getByteValue());
 
-        instance = constructorAccess.newInstance(6, null, Byte.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class), Byte.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Byte.MAX_VALUE, entity.getByteValue());
 
-        instance = constructorAccess.newInstance(6, null, (byte) 0);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class), (byte) 0);
         entity = (TestConstructorEntity) instance;
         assertEquals((byte) 0, entity.getByteValue());
     }
@@ -464,11 +464,11 @@ class ConstructorAccessTest {
     @Test
     void testShortBoundaryValues() {
         // 测试 short 边界值
-        Object instance = constructorAccess.newInstance(7, null, Short.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(short.class), Short.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Short.MIN_VALUE, entity.getShortValue());
 
-        instance = constructorAccess.newInstance(7, null, Short.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(short.class), Short.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Short.MAX_VALUE, entity.getShortValue());
     }
@@ -476,19 +476,19 @@ class ConstructorAccessTest {
     @Test
     void testCharBoundaryValues() {
         // 测试 char 边界值
-        Object instance = constructorAccess.newInstance(8, null, Character.MIN_VALUE);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(char.class), Character.MIN_VALUE);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(Character.MIN_VALUE, entity.getCharValue());
 
-        instance = constructorAccess.newInstance(8, null, Character.MAX_VALUE);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(char.class), Character.MAX_VALUE);
         entity = (TestConstructorEntity) instance;
         assertEquals(Character.MAX_VALUE, entity.getCharValue());
 
-        instance = constructorAccess.newInstance(8, null, '\u0000');
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(char.class), '\u0000');
         entity = (TestConstructorEntity) instance;
         assertEquals('\u0000', entity.getCharValue());
 
-        instance = constructorAccess.newInstance(8, null, '中');
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(char.class), '中');
         entity = (TestConstructorEntity) instance;
         assertEquals('中', entity.getCharValue());
     }
@@ -498,7 +498,7 @@ class ConstructorAccessTest {
         // 测试 String 特殊值
         String[] testStrings = {"", " ", "test", "中文", "null", "\n", "\t", "\\", "\""};
         for (String str : testStrings) {
-            Object instance = constructorAccess.newInstance(9, null, str);
+            Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(String.class), str);
             TestConstructorEntity entity = (TestConstructorEntity) instance;
             assertEquals(str, entity.getStringValue());
         }
@@ -510,22 +510,22 @@ class ConstructorAccessTest {
     void testIndexOutOfBounds() {
         // 测试负索引
         assertThrows(IllegalArgumentException.class, () -> {
-            constructorAccess.newInstance(-1, null);
+            constructorAccess.newInstance(-1);
         });
 
         // 测试超出范围的索引
         assertThrows(IllegalArgumentException.class, () -> {
-            constructorAccess.newInstance(1000, null);
+            constructorAccess.newInstance(1000);
         });
 
         // 测试 Integer.MIN_VALUE
         assertThrows(IllegalArgumentException.class, () -> {
-            constructorAccess.newInstance(Integer.MIN_VALUE, null);
+            constructorAccess.newInstance(Integer.MIN_VALUE);
         });
 
         // 测试 Integer.MAX_VALUE
         assertThrows(IllegalArgumentException.class, () -> {
-            constructorAccess.newInstance(Integer.MAX_VALUE, null);
+            constructorAccess.newInstance(Integer.MAX_VALUE);
         });
     }
 
@@ -533,11 +533,11 @@ class ConstructorAccessTest {
     void testIndexOutOfBoundsWithArgs() {
         // 测试带参数的索引越界
         assertThrows(IllegalArgumentException.class, () -> {
-            constructorAccess.newInstance(-1, null, 42);
+            constructorAccess.newInstance(-1, 42);
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            constructorAccess.newInstance(1000, null, "test");
+            constructorAccess.newInstance(1000, "test");
         });
     }
 
@@ -546,7 +546,7 @@ class ConstructorAccessTest {
     @Test
     void testNullArgsArray() {
         // 测试 args 为 null（无参构造器）
-        Object instance = constructorAccess.newInstance(0, null, (Object[]) null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(), (Object[]) null);
         assertNotNull(instance);
         assertTrue(instance instanceof TestConstructorEntity);
     }
@@ -554,7 +554,7 @@ class ConstructorAccessTest {
     @Test
     void testEmptyArgsArray() {
         // 测试空数组（无参构造器）
-        Object instance = constructorAccess.newInstance(0, null, new Object[0]);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(), new Object[0]);
         assertNotNull(instance);
         assertTrue(instance instanceof TestConstructorEntity);
     }
@@ -562,7 +562,7 @@ class ConstructorAccessTest {
     @Test
     void testNullStringArgument() {
         // 测试 String 参数为 null
-        Object instance = constructorAccess.newInstance(9, null, (String) null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(String.class), (String) null);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertNull(entity.getStringValue());
@@ -571,7 +571,7 @@ class ConstructorAccessTest {
     @Test
     void testNullIntegerArgument() {
         // 测试 Integer 参数为 null
-        Object instance = constructorAccess.newInstance(10, null, (Integer) null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(Integer.class), (Integer) null);
         assertNotNull(instance);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertNull(entity.getIntegerValue());
@@ -583,23 +583,23 @@ class ConstructorAccessTest {
     void testAllConstructors() {
         // 测试所有构造器
         // 无参构造器
-        Object instance = constructorAccess.newInstance(0, null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex());
         assertNotNull(instance);
 
         // 单参数构造器
-        instance = constructorAccess.newInstance(1, null, 1);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), 1);
         assertNotNull(instance);
-        instance = constructorAccess.newInstance(2, null, 2L);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(long.class), 2L);
         assertNotNull(instance);
-        instance = constructorAccess.newInstance(9, null, "test");
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(String.class), "test");
         assertNotNull(instance);
 
         // 多参数构造器
-        instance = constructorAccess.newInstance(11, null, 10, 20L);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class), 10, 20L);
         assertNotNull(instance);
-        instance = constructorAccess.newInstance(14, null, 1, 2L, 3.0);
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class, double.class), 1, 2L, 3.0);
         assertNotNull(instance);
-        instance = constructorAccess.newInstance(17, null,
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class, short.class, int.class, long.class, float.class, double.class, boolean.class, char.class),
                 (byte) 1, (short) 2, 3, 4L, 5.0f, 6.0, true, 'A');
         assertNotNull(instance);
     }
@@ -608,7 +608,7 @@ class ConstructorAccessTest {
     void testMultipleInstances() {
         // 测试创建多个实例
         for (int i = 0; i < 10; i++) {
-            Object instance = constructorAccess.newInstance(1, null, i);
+            Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), i);
             assertNotNull(instance);
             TestConstructorEntity entity = (TestConstructorEntity) instance;
             assertEquals(i, entity.getIntValue());
@@ -618,13 +618,13 @@ class ConstructorAccessTest {
     @Test
     void testMixedPrimitiveAndBoxedValues() {
         // 测试混合使用基本类型和包装类型（自动拆箱）
-        Object instance = constructorAccess.newInstance(11, null,
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class),
                 100, Long.valueOf(200L)); // int 基本类型 + Long 包装类型
         TestConstructorEntity entity = (TestConstructorEntity) instance;
         assertEquals(100, entity.getIntValue());
         assertEquals(200L, entity.getLongValue());
 
-        instance = constructorAccess.newInstance(11, null,
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class, long.class),
                 Integer.valueOf(300), 400L); // Integer 包装类型 + long 基本类型
         entity = (TestConstructorEntity) instance;
         assertEquals(300, entity.getIntValue());
@@ -635,7 +635,7 @@ class ConstructorAccessTest {
     void testRapidInstantiation() {
         // 快速连续创建实例
         for (int i = 0; i < 1000; i++) {
-            Object instance = constructorAccess.newInstance(1, null, i);
+            Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(int.class), i);
             assertNotNull(instance);
             TestConstructorEntity entity = (TestConstructorEntity) instance;
             assertEquals(i, entity.getIntValue());
@@ -646,13 +646,13 @@ class ConstructorAccessTest {
     void testValidIndexBoundaries() {
         // 测试有效索引边界
         // 第一个构造器 (index 0 - 无参构造器)
-        Object instance = constructorAccess.newInstance(0, null);
+        Object instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex());
         assertNotNull(instance);
 
         // 最后一个构造器需要知道总构造器数
         // 根据 TestConstructorEntity，应该有 18 个构造器（0-17）
         // 测试最后一个构造器
-        instance = constructorAccess.newInstance(17, null,
+        instance = constructorAccess.newInstance(constructorAccessHelper.getConstructorIndex(byte.class, short.class, int.class, long.class, float.class, double.class, boolean.class, char.class),
                 (byte) 1, (short) 2, 3, 4L, 5.0f, 6.0, true, 'A');
         assertNotNull(instance);
     }
@@ -661,7 +661,7 @@ class ConstructorAccessTest {
     void testExceptionMessages() {
         // 测试异常消息
         try {
-            constructorAccess.newInstance(-1, null);
+            constructorAccess.newInstance(-1);
             fail("Should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertNotNull(e.getMessage());
@@ -669,7 +669,7 @@ class ConstructorAccessTest {
         }
 
         try {
-            constructorAccess.newInstance(1000, null);
+            constructorAccess.newInstance(1000);
             fail("Should throw IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertNotNull(e.getMessage());
@@ -677,13 +677,4 @@ class ConstructorAccessTest {
         }
     }
 
-    @Test
-    void testConstructorInfo() {
-        // 测试构造器信息
-        assertNotNull(constructorAccessInfo);
-        assertTrue(constructorAccessInfo.ok());
-        assertNotNull(constructorAccessInfo.constructorAccessClass());
-        assertNotNull(constructorAccessInfo.constructors());
-        assertFalse(constructorAccessInfo.constructors().isEmpty());
-    }
 }

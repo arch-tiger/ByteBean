@@ -7,5 +7,5 @@ package com.github.archtiger.core.access.constructor;
  * @datetime 2026/1/11 21:44
  */
 public interface ConstructorAccess {
-    Object newInstance(int index, Object target, Object... args);
+    Object newInstance(int index, Object... args);
 }

@@ -17,8 +17,10 @@ public record FieldAccessInfo(
         List<Field> fields,
         boolean ok
 ) {
+    private static final FieldAccessInfo FAIL = new FieldAccessInfo(null, Collections.emptyList(), false);
+
     public static FieldAccessInfo fail() {
-        return new FieldAccessInfo(null, Collections.emptyList(), false);
+        return FAIL;
     }
 
     public static FieldAccessInfo success(Class<? extends FieldAccess> fieldAccessClass, List<Field> fields) {

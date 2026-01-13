@@ -181,6 +181,15 @@ public class AsmUtil {
 
     /**
      * 生成抛出 IllegalArgumentException 的字节码
+     *
+     * @param mv 方法访问器
+     */
+    public static void throwIAEForConstructor(MethodVisitor mv) {
+        throwIAE(mv, "Invalid constructor index: ");
+    }
+
+    /**
+     * 生成抛出 IllegalArgumentException 的字节码
      * <p>
      * 生成的字节码等价于:
      * <pre>

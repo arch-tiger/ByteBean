@@ -53,7 +53,8 @@ public class MethodAccessHelper {
      */
     public int getMethodIndex(String methodName, Class<?>... paramTypes) {
         for (int i = 0, n = methodNames.length; i < n; i++) {
-            if (Arrays.equals(paramTypes, this.methodParamTypes[i]) && methodNames[i].equals(methodName)) {
+            // 优先匹配速度最快,最可能失败的情况
+            if (methodNames[i].equals(methodName) && Arrays.equals(paramTypes, this.methodParamTypes[i])) {
                 return i;
             }
         }
