@@ -26,7 +26,7 @@ public class MethodInvokerHelper {
         this.methodNames = methodInvokerResult.methods().stream().map(Method::getName).toArray(String[]::new);
         this.methodParamTypes = methodInvokerResult.methods().stream().map(Method::getParameterTypes).toArray(Class[][]::new);
         try {
-            this.methodInvoker = methodInvokerResult.methodAccessClass().getDeclaredConstructor().newInstance();
+            this.methodInvoker = methodInvokerResult.methodInvokerClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);

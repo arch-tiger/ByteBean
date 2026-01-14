@@ -13,7 +13,7 @@ import java.util.List;
  * @datetime 2026/1/11 21:00
  */
 public record MethodInvokerResult(
-        Class<? extends MethodInvoker> methodAccessClass,
+        Class<? extends MethodInvoker> methodInvokerClass,
         List<Method> methods,
         boolean ok
 ) {

@@ -13,7 +13,7 @@ import java.util.List;
  * @datetime 2026/1/11 18:55
  */
 public record FieldInvokerResult(
-        Class<? extends FieldInvoker> fieldAccessClass,
+        Class<? extends FieldInvoker> fieldInvokerClass,
         List<Field> fields,
         boolean ok
 ) {

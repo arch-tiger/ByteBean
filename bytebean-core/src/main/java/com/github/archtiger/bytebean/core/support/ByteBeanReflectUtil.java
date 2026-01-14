@@ -1,6 +1,7 @@
 package com.github.archtiger.bytebean.core.support;
 
 import cn.hutool.core.util.ReflectUtil;
+import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -8,6 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -47,6 +49,13 @@ public class ByteBeanReflectUtil {
             fieldList.add(field);
         }
 
+        // 排序规则: 先按字段名排序，再按字段类型描述符排序
+        // 例如: int a, long b, int c 会被排序为: a, c, b
+        fieldList.sort(Comparator
+                .comparing(Field::getName)
+                .thenComparing(f -> Type.getDescriptor(f.getType()))
+        );
+
         return fieldList;
     }
 
@@ -79,6 +88,11 @@ public class ByteBeanReflectUtil {
             methodList.add(method);
         }
 
+        methodList.sort(Comparator
+                .comparing(Method::getName)
+                .thenComparing(m -> Type.getMethodDescriptor(m))
+        );
+
         return methodList;
     }
 
@@ -105,6 +119,12 @@ public class ByteBeanReflectUtil {
 
             constructorList.add(constructor);
         }
+
+        // 排序规则: 先按参数数量排序，再按参数类型描述符排序
+        constructorList.sort(Comparator
+                .comparing((Constructor<?> c) -> c.getParameterTypes().length)
+                .thenComparing(Type::getConstructorDescriptor)
+        );
 
         return constructorList;
     }

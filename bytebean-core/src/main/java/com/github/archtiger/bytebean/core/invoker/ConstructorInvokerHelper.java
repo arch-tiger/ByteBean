@@ -27,7 +27,7 @@ public class ConstructorInvokerHelper {
                 .map(Constructor::getParameterTypes)
                 .toArray(Class[][]::new);
         try {
-            this.constructorInvoker = constructorInvokerResult.constructorAccessClass().getDeclaredConstructor().newInstance();
+            this.constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);

@@ -13,7 +13,7 @@ import java.util.List;
  * @datetime 2026/1/11 21:44
  */
 public record ConstructorInvokerResult(
-        Class<? extends ConstructorInvoker> constructorAccessClass,
+        Class<? extends ConstructorInvoker> constructorInvokerClass,
         List<Constructor<?>> constructors,
         boolean ok
 ) {

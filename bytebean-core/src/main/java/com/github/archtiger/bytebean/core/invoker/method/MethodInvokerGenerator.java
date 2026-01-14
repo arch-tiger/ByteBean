@@ -1,18 +1,16 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
+import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import com.github.archtiger.bytebean.core.model.MethodInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.NameUtil;
-import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,11 +46,6 @@ public final class MethodInvokerGenerator {
                 return MethodInvokerResult.fail();
             }
 
-            // 步骤1.1: 对方法列表进行排序
-            methods.sort(Comparator
-                    .comparing(Method::getName)
-                    .thenComparing(m -> Type.getMethodDescriptor(m))
-            );
             // 步骤2: 构造生成类的全限定名
             String invokerName = NameUtil.calcInvokerName(targetClass, MethodInvoker.class);
 

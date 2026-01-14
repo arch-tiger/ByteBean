@@ -1,18 +1,16 @@
 package com.github.archtiger.bytebean.core.invoker.constructor;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
+import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.NameUtil;
-import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
-import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +47,6 @@ public final class ConstructorInvokerGenerator {
             if (constructors.isEmpty()) {
                 return ConstructorInvokerResult.fail();
             }
-
-            // 步骤1.1: 对构造器列表进行排序
-            // 排序规则: 先按参数数量排序，再按参数类型描述符排序
-            constructors.sort(Comparator
-                    .comparing((Constructor<?> c) -> c.getParameterTypes().length)
-                    .thenComparing(Type::getConstructorDescriptor)
-            );
 
             // 步骤2: 构造生成类的全限定名
             String invokerName = NameUtil.calcInvokerName(targetClass, ConstructorInvoker.class);

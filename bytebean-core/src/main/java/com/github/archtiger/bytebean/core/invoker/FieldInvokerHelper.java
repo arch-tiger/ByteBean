@@ -25,7 +25,7 @@ public class FieldInvokerHelper {
         this.fieldNames = fieldInvokerResult.fields().stream().map(Field::getName).toArray(String[]::new);
         this.modifiers = fieldInvokerResult.fields().stream().mapToInt(Field::getModifiers).toArray();
         try {
-            this.fieldInvoker = fieldInvokerResult.fieldAccessClass().getDeclaredConstructor().newInstance();
+            this.fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
