@@ -53,7 +53,7 @@ public class ByteBeanReflectUtil {
     /**
      * 获取指定类的方法集合
      * <p>
-     * 获取当前类所有，非static，非private方法，同时也需要父类，非static，public 方法。
+     * 获取当前类及父类所有，非static，非private方法。
      *
      * @param targetClass 目标类
      * @return Method 方法列表
@@ -74,13 +74,6 @@ public class ByteBeanReflectUtil {
             // 跳过私有方法
             if (Modifier.isPrivate(method.getModifiers())) {
                 continue;
-            }
-
-            // 排除父类非public 方法
-            if (!targetClass.equals(method.getDeclaringClass())) {
-                if (!Modifier.isPublic(method.getModifiers())) {
-                    continue;
-                }
             }
 
             methodList.add(method);
