@@ -27,12 +27,11 @@ class MethodExtendedClassCreationTest {
      * 4. 测试 computeIfAbsent 在高并发下的行为（只有一个线程会创建类，其他获取缓存）
      */
     @Test
-    void testConcurrentGenerationForSameClass() throws InterruptedException, ExecutionException {
+    void testConcurrentGenerationForSameClass() throws Exception {
         final Class<?> testClass = TestMethodEntity.class;
         final int threadCount = 500;
         final long timeoutSeconds = 30;
 
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch completionLatch = new CountDownLatch(threadCount);
 
@@ -40,10 +39,14 @@ class MethodExtendedClassCreationTest {
         List<MethodInvokerResult> results = new CopyOnWriteArrayList<>();
 
         // 创建所有任务，等待启动信号
-        List<Future<?>> futures = new ArrayList<>();
+        List<Thread> threads = new ArrayList<>();
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+
         for (int i = 0; i < threadCount; i++) {
-            Future<?> future = executor.submit(() -> {
+            Thread thread = new Thread(() -> {
                 try {
+                    // 标记线程已就绪
+                    readyLatch.countDown();
                     // 等待所有线程就绪后同时启动
                     startLatch.await();
 
@@ -59,22 +62,28 @@ class MethodExtendedClassCreationTest {
                     completionLatch.countDown();
                 }
             });
-            futures.add(future);
+            threads.add(thread);
+            thread.start();
         }
 
-        // 启动所有线程
+        // 等待所有线程都进入就绪状态（阻塞在 startLatch.await()）
+        readyLatch.await();
+        // 此时所有500个线程都已经启动并阻塞在 startLatch.await()
+        // 立即释放锁，所有线程同时开始执行
         startLatch.countDown();
 
         // 等待所有任务完成（带超时）
         boolean completed = completionLatch.await(timeoutSeconds, TimeUnit.SECONDS);
         if (!completed) {
-            executor.shutdownNow();
+            // 强制中断所有线程
+            threads.forEach(Thread::interrupt);
             fail("Test timed out after " + timeoutSeconds + " seconds");
         }
 
-        // 关闭线程池
-        executor.shutdown();
-        executor.awaitTermination(5, TimeUnit.SECONDS);
+        // 等待所有线程结束
+        for (Thread thread : threads) {
+            thread.join(5000);
+        }
 
         // 验证没有异常发生
         if (!exceptions.isEmpty()) {
