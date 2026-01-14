@@ -11,7 +11,7 @@
     <url>https://github.com/arch-tiger/ByteBean</url>
 
     <modules>
-        <module>bytebean-instructions</module>
+        <module>bytebean-api</module>
         <module>bytebean-core</module>
         <module>bytebean-extensions</module>
     </modules>
@@ -35,7 +35,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.github.archtiger</groupId>
-                <artifactId>bytebean-instructions</artifactId>
+                <artifactId>bytebean-api</artifactId>
                 <version>${bytebean.version}</version>
             </dependency>
             <dependency>
