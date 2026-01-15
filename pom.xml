@@ -27,6 +27,7 @@
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
         <hutool.version>5.8.42</hutool.version>
         <bytebuddy.version>1.18.2</bytebuddy.version>
+        <reflectasm.version>1.11.9</reflectasm.version>
         <jmh.version>1.37</jmh.version>
         <junit.version>5.14.2</junit.version>
     </properties>
@@ -62,6 +63,11 @@
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
                 <version>${bytebuddy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>reflectasm</artifactId>
+                <version>${reflectasm.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.openjdk.jmh</groupId>
