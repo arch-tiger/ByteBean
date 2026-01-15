@@ -6,10 +6,12 @@ import com.github.archtiger.bytebean.core.model.MethodInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.description.modifier.MethodManifestation;
 import net.bytebuddy.description.modifier.TypeManifestation;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.jar.asm.ClassWriter;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -113,6 +115,10 @@ public final class MethodInvokerGenerator {
                     .defineMethod("invokeChar1", Object.class, Visibility.PUBLIC, MethodManifestation.FINAL)
                     .withParameters(int.class, Object.class, char.class)
                     .intercept(new MethodPrimitiveP1InvokerImpl(targetClass, methods, char.class))
+                    // 自动计算
+                    .visit(new AsmVisitorWrapper.ForDeclaredMethods()
+                            .writerFlags(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+                    )
                     // 生成字节码
                     .make()
                     .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
