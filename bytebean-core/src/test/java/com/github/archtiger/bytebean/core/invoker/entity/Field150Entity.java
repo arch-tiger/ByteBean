@@ -460,4 +460,13 @@ public class Field150Entity {
     public void setField149(Integer field149) { this.field149 = field149; }
     public Integer getField150() { return field150; }
     public void setField150(Integer field150) { this.field150 = field150; }
+
+    // 5参数setter方法 - 用于多参数性能测试
+    public void setFiveFields(Integer f1, Integer f2, Integer f3, Integer f4, Integer f5) {
+        this.field1 = f1;
+        this.field2 = f2;
+        this.field3 = f3;
+        this.field4 = f4;
+        this.field5 = f5;
+    }
 }

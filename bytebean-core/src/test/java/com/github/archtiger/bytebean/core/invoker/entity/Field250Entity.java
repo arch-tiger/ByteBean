@@ -756,4 +756,45 @@ public class Field250Entity {
     public void setField249(Integer field249) { this.field249 = field249; }
     public Integer getField250() { return field250; }
     public void setField250(Integer field250) { this.field250 = field250; }
+
+    // 5参数setter方法 - 用于多参数性能测试
+    public void setFiveFields_1_5(Integer f1, Integer f2, Integer f3, Integer f4, Integer f5) {
+        this.field1 = f1;
+        this.field2 = f2;
+        this.field3 = f3;
+        this.field4 = f4;
+        this.field5 = f5;
+    }
+
+    public void setFiveFields_6_10(Integer f6, Integer f7, Integer f8, Integer f9, Integer f10) {
+        this.field6 = f6;
+        this.field7 = f7;
+        this.field8 = f8;
+        this.field9 = f9;
+        this.field10 = f10;
+    }
+
+    public void setFiveFields_11_15(Integer f11, Integer f12, Integer f13, Integer f14, Integer f15) {
+        this.field11 = f11;
+        this.field12 = f12;
+        this.field13 = f13;
+        this.field14 = f14;
+        this.field15 = f15;
+    }
+
+    public void setFiveFields_16_20(Integer f16, Integer f17, Integer f18, Integer f19, Integer f20) {
+        this.field16 = f16;
+        this.field17 = f17;
+        this.field18 = f18;
+        this.field19 = f19;
+        this.field20 = f20;
+    }
+
+    public void setFiveFields_21_25(Integer f21, Integer f22, Integer f23, Integer f24, Integer f25) {
+        this.field21 = f21;
+        this.field22 = f22;
+        this.field23 = f23;
+        this.field24 = f24;
+        this.field25 = f25;
+    }
 }

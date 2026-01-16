@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class MethodInvoker10RASMBenchmark {
 
-    private static final int TEST_COUNT = 10;
+    private static final int TEST_COUNT = 100;
 
     private Field10Entity entity;
 

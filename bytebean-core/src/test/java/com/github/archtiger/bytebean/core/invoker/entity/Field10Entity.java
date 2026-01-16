@@ -1,5 +1,7 @@
 package com.github.archtiger.bytebean.core.invoker.entity;
 
+import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+
 /**
  * 10个字段的测试实体类
  * 所有字段均为对象类型（Integer）
@@ -48,4 +50,8 @@ public class Field10Entity {
 
     public Integer getField10() { return field10; }
     public void setField10(Integer field10) { this.field10 = field10; }
+
+    public static void main(String[] args) {
+        ByteBeanReflectUtil.getMethods(Field10Entity.class).forEach(System.out::println);
+    }
 }

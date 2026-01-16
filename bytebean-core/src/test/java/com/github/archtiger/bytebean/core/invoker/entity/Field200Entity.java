@@ -606,4 +606,13 @@ public class Field200Entity {
     public void setField199(Integer field199) { this.field199 = field199; }
     public Integer getField200() { return field200; }
     public void setField200(Integer field200) { this.field200 = field200; }
+
+    // 5参数setter方法 - 用于多参数性能测试
+    public void setFiveFields(Integer f1, Integer f2, Integer f3, Integer f4, Integer f5) {
+        this.field1 = f1;
+        this.field2 = f2;
+        this.field3 = f3;
+        this.field4 = f4;
+        this.field5 = f5;
+    }
 }
