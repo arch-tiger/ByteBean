@@ -27,7 +27,7 @@ class MethodInvokerTest {
     @BeforeEach
     void setUp() throws Exception {
         methodInvokerHelper = MethodInvokerHelper.of(TestMethodEntity.class);
-        methodInvoker = methodInvokerHelper.getMethodInvoker();
+        methodInvoker = methodInvokerHelper;
         entity = new TestMethodEntity();
     }
 

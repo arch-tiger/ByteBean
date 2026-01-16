@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * MethodInvoker性能测试 - 10字段版本
+ * MethodInvoker性能测试 - 150字段版本
  * 只测试 getter 和 setter 调用，对比6种方式的性能
  * 所有字段均为对象类型（Integer）
  *
@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3, time = 3, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @State(Scope.Benchmark)
-public class MethodInvoker10RASMBenchmark {
+public class MethodInvoker150RASMBenchmark {
 
     private static final int TEST_COUNT = 10;
 
-    private Field10Entity entity;
+    private Field150Entity entity;
 
     // ========== ReflectASM ==========
     private MethodAccess reflectasmMethodAccess;
@@ -43,15 +43,15 @@ public class MethodInvoker10RASMBenchmark {
 
     @Setup(Level.Trial)
     public void setup() throws Throwable {
-        entity = new Field10Entity();
+        entity = new Field150Entity();
 
         // 初始化 ReflectASM
-        reflectasmMethodAccess = MethodAccess.get(Field10Entity.class);
+        reflectasmMethodAccess = MethodAccess.get(Field150Entity.class);
         reflectasmGetterIndexes = new ArrayList<>(TEST_COUNT);
         reflectasmSetterIndexes = new ArrayList<>(TEST_COUNT);
 
         // 初始化 MethodInvokerHelper
-        methodInvokerHelper = MethodInvokerHelper.of(Field10Entity.class);
+        methodInvokerHelper = MethodInvokerHelper.of(Field150Entity.class);
         methodInvokerHelperGetterIndexes = new ArrayList<>(TEST_COUNT);
         methodInvokerHelperSetterIndexes = new ArrayList<>(TEST_COUNT);
 
@@ -133,6 +133,6 @@ public class MethodInvoker10RASMBenchmark {
     }
 
     public static void main(String[] args) throws Exception {
-        org.openjdk.jmh.Main.main(new String[]{MethodInvoker10RASMBenchmark.class.getName()});
+        org.openjdk.jmh.Main.main(new String[]{MethodInvoker150RASMBenchmark.class.getName()});
     }
 }

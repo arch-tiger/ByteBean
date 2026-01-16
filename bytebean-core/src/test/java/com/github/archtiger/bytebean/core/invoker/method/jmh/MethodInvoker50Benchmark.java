@@ -349,7 +349,7 @@ public class MethodInvoker50Benchmark {
     public void test_MethodInvokerHelper_Getter_Varargs(Blackhole bh) throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperGetterIndexes.get(i);
-            Object result = methodInvokerHelper.getMethodInvoker().invoke(index, entity);
+            Object result = methodInvokerHelper.invoke(index, entity);
             bh.consume(result);
         }
     }
@@ -358,7 +358,7 @@ public class MethodInvoker50Benchmark {
     public void test_MethodInvokerHelper_Setter_Varargs(Blackhole bh) throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperSetterIndexes.get(i);
-            methodInvokerHelper.getMethodInvoker().invoke(index, entity, testValue);
+            methodInvokerHelper.invoke(index, entity, testValue);
         }
     }
     

@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author ZIJIDELU
  * @datetime 2026/1/11 21:23
  */
-public class MethodInvokerHelper extends MethodInvoker {
+public final class MethodInvokerHelper extends MethodInvoker {
     private final MethodInvoker methodInvoker;
     private final String[] methodNames;
     private final Class<?>[][] methodParamTypes;
@@ -43,13 +43,6 @@ public class MethodInvokerHelper extends MethodInvoker {
         }
 
         return new MethodInvokerHelper(methodInvokerResult);
-    }
-
-    /**
-     * 获取方法访问器
-     */
-    public MethodInvoker getMethodInvoker() {
-        return methodInvoker;
     }
 
     /**
