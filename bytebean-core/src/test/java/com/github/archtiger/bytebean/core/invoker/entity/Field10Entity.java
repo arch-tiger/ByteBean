@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.core.invoker.method.jmh;
+package com.github.archtiger.bytebean.core.invoker.entity;
 
 /**
  * 10个字段的测试实体类

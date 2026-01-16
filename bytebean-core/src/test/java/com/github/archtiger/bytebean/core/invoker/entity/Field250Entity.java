@@ -1,10 +1,10 @@
-package com.github.archtiger.bytebean.core.invoker.method.jmh;
+package com.github.archtiger.bytebean.core.invoker.entity;
 
 /**
- * 200字段测试实体类
+ * 250字段测试实体类
  * 用于性能测试对比
  */
-public class Field200Entity {
+public class Field250Entity {
     private Integer field1;
     private Integer field2;
     private Integer field3;
@@ -205,6 +205,56 @@ public class Field200Entity {
     private Integer field198;
     private Integer field199;
     private Integer field200;
+    private Integer field201;
+    private Integer field202;
+    private Integer field203;
+    private Integer field204;
+    private Integer field205;
+    private Integer field206;
+    private Integer field207;
+    private Integer field208;
+    private Integer field209;
+    private Integer field210;
+    private Integer field211;
+    private Integer field212;
+    private Integer field213;
+    private Integer field214;
+    private Integer field215;
+    private Integer field216;
+    private Integer field217;
+    private Integer field218;
+    private Integer field219;
+    private Integer field220;
+    private Integer field221;
+    private Integer field222;
+    private Integer field223;
+    private Integer field224;
+    private Integer field225;
+    private Integer field226;
+    private Integer field227;
+    private Integer field228;
+    private Integer field229;
+    private Integer field230;
+    private Integer field231;
+    private Integer field232;
+    private Integer field233;
+    private Integer field234;
+    private Integer field235;
+    private Integer field236;
+    private Integer field237;
+    private Integer field238;
+    private Integer field239;
+    private Integer field240;
+    private Integer field241;
+    private Integer field242;
+    private Integer field243;
+    private Integer field244;
+    private Integer field245;
+    private Integer field246;
+    private Integer field247;
+    private Integer field248;
+    private Integer field249;
+    private Integer field250;
 
     public Integer getField1() { return field1; }
     public void setField1(Integer field1) { this.field1 = field1; }
@@ -606,4 +656,104 @@ public class Field200Entity {
     public void setField199(Integer field199) { this.field199 = field199; }
     public Integer getField200() { return field200; }
     public void setField200(Integer field200) { this.field200 = field200; }
+    public Integer getField201() { return field201; }
+    public void setField201(Integer field201) { this.field201 = field201; }
+    public Integer getField202() { return field202; }
+    public void setField202(Integer field202) { this.field202 = field202; }
+    public Integer getField203() { return field203; }
+    public void setField203(Integer field203) { this.field203 = field203; }
+    public Integer getField204() { return field204; }
+    public void setField204(Integer field204) { this.field204 = field204; }
+    public Integer getField205() { return field205; }
+    public void setField205(Integer field205) { this.field205 = field205; }
+    public Integer getField206() { return field206; }
+    public void setField206(Integer field206) { this.field206 = field206; }
+    public Integer getField207() { return field207; }
+    public void setField207(Integer field207) { this.field207 = field207; }
+    public Integer getField208() { return field208; }
+    public void setField208(Integer field208) { this.field208 = field208; }
+    public Integer getField209() { return field209; }
+    public void setField209(Integer field209) { this.field209 = field209; }
+    public Integer getField210() { return field210; }
+    public void setField210(Integer field210) { this.field210 = field210; }
+    public Integer getField211() { return field211; }
+    public void setField211(Integer field211) { this.field211 = field211; }
+    public Integer getField212() { return field212; }
+    public void setField212(Integer field212) { this.field212 = field212; }
+    public Integer getField213() { return field213; }
+    public void setField213(Integer field213) { this.field213 = field213; }
+    public Integer getField214() { return field214; }
+    public void setField214(Integer field214) { this.field214 = field214; }
+    public Integer getField215() { return field215; }
+    public void setField215(Integer field215) { this.field215 = field215; }
+    public Integer getField216() { return field216; }
+    public void setField216(Integer field216) { this.field216 = field216; }
+    public Integer getField217() { return field217; }
+    public void setField217(Integer field217) { this.field217 = field217; }
+    public Integer getField218() { return field218; }
+    public void setField218(Integer field218) { this.field218 = field218; }
+    public Integer getField219() { return field219; }
+    public void setField219(Integer field219) { this.field219 = field219; }
+    public Integer getField220() { return field220; }
+    public void setField220(Integer field220) { this.field220 = field220; }
+    public Integer getField221() { return field221; }
+    public void setField221(Integer field221) { this.field221 = field221; }
+    public Integer getField222() { return field222; }
+    public void setField222(Integer field222) { this.field222 = field222; }
+    public Integer getField223() { return field223; }
+    public void setField223(Integer field223) { this.field223 = field223; }
+    public Integer getField224() { return field224; }
+    public void setField224(Integer field224) { this.field224 = field224; }
+    public Integer getField225() { return field225; }
+    public void setField225(Integer field225) { this.field225 = field225; }
+    public Integer getField226() { return field226; }
+    public void setField226(Integer field226) { this.field226 = field226; }
+    public Integer getField227() { return field227; }
+    public void setField227(Integer field227) { this.field227 = field227; }
+    public Integer getField228() { return field228; }
+    public void setField228(Integer field228) { this.field228 = field228; }
+    public Integer getField229() { return field229; }
+    public void setField229(Integer field229) { this.field229 = field229; }
+    public Integer getField230() { return field230; }
+    public void setField230(Integer field230) { this.field230 = field230; }
+    public Integer getField231() { return field231; }
+    public void setField231(Integer field231) { this.field231 = field231; }
+    public Integer getField232() { return field232; }
+    public void setField232(Integer field232) { this.field232 = field232; }
+    public Integer getField233() { return field233; }
+    public void setField233(Integer field233) { this.field233 = field233; }
+    public Integer getField234() { return field234; }
+    public void setField234(Integer field234) { this.field234 = field234; }
+    public Integer getField235() { return field235; }
+    public void setField235(Integer field235) { this.field235 = field235; }
+    public Integer getField236() { return field236; }
+    public void setField236(Integer field236) { this.field236 = field236; }
+    public Integer getField237() { return field237; }
+    public void setField237(Integer field237) { this.field237 = field237; }
+    public Integer getField238() { return field238; }
+    public void setField238(Integer field238) { this.field238 = field238; }
+    public Integer getField239() { return field239; }
+    public void setField239(Integer field239) { this.field239 = field239; }
+    public Integer getField240() { return field240; }
+    public void setField240(Integer field240) { this.field240 = field240; }
+    public Integer getField241() { return field241; }
+    public void setField241(Integer field241) { this.field241 = field241; }
+    public Integer getField242() { return field242; }
+    public void setField242(Integer field242) { this.field242 = field242; }
+    public Integer getField243() { return field243; }
+    public void setField243(Integer field243) { this.field243 = field243; }
+    public Integer getField244() { return field244; }
+    public void setField244(Integer field244) { this.field244 = field244; }
+    public Integer getField245() { return field245; }
+    public void setField245(Integer field245) { this.field245 = field245; }
+    public Integer getField246() { return field246; }
+    public void setField246(Integer field246) { this.field246 = field246; }
+    public Integer getField247() { return field247; }
+    public void setField247(Integer field247) { this.field247 = field247; }
+    public Integer getField248() { return field248; }
+    public void setField248(Integer field248) { this.field248 = field248; }
+    public Integer getField249() { return field249; }
+    public void setField249(Integer field249) { this.field249 = field249; }
+    public Integer getField250() { return field250; }
+    public void setField250(Integer field250) { this.field250 = field250; }
 }
