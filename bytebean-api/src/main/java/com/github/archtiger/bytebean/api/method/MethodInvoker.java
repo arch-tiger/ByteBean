@@ -17,6 +17,8 @@ public abstract class MethodInvoker {
      */
     public abstract Object invoke(int index, Object instance, Object... arguments);
 
+    public abstract Object invoke(int index, Object instance, Object arg);
+
     public abstract Object invoke(int index, Object instance);
 
     /**

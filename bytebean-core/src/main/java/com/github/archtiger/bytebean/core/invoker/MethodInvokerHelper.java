@@ -1,11 +1,11 @@
 package com.github.archtiger.bytebean.core.invoker;
 
 import cn.hutool.core.util.ClassUtil;
+import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerGenerator;
 import com.github.archtiger.bytebean.core.model.MethodInvokerResult;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;
-import com.github.archtiger.bytebean.api.method.MethodInvoker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author ZIJIDELU
  * @datetime 2026/1/11 21:23
  */
-public class MethodInvokerHelper {
+public class MethodInvokerHelper extends MethodInvoker {
     private final MethodInvoker methodInvoker;
     private final String[] methodNames;
     private final Class<?>[][] methodParamTypes;
@@ -215,4 +215,98 @@ public class MethodInvokerHelper {
         return methodInvoker.invokeBoolean1(methodIndex, target, arg1);
     }
 
+    @Override
+    public Object invoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.invoke(index, instance, arguments);
+    }
+
+    @Override
+    public Object invoke(int index, Object instance) {
+        return methodInvoker.invoke(index, instance);
+    }
+
+    @Override
+    public Object invoke(int index, Object instance, Object arg) {
+        return methodInvoker.invoke(index, instance, arg);
+    }
+
+    @Override
+    public int intInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.intInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public long longInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.longInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public float floatInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.floatInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public double doubleInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.doubleInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public boolean booleanInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.booleanInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public byte byteInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.byteInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public short shortInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.shortInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public char charInvoke(int index, Object instance, Object... arguments) {
+        return methodInvoker.charInvoke(index, instance, arguments);
+    }
+
+    @Override
+    public Object invokeInt1(int index, Object instance, int arg) {
+        return methodInvoker.invokeInt1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeLong1(int index, Object instance, long arg) {
+        return methodInvoker.invokeLong1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeFloat1(int index, Object instance, float arg) {
+        return methodInvoker.invokeFloat1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeDouble1(int index, Object instance, double arg) {
+        return methodInvoker.invokeDouble1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeBoolean1(int index, Object instance, boolean arg) {
+        return methodInvoker.invokeBoolean1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeByte1(int index, Object instance, byte arg) {
+        return methodInvoker.invokeByte1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeShort1(int index, Object instance, short arg) {
+        return methodInvoker.invokeShort1(index, instance, arg);
+    }
+
+    @Override
+    public Object invokeChar1(int index, Object instance, char arg) {
+        return methodInvoker.invokeChar1(index, instance, arg);
+    }
 }

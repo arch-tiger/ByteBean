@@ -27,11 +27,11 @@ import java.util.List;
  *
  * @author ZIJIDELU
  */
-public final class MethodInvokerImpl implements Implementation {
+public final class MethodByteCode implements Implementation {
     private final Class<?> targetClass;
     private final List<Method> methods;
 
-    public MethodInvokerImpl(Class<?> targetClass, List<Method> methods) {
+    public MethodByteCode(Class<?> targetClass, List<Method> methods) {
         this.targetClass = targetClass;
         this.methods = methods;
     }

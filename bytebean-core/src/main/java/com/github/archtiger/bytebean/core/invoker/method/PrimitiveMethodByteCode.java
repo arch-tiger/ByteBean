@@ -21,12 +21,12 @@ import java.util.List;
  * @author ZIJIDELU
  * @datetime 2026/1/11
  */
-public final class PrimitiveMethodInvokerImpl implements Implementation {
+public final class PrimitiveMethodByteCode implements Implementation {
     private final Class<?> targetClass;
     private final List<Method> methods;
     private final Class<?> primitiveType;
 
-    public PrimitiveMethodInvokerImpl(Class<?> targetClass, List<Method> methods, Class<?> primitiveType) {
+    public PrimitiveMethodByteCode(Class<?> targetClass, List<Method> methods, Class<?> primitiveType) {
         this.targetClass = targetClass;
         this.methods = methods;
         this.primitiveType = primitiveType;

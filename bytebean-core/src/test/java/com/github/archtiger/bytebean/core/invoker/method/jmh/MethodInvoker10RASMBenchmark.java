@@ -1,7 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.method.jmh;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import com.github.archtiger.bytebean.core.invoker.MethodInvokerHelper;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -37,7 +36,6 @@ public class MethodInvoker10RASMBenchmark {
 
     // ========== MethodInvokerHelper ==========
     private MethodInvokerHelper methodInvokerHelper;
-    private MethodInvoker methodInvoker;
     private List<Integer> methodInvokerHelperGetterIndexes;
     private List<Integer> methodInvokerHelperSetterIndexes;
 
@@ -54,7 +52,6 @@ public class MethodInvoker10RASMBenchmark {
 
         // 初始化 MethodInvokerHelper
         methodInvokerHelper = MethodInvokerHelper.of(Field10Entity.class);
-        methodInvoker = methodInvokerHelper.getMethodInvoker();
         methodInvokerHelperGetterIndexes = new ArrayList<>(TEST_COUNT);
         methodInvokerHelperSetterIndexes = new ArrayList<>(TEST_COUNT);
 
@@ -105,7 +102,7 @@ public class MethodInvoker10RASMBenchmark {
     public void test_MethodInvokerHelper_Getter_Varargs(Blackhole bh) throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperGetterIndexes.get(i);
-            Object result = methodInvoker.invoke(index, entity);
+            Object result = methodInvokerHelper.invoke(index, entity);
             bh.consume(result);
         }
     }
@@ -114,7 +111,7 @@ public class MethodInvoker10RASMBenchmark {
     public void test_MethodInvokerHelper_Setter_Varargs(Blackhole bh) throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperSetterIndexes.get(i);
-            methodInvoker.invoke(index, entity, testValue);
+            methodInvokerHelper.invoke(index, entity, testValue);
         }
     }
 
