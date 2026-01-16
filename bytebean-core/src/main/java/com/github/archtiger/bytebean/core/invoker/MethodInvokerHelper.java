@@ -74,7 +74,7 @@ public final class MethodInvokerHelper extends MethodInvoker {
     /**
      * 调用方法，返回Object类型结果
      */
-    public Object invoke(Object target, String methodName, Object... args) {
+    public Object invoke1(Object target, String methodName, Object... args) {
         int methodIndex = getMethodIndexOrThrow(methodName, ClassUtil.getClasses(args));
 
         return methodInvoker.invoke(methodIndex, target, args);
@@ -219,8 +219,8 @@ public final class MethodInvokerHelper extends MethodInvoker {
     }
 
     @Override
-    public Object invoke(int index, Object instance, Object arg) {
-        return methodInvoker.invoke(index, instance, arg);
+    public Object invoke1(int index, Object instance, Object arg) {
+        return methodInvoker.invoke1(index, instance, arg);
     }
 
     @Override

@@ -63,7 +63,7 @@ public final class MethodInvokerGenerator {
                     .withParameters(int.class, Object.class, Object[].class)
                     .intercept(new MethodByteCode(targetClass, methods))
                     // 定义 invoke 方法: Object invoke(int index, Object instance, Object arg0)
-                    .defineMethod("invoke", Object.class, Visibility.PUBLIC, MethodManifestation.FINAL)
+                    .defineMethod("invoke1", Object.class, Visibility.PUBLIC, MethodManifestation.FINAL)
                     .withParameters(int.class, Object.class, Object.class)
                     .intercept(new MethodP1ByteCode(targetClass, methods))
                     // 定义 invoke 方法: Object invoke(int index, Object instance)

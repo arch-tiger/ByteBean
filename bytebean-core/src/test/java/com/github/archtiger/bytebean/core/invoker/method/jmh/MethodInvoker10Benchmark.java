@@ -238,7 +238,7 @@ public class MethodInvoker10Benchmark {
     public void test_MethodInvokerHelper_Setter_Varargs(Blackhole bh) throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperSetterIndexes.get(i);
-            methodInvokerHelper.invoke(index, entity, testValue);
+            methodInvokerHelper.invoke1(index, entity, testValue);
         }
     }
     

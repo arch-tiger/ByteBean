@@ -1,7 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
 import com.github.archtiger.bytebean.core.support.AsmUtil;
-import com.github.archtiger.bytebean.core.support.ByteCodeSizeUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -13,10 +12,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * 基本类型方法调用实现类
- * <p>
- * 实现 MethodAccess 的基本类型返回方法（intInvoke, longInvoke 等）
- * 直接返回基本类型，避免装箱
+ * 基本类型返回方法调用实现类
  *
  * @author ZIJIDELU
  * @datetime 2026/1/11
@@ -36,13 +32,17 @@ public final class PrimitiveMethodByteCode implements Implementation {
     public ByteCodeAppender appender(Target implementationTarget) {
         return (mv, ctx, md) -> {
             String owner = Type.getInternalName(targetClass);
-            String generatedClassName = implementationTarget.getInstrumentedType().getInternalName();
 
-            // slot: 0=this, 1=index, 2=instance, 3=arguments, 4=castedInstance
+            // ============================================================
+            // 1. 预加载并强转 Instance (Slot 2 -> Slot 4)
+            // ============================================================
             mv.visitVarInsn(Opcodes.ALOAD, 2);
             mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
             mv.visitVarInsn(Opcodes.ASTORE, 4);
 
+            // ============================================================
+            // 2. 加载 Index 并初始化 Switch
+            // ============================================================
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
             Label defaultLabel = new Label();
@@ -51,23 +51,20 @@ public final class PrimitiveMethodByteCode implements Implementation {
                 labels[i] = new Label();
             }
 
-            mv.visitTableSwitchInsn(0, methods.size() - 1, defaultLabel, labels);
+            if (!methods.isEmpty()) {
+                mv.visitTableSwitchInsn(0, methods.size() - 1, defaultLabel, labels);
+            } else {
+                mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
+            }
 
-            // case 0..N
+            // ============================================================
+            // 3. 生成 Case 分支
+            // ============================================================
             for (int i = 0; i < methods.size(); i++) {
                 Method method = methods.get(i);
                 mv.visitLabel(labels[i]);
-                mv.visitFrame(Opcodes.F_NEW, 5,
-                        new Object[]{
-                                generatedClassName,
-                                Opcodes.INTEGER,
-                                "java/lang/Object",
-                                "[Ljava/lang/Object;",
-                                owner
-                        },
-                        0, new Object[0]);
 
-                // 只处理返回指定基本类型的方法，其他类型跳转到 default 分支
+                // 防御性检查：只处理返回值类型匹配的方法
                 if (method.getReturnType() != primitiveType) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
@@ -76,12 +73,41 @@ public final class PrimitiveMethodByteCode implements Implementation {
                 // 加载目标对象
                 mv.visitVarInsn(Opcodes.ALOAD, 4);
 
-                // 加载方法参数
+                // 循环加载参数
                 Class<?>[] paramTypes = method.getParameterTypes();
                 for (int j = 0; j < paramTypes.length; j++) {
-                    mv.visitVarInsn(Opcodes.ALOAD, 3);   // Object[] arguments
-                    mv.visitIntInsn(Opcodes.BIPUSH, j);
-                    mv.visitInsn(Opcodes.AALOAD);         // arguments[j]
+                    // A. 加载 Args 数组
+                    mv.visitVarInsn(Opcodes.ALOAD, 3);
+
+                    // B. 加载索引 (优化为单字节指令)
+                    switch (j) {
+                        case 0:
+                            mv.visitInsn(Opcodes.ICONST_0);
+                            break;
+                        case 1:
+                            mv.visitInsn(Opcodes.ICONST_1);
+                            break;
+                        case 2:
+                            mv.visitInsn(Opcodes.ICONST_2);
+                            break;
+                        case 3:
+                            mv.visitInsn(Opcodes.ICONST_3);
+                            break;
+                        case 4:
+                            mv.visitInsn(Opcodes.ICONST_4);
+                            break;
+                        case 5:
+                            mv.visitInsn(Opcodes.ICONST_5);
+                            break;
+                        default:
+                            mv.visitIntInsn(Opcodes.BIPUSH, j);
+                            break;
+                    }
+
+                    // C. 读取数组元素
+                    mv.visitInsn(Opcodes.AALOAD);
+
+                    // D. 参数适配 (拆箱或强转)
                     AsmUtil.unboxOrCast(mv, paramTypes[j]);
                 }
 
@@ -98,49 +124,16 @@ public final class PrimitiveMethodByteCode implements Implementation {
                 mv.visitInsn(AsmUtil.getReturnOpcode(primitiveType));
             }
 
-            // default
+            // ============================================================
+            // 4. Default 分支
+            // ============================================================
             mv.visitLabel(defaultLabel);
-            mv.visitFrame(Opcodes.F_NEW, 5,
-                    new Object[]{
-                            generatedClassName,
-                            Opcodes.INTEGER,
-                            "java/lang/Object",
-                            "[Ljava/lang/Object;",
-                            owner
-                    },
-                    0, new Object[0]);
-
             AsmUtil.throwIAEForMethod(mv);
 
-            // 计算最大栈深度
-            int maxStack = 0;
-            int maxLocals = 5;
-
-            for (Method method : methods) {
-                if (method.getReturnType() == primitiveType) {
-                    Class<?>[] params = method.getParameterTypes();
-                    int methodStack = 1; // target
-                    for (Class<?> p : params) {
-                        methodStack += ByteCodeSizeUtil.slotSize(p);
-                        if (p.isPrimitive()) {
-                            methodStack += 1; // 拆箱临时栈
-                        }
-                    }
-                    if (params.length > 0) {
-                        methodStack += 2; // ALOAD args + BIPUSH index
-                    }
-                    
-                    if (methodStack > maxStack) {
-                        maxStack = methodStack;
-                    }
-                }
-            }
-
-            if (maxStack < 4) {
-                maxStack = 4;
-            }
-
-            return new ByteCodeAppender.Size(maxStack, maxLocals);
+            // ============================================================
+            // 5. 返回 ZERO，由 ByteBuddy/ASM 自动计算
+            // ============================================================
+            return ByteCodeAppender.Size.ZERO;
         };
     }
 

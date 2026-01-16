@@ -61,7 +61,7 @@ class MethodInvokerTest {
         int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
         int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
 
-        Object result = methodInvoker.invoke(setIntIndex, entity, 100); // setInt(int)
+        Object result = methodInvoker.invoke1(setIntIndex, entity, 100); // setInt(int)
         assertNull(result); // void 方法返回 null
 
         result = methodInvoker.invoke(getIntIndex, entity); // getInt()
@@ -104,31 +104,31 @@ class MethodInvokerTest {
         int setStringIndex = methodInvokerHelper.getMethodIndex("setString", String.class);
         int getStringIndex = methodInvokerHelper.getMethodIndex("getString");
 
-        methodInvoker.invoke(setIntIndex, entity, 100); // setInt
+        methodInvoker.invoke1(setIntIndex, entity, 100); // setInt
         assertEquals(100, ((Integer) methodInvoker.invoke(getIntIndex, entity)).intValue());
 
-        methodInvoker.invoke(setLongIndex, entity, 200L); // setLong
+        methodInvoker.invoke1(setLongIndex, entity, 200L); // setLong
         assertEquals(200L, ((Long) methodInvoker.invoke(getLongIndex, entity)).longValue());
 
-        methodInvoker.invoke(setFloatIndex, entity, 3.14f); // setFloat
+        methodInvoker.invoke1(setFloatIndex, entity, 3.14f); // setFloat
         assertEquals(3.14f, ((Float) methodInvoker.invoke(getFloatIndex, entity)).floatValue(), 0.0001f);
 
-        methodInvoker.invoke(setDoubleIndex, entity, 2.71828); // setDouble
+        methodInvoker.invoke1(setDoubleIndex, entity, 2.71828); // setDouble
         assertEquals(2.71828, ((Double) methodInvoker.invoke(getDoubleIndex, entity)).doubleValue(), 0.000001);
 
-        methodInvoker.invoke(setBooleanIndex, entity, true); // setBoolean
+        methodInvoker.invoke1(setBooleanIndex, entity, true); // setBoolean
         assertEquals(true, methodInvoker.invoke(getBooleanIndex, entity));
 
-        methodInvoker.invoke(setByteIndex, entity, (byte) 42); // setByte
+        methodInvoker.invoke1(setByteIndex, entity, (byte) 42); // setByte
         assertEquals((byte) 42, ((Byte) methodInvoker.invoke(getByteIndex, entity)).byteValue());
 
-        methodInvoker.invoke(setShortIndex, entity, (short) 123); // setShort
+        methodInvoker.invoke1(setShortIndex, entity, (short) 123); // setShort
         assertEquals((short) 123, ((Short) methodInvoker.invoke(getShortIndex, entity)).shortValue());
 
-        methodInvoker.invoke(setCharIndex, entity, 'A'); // setChar
+        methodInvoker.invoke1(setCharIndex, entity, 'A'); // setChar
         assertEquals('A', ((Character) methodInvoker.invoke(getCharIndex, entity)).charValue());
 
-        methodInvoker.invoke(setStringIndex, entity, "test"); // setString
+        methodInvoker.invoke1(setStringIndex, entity, "test"); // setString
         assertEquals("test", methodInvoker.invoke(getStringIndex, entity));
     }
 
@@ -405,7 +405,7 @@ class MethodInvokerTest {
         methodInvoker.invokeFloat1(setFloatIndex, entity, 0.0f); // setFloat
         assertEquals(0.0f, methodInvoker.floatInvoke(getFloatIndex, entity), 0.0f);
 
-        methodInvoker.invoke(setFloatIndex, entity, -0.0f); // setFloat
+        methodInvoker.invoke1(setFloatIndex, entity, -0.0f); // setFloat
         assertEquals(-0.0f, methodInvoker.floatInvoke(getFloatIndex, entity), 0.0f);
     }
 
@@ -579,7 +579,7 @@ class MethodInvokerTest {
         });
 
         assertThrows(NullPointerException.class, () -> {
-            methodInvoker.invoke(setIntIndex, null, 100);
+            methodInvoker.invoke1(setIntIndex, null, 100);
         });
 
         assertThrows(NullPointerException.class, () -> {
@@ -622,10 +622,10 @@ class MethodInvokerTest {
         int setIntegerIndex = methodInvokerHelper.getMethodIndex("setInteger", Integer.class);
         int getIntegerIndex = methodInvokerHelper.getMethodIndex("getInteger");
 
-        methodInvoker.invoke(setStringIndex, entity, (String) null); // setString(null)
+        methodInvoker.invoke1(setStringIndex, entity, (String) null); // setString(null)
         assertNull(methodInvoker.invoke(getStringIndex, entity)); // getString() 应该返回 null
 
-        methodInvoker.invoke(setIntegerIndex, entity, (Integer) null); // setInteger(null)
+        methodInvoker.invoke1(setIntegerIndex, entity, (Integer) null); // setInteger(null)
         assertNull(methodInvoker.invoke(getIntegerIndex, entity)); // getInteger() 应该返回 null
     }
 
@@ -638,7 +638,7 @@ class MethodInvokerTest {
         Object result = methodInvoker.invoke(voidMethodIndex, entity); // voidMethod()
         assertNull(result);
 
-        result = methodInvoker.invoke(setIntIndex, entity, 100); // setInt(int) - void
+        result = methodInvoker.invoke1(setIntIndex, entity, 100); // setInt(int) - void
         assertNull(result);
     }
 
@@ -651,7 +651,7 @@ class MethodInvokerTest {
         int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
 
         for (int i = 0; i < 10; i++) {
-            methodInvoker.invoke(setIntIndex, entity, i); // setInt
+            methodInvoker.invoke1(setIntIndex, entity, i); // setInt
             Object result = methodInvoker.invoke(getIntIndex, entity); // getInt
             assertEquals(i, ((Integer) result).intValue());
         }
@@ -669,10 +669,10 @@ class MethodInvokerTest {
         int setDoubleIndex = methodInvokerHelper.getMethodIndex("setDouble", double.class);
         int getDoubleIndex = methodInvokerHelper.getMethodIndex("getDouble");
 
-        methodInvoker.invoke(setIntIndex, entity, 100); // setInt
-        methodInvoker.invoke(setLongIndex, entity, 200L); // setLong
-        methodInvoker.invoke(setFloatIndex, entity, 3.14f); // setFloat
-        methodInvoker.invoke(setDoubleIndex, entity, 2.71828); // setDouble
+        methodInvoker.invoke1(setIntIndex, entity, 100); // setInt
+        methodInvoker.invoke1(setLongIndex, entity, 200L); // setLong
+        methodInvoker.invoke1(setFloatIndex, entity, 3.14f); // setFloat
+        methodInvoker.invoke1(setDoubleIndex, entity, 2.71828); // setDouble
 
         assertEquals(100, ((Integer) methodInvoker.invoke(getIntIndex, entity)).intValue());
         assertEquals(200L, ((Long) methodInvoker.invoke(getLongIndex, entity)).longValue());
@@ -689,7 +689,7 @@ class MethodInvokerTest {
         methodInvoker.invokeInt1(setIntIndex, entity, 100); // setInt
         assertEquals(100, methodInvoker.intInvoke(getIntIndex, entity)); // getInt
 
-        Object result = methodInvoker.invoke(setIntIndex, entity, 200); // setInt using invoke
+        Object result = methodInvoker.invoke1(setIntIndex, entity, 200); // setInt using invoke
         assertNull(result);
         assertEquals(200, ((Integer) methodInvoker.invoke(getIntIndex, entity)).intValue());
 
@@ -707,7 +707,7 @@ class MethodInvokerTest {
         int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
 
         for (int i = 0; i < 1000; i++) {
-            methodInvoker.invoke(setIntIndex, entity, i); // setInt
+            methodInvoker.invoke1(setIntIndex, entity, i); // setInt
             Object result = methodInvoker.invoke(getIntIndex, entity); // getInt
             assertEquals(i, ((Integer) result).intValue());
         }
@@ -779,7 +779,7 @@ class MethodInvokerTest {
         int getStringIndex = methodInvokerHelper.getMethodIndex("getString");
         String[] testStrings = {"", " ", "test", "中文", "null", "\n", "\t", "\\", "\""};
         for (String str : testStrings) {
-            methodInvoker.invoke(setStringIndex, entity, str); // setString
+            methodInvoker.invoke1(setStringIndex, entity, str); // setString
             assertEquals(str, methodInvoker.invoke(getStringIndex, entity)); // getString
         }
     }
@@ -827,7 +827,7 @@ class MethodInvokerTest {
         int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
 
         for (int i = 0; i < 100; i++) {
-            methodInvoker.invoke(setIntIndex, entity, 42); // setInt
+            methodInvoker.invoke1(setIntIndex, entity, 42); // setInt
             Object result = methodInvoker.invoke(getIntIndex, entity); // getInt
             assertEquals(42, ((Integer) result).intValue());
         }
@@ -841,11 +841,11 @@ class MethodInvokerTest {
         int setLongIndex = methodInvokerHelper.getMethodIndex("setLong", long.class);
         int addLongIndex = methodInvokerHelper.getMethodIndex("addLong", long.class);
 
-        methodInvoker.invoke(setIntIndex, entity, 10); // setInt(10)
+        methodInvoker.invoke1(setIntIndex, entity, 10); // setInt(10)
         int result = methodInvoker.intInvoke(addIntIndex, entity, 20); // addInt(20) -> 返回 30
         assertEquals(30, result);
 
-        methodInvoker.invoke(setLongIndex, entity, 100L); // setLong(100L)
+        methodInvoker.invoke1(setLongIndex, entity, 100L); // setLong(100L)
         long longResult = methodInvoker.longInvoke(addLongIndex, entity, 200L); // addLong(200L) -> 返回 300L
         assertEquals(300L, longResult);
     }
@@ -883,5 +883,385 @@ class MethodInvokerTest {
             assertNotNull(e.getMessage());
             assertTrue(e.getMessage().contains("Invalid") || e.getMessage().contains("index"));
         }
+    }
+
+    // ==================== 参数为null的测试 ====================
+
+    @Test
+    void testNullArgumentsInVarargsInvoke() {
+        // 测试可变参数invoke中的null参数
+        int setStringIndex = methodInvokerHelper.getMethodIndex("setString", String.class);
+        int getStringIndex = methodInvokerHelper.getMethodIndex("getString");
+        int setIntegerIndex = methodInvokerHelper.getMethodIndex("setInteger", Integer.class);
+        int getIntegerIndex = methodInvokerHelper.getMethodIndex("getInteger");
+
+        // 使用varargs设置null
+        methodInvoker.invoke(setStringIndex, entity, new Object[]{null});
+        assertNull(methodInvoker.invoke(getStringIndex, entity));
+
+        methodInvoker.invoke(setIntegerIndex, entity, new Object[]{null});
+        assertNull(methodInvoker.invoke(getIntegerIndex, entity));
+    }
+
+    @Test
+    void testNullArgumentInSingleArgInvoke() {
+        // 测试单参数invoke中的null参数
+        int setStringIndex = methodInvokerHelper.getMethodIndex("setString", String.class);
+        int getStringIndex = methodInvokerHelper.getMethodIndex("getString");
+
+        Object result = methodInvoker.invoke1(setStringIndex, entity, null);
+        assertNull(result);
+        assertNull(methodInvoker.invoke(getStringIndex, entity));
+    }
+
+    @Test
+    void testNullArrayInVarargsInvoke() {
+        // 测试varargs invoke中传入null数组
+        // 注意：传入null数组会抛出NullPointerException
+        int setStringIndex = methodInvokerHelper.getMethodIndex("setString", String.class);
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setStringIndex, entity, (Object[]) null);
+        });
+    }
+
+    @Test
+    void testNullArgumentsForPrimitiveParams() {
+        // 测试基本类型参数传入null
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，传入null会抛出NullPointerException
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int setLongIndex = methodInvokerHelper.getMethodIndex("setLong", long.class);
+        int setFloatIndex = methodInvokerHelper.getMethodIndex("setFloat", float.class);
+        int setDoubleIndex = methodInvokerHelper.getMethodIndex("setDouble", double.class);
+        int setBooleanIndex = methodInvokerHelper.getMethodIndex("setBoolean", boolean.class);
+        int setByteIndex = methodInvokerHelper.getMethodIndex("setByte", byte.class);
+        int setShortIndex = methodInvokerHelper.getMethodIndex("setShort", short.class);
+        int setCharIndex = methodInvokerHelper.getMethodIndex("setChar", char.class);
+
+        // 基本类型参数不能为null，自动拆箱时会抛出NullPointerException
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setIntIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setLongIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setFloatIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setDoubleIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setBooleanIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setByteIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setShortIndex, entity, new Object[]{null});
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke(setCharIndex, entity, new Object[]{null});
+        });
+    }
+
+    @Test
+    void testNullArgumentForPrimitiveParamsSingleArgInvoke() {
+        // 测试单参数invoke中基本类型参数传入null
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，传入null会抛出NullPointerException
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int setLongIndex = methodInvokerHelper.getMethodIndex("setLong", long.class);
+        int setFloatIndex = methodInvokerHelper.getMethodIndex("setFloat", float.class);
+        int setDoubleIndex = methodInvokerHelper.getMethodIndex("setDouble", double.class);
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke1(setIntIndex, entity, (Object) null);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke1(setLongIndex, entity, (Object) null);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke1(setFloatIndex, entity, (Object) null);
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            methodInvoker.invoke1(setDoubleIndex, entity, (Object) null);
+        });
+    }
+
+    // ==================== 参数数量不匹配的测试 ====================
+    // 注意：参数数量不匹配时，MethodInvokerHelper的getMethodIndex方法会抛出IllegalArgumentException
+    // 这些测试被移除，因为测试的是MethodInvokerHelper的行为而不是MethodInvoker本身
+
+    @Test
+    void testCorrectArgumentCountEdgeCases() {
+        // 测试正确参数数量的边界情况
+        int addTwoIntsIndex = methodInvokerHelper.getMethodIndex("addTwoInts", int.class, int.class);
+        int addThreeDoublesIndex = methodInvokerHelper.getMethodIndex("addThreeDoubles", double.class, double.class, double.class);
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
+        int voidMethodIndex = methodInvokerHelper.getMethodIndex("voidMethod");
+
+        // 正确的参数数量应该正常工作
+        Object result = methodInvoker.invoke(addTwoIntsIndex, entity, new Object[]{10, 20});
+        assertEquals(30, ((Integer) result).intValue());
+
+        result = methodInvoker.invoke(addThreeDoublesIndex, entity, new Object[]{1.0, 2.0, 3.0});
+        assertEquals(6.0, ((Double) result).doubleValue(), 0.000001);
+
+        methodInvoker.invoke(setIntIndex, entity, new Object[]{100});
+        assertEquals(100, ((Integer) methodInvoker.invoke(getIntIndex, entity)).intValue());
+
+        // void方法无参数
+        result = methodInvoker.invoke(voidMethodIndex, entity);
+        assertNull(result);
+    }
+
+    // ==================== 参数类型不匹配的测试 ====================
+
+    @Test
+    void testWrongArgumentTypeForInt() {
+        // 测试int参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int addIntIndex = methodInvokerHelper.getMethodIndex("addInt", int.class);
+
+        // int参数不能接收String - 会抛出ClassCastException
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setIntIndex, entity, new Object[]{"not a number"});
+        });
+
+        // int参数不能接收long - 会抛出ClassCastException
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setIntIndex, entity, new Object[]{100L});
+        });
+
+        // int参数不能接收double - 会抛出ClassCastException
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setIntIndex, entity, new Object[]{1.5});
+        });
+
+        // int参数不能接收boolean - 会抛出ClassCastException
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setIntIndex, entity, new Object[]{true});
+        });
+
+        // 正确的int类型应该工作
+        methodInvoker.invoke(setIntIndex, entity, new Object[]{42});
+        assertEquals(42, ((Integer) methodInvoker.invoke(addIntIndex, entity, new Object[]{0})).intValue());
+    }
+
+    @Test
+    void testWrongArgumentTypeForLong() {
+        // 测试long参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setLongIndex = methodInvokerHelper.getMethodIndex("setLong", long.class);
+        int addLongIndex = methodInvokerHelper.getMethodIndex("addLong", long.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setLongIndex, entity, new Object[]{"not a number"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setLongIndex, entity, new Object[]{1.5});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setLongIndex, entity, new Object[]{true});
+        });
+
+        // 正确的long类型应该工作
+        methodInvoker.invoke(setLongIndex, entity, new Object[]{1000L});
+        assertEquals(1000L, ((Long) methodInvoker.invoke(addLongIndex, entity, new Object[]{0L})).longValue());
+    }
+
+    @Test
+    void testWrongArgumentTypeForFloat() {
+        // 测试float参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setFloatIndex = methodInvokerHelper.getMethodIndex("setFloat", float.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setFloatIndex, entity, new Object[]{"not a number"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setFloatIndex, entity, new Object[]{true});
+        });
+
+        // 正确的float类型应该工作
+        methodInvoker.invoke(setFloatIndex, entity, new Object[]{3.14f});
+        assertEquals(3.14f, ((Float) methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getFloat"), entity)).floatValue(), 0.0001f);
+    }
+
+    @Test
+    void testWrongArgumentTypeForDouble() {
+        // 测试double参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setDoubleIndex = methodInvokerHelper.getMethodIndex("setDouble", double.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setDoubleIndex, entity, new Object[]{"not a number"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setDoubleIndex, entity, new Object[]{true});
+        });
+
+        // 正确的double类型应该工作
+        methodInvoker.invoke(setDoubleIndex, entity, new Object[]{2.71828});
+        assertEquals(2.71828, ((Double) methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getDouble"), entity)).doubleValue(), 0.000001);
+    }
+
+    @Test
+    void testWrongArgumentTypeForBoolean() {
+        // 测试boolean参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setBooleanIndex = methodInvokerHelper.getMethodIndex("setBoolean", boolean.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setBooleanIndex, entity, new Object[]{"not a boolean"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setBooleanIndex, entity, new Object[]{1});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setBooleanIndex, entity, new Object[]{1.0});
+        });
+
+        // 正确的boolean类型应该工作
+        methodInvoker.invoke(setBooleanIndex, entity, new Object[]{true});
+        assertEquals(true, methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getBoolean"), entity));
+    }
+
+    @Test
+    void testWrongArgumentTypeForByte() {
+        // 测试byte参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setByteIndex = methodInvokerHelper.getMethodIndex("setByte", byte.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setByteIndex, entity, new Object[]{"not a number"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setByteIndex, entity, new Object[]{true});
+        });
+
+        // 正确的byte类型应该工作
+        methodInvoker.invoke(setByteIndex, entity, new Object[]{(byte) 42});
+        assertEquals((byte) 42, ((Byte) methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getByte"), entity)).byteValue());
+    }
+
+    @Test
+    void testWrongArgumentTypeForShort() {
+        // 测试short参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setShortIndex = methodInvokerHelper.getMethodIndex("setShort", short.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setShortIndex, entity, new Object[]{"not a number"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setShortIndex, entity, new Object[]{true});
+        });
+
+        // 正确的short类型应该工作
+        methodInvoker.invoke(setShortIndex, entity, new Object[]{(short) 123});
+        assertEquals((short) 123, ((Short) methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getShort"), entity)).shortValue());
+    }
+
+    @Test
+    void testWrongArgumentTypeForChar() {
+        // 测试char参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setCharIndex = methodInvokerHelper.getMethodIndex("setChar", char.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setCharIndex, entity, new Object[]{"not a char"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setCharIndex, entity, new Object[]{65});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setCharIndex, entity, new Object[]{true});
+        });
+
+        // 正确的char类型应该工作
+        methodInvoker.invoke(setCharIndex, entity, new Object[]{'A'});
+        assertEquals('A', ((Character) methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getChar"), entity)).charValue());
+    }
+
+    @Test
+    void testWrongArgumentTypeForString() {
+        // 测试String参数传入错误类型
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int setStringIndex = methodInvokerHelper.getMethodIndex("setString", String.class);
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setStringIndex, entity, new Object[]{123});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(setStringIndex, entity, new Object[]{true});
+        });
+
+        // 正确的String类型应该工作
+        methodInvoker.invoke(setStringIndex, entity, new Object[]{"test"});
+        assertEquals("test", methodInvoker.invoke(methodInvokerHelper.getMethodIndex("getString"), entity));
+    }
+
+    @Test
+    void testMixedWrongArgumentTypes() {
+        // 测试多参数方法中的类型不匹配
+        // 注意：MethodInvoker不做类型检查，直接进行类型转换，会抛出ClassCastException
+        int addTwoIntsIndex = methodInvokerHelper.getMethodIndex("addTwoInts", int.class, int.class);
+        int addThreeDoublesIndex = methodInvokerHelper.getMethodIndex("addThreeDoubles", double.class, double.class, double.class);
+        int concatenateIndex = methodInvokerHelper.getMethodIndex("concatenate", String.class, String.class);
+
+        // 多参数方法中部分参数类型错误
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(addTwoIntsIndex, entity, new Object[]{10, "20"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(addTwoIntsIndex, entity, new Object[]{"10", 20});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(addThreeDoublesIndex, entity, new Object[]{1.0, 2.0, "3.0"});
+        });
+
+        assertThrows(ClassCastException.class, () -> {
+            methodInvoker.invoke(concatenateIndex, entity, new Object[]{"a", 123});
+        });
+
+        // 正确的参数类型应该工作
+        Object result = methodInvoker.invoke(addTwoIntsIndex, entity, new Object[]{10, 20});
+        assertEquals(30, ((Integer) result).intValue());
+
+        result = methodInvoker.invoke(concatenateIndex, entity, new Object[]{"hello", "world"});
+        assertEquals("helloworld", result);
+    }
+
+    @Test
+    void testArrayParameter() {
+        int concatenateIndex = methodInvokerHelper.getMethodIndex("concatenate", String.class, String.class);
+        Object result = methodInvoker.invoke(concatenateIndex, entity, new Object[]{"hello", "world"});
+        assertEquals("helloworld", result);
     }
 }
