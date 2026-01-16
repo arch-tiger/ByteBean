@@ -34,6 +34,14 @@ public class MethodP0ByteCode implements Implementation {
 
             String owner = Type.getInternalName(targetClass);
 
+            // Slot 1: int index
+            // Slot 2: Object instance
+
+            mv.visitVarInsn(Opcodes.ALOAD, 2); // 加载原始 instance
+            //【关键优化】0. 预加载并强转 instance
+            mv.visitTypeInsn(Opcodes.CHECKCAST, owner); // 强转为目标类型
+            mv.visitVarInsn(Opcodes.ASTORE, 3); // 存入 Slot 3 (使用局部变量缓存强转后的对象)
+
             // --- 1. 加载 index 参数 ---
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
@@ -55,17 +63,14 @@ public class MethodP0ByteCode implements Implementation {
                 Method method = methods.get(i);
                 mv.visitLabel(labels[i]);
 
-                // 判断是否有参方法
+                // 只处理无参方法
                 if (method.getParameterCount() != 0) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
                 }
 
-                // 加载 instance 并强转
-                mv.visitVarInsn(Opcodes.ALOAD, 2);
-                // 微优化：如果 targetClass 是 Object.class，CHECKCAST 是多余的，但在 ASM 中通常保留即可，
-                // JIT 会自动将其优化掉。
-                mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
+                // 【修改点】直接从 Slot 3 加载已强转的 instance，无需再次 CHECKCAST
+                mv.visitVarInsn(Opcodes.ALOAD, 3);
 
                 // 调用目标方法
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner, method.getName(),
@@ -86,10 +91,10 @@ public class MethodP0ByteCode implements Implementation {
             mv.visitLabel(defaultLabel);
             AsmUtil.throwIAEForMethod(mv);
 
-            // --- 5. 返回 Size 对象 ---
             return ByteCodeAppender.Size.ZERO;
         };
     }
+
 
     @Override
     public InstrumentedType prepare(InstrumentedType instrumentedType) {
