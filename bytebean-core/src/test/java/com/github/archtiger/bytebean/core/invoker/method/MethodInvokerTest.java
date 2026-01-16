@@ -1,12 +1,11 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
-import com.github.archtiger.bytebean.core.invoker.MethodInvokerHelper;
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
+import com.github.archtiger.bytebean.core.invoker.MethodInvokerHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * MethodAccess 接口的严格测试
@@ -38,7 +37,8 @@ class MethodInvokerTest {
     void testInvokeNoArgs() {
         // 测试无参数方法
         entity.setInt(42);
-        int result = methodInvokerHelper.intInvoke(entity, "getInt"); // getInt()
+        int index_1 = methodInvokerHelper.getMethodIndex("getInt");
+        int result = methodInvokerHelper.intInvoke(index_1, entity); // getInt()
         assertEquals(42, result);
 
         int index_2 = methodInvokerHelper.getMethodIndex("getString");
