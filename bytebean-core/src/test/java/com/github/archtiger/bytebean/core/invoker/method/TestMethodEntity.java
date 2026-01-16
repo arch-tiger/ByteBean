@@ -200,4 +200,57 @@ class TestMethodEntity {
     public char nextChar(char value) {
         return (char) (value + 1);
     }
+
+    // ==================== 数组/对象参数方法 ====================
+
+    public int[] getIntArray() {
+        return new int[]{intValue, intValue + 1, intValue + 2};
+    }
+
+    public int sumArray(int[] values) {
+        int sum = 0;
+        if (values != null) {
+            for (int value : values) {
+                sum += value;
+            }
+        }
+        return sum;
+    }
+
+    public String processObject(Object obj) {
+        return obj != null ? obj.toString() : "null";
+    }
+
+    // ==================== 数值运算方法 ====================
+
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+
+    public int subtract(int a, int b) {
+        return a - b;
+    }
+
+    // ==================== 递归方法 ====================
+
+    public int factorial(int n) {
+        if (n <= 1) {
+            return 1;
+        }
+        return n * factorial(n - 1);
+    }
+
+    // ==================== 返回数组方法 ====================
+
+    public String[] getStringArray() {
+        return new String[]{stringValue, stringValue + "2"};
+    }
+
+    public Object[] getMixedArray() {
+        return new Object[]{intValue, stringValue, booleanValue};
+    }
 }

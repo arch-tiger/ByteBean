@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * MethodAccess 接口的严格测试
@@ -1263,5 +1264,252 @@ class MethodInvokerTest {
         int concatenateIndex = methodInvokerHelper.getMethodIndex("concatenate", String.class, String.class);
         Object result = methodInvoker.invoke(concatenateIndex, entity, new Object[]{"hello", "world"});
         assertEquals("helloworld", result);
+    }
+
+    // ==================== 数值溢出测试 ====================
+
+    @Test
+    void testIntOverflow() {
+        int addIndex = methodInvokerHelper.getMethodIndex("add", int.class, int.class);
+
+        // Integer.MAX_VALUE + 1 应该溢出变成负数
+        int result = methodInvoker.intInvoke(addIndex, entity, Integer.MAX_VALUE, 1);
+        assertEquals(Integer.MIN_VALUE, result);
+
+        // Integer.MIN_VALUE - 1 应该溢出变成正数
+        result = methodInvoker.intInvoke(addIndex, entity, Integer.MIN_VALUE, -1);
+        assertEquals(Integer.MAX_VALUE, result);
+    }
+
+    @Test
+    void testIntMultiplyOverflow() {
+        int multiplyIndex = methodInvokerHelper.getMethodIndex("multiply", int.class, int.class);
+
+        // 46341 * 46341 会溢出 (超过 Integer.MAX_VALUE)
+        int result = methodInvoker.intInvoke(multiplyIndex, entity, 46341, 46341);
+        assertTrue(result < 0); // 溢出后变成负数
+    }
+
+    @Test
+    void testLongOverflow() {
+        int addIndex = methodInvokerHelper.getMethodIndex("addTwoLongs", long.class, long.class);
+
+        // Long.MAX_VALUE + 1 应该溢出变成负数
+        Object result = methodInvoker.invoke(addIndex, entity, Long.MAX_VALUE, 1L);
+        assertEquals(Long.MIN_VALUE, ((Long) result).longValue());
+
+        // Long.MIN_VALUE - 1 应该溢出变成正数
+        result = methodInvoker.invoke(addIndex, entity, Long.MIN_VALUE, -1L);
+        assertEquals(Long.MAX_VALUE, ((Long) result).longValue());
+    }
+
+    @Test
+    void testSubtractUnderflow() {
+        int subtractIndex = methodInvokerHelper.getMethodIndex("subtract", int.class, int.class);
+
+        // Integer.MIN_VALUE - 1 应该溢出变成 MAX_VALUE
+        int result = methodInvoker.intInvoke(subtractIndex, entity, Integer.MIN_VALUE, 1);
+        assertEquals(Integer.MAX_VALUE, result);
+    }
+
+    // ==================== 数组/对象参数测试 ====================
+
+    @Test
+    void testArrayReturnType() {
+        int getArrayIndex = methodInvokerHelper.getMethodIndex("getIntArray");
+
+        entity.setInt(10);
+        Object result = methodInvoker.invoke(getArrayIndex, entity);
+
+        assertNotNull(result);
+        assertTrue(result instanceof int[]);
+        int[] array = (int[]) result;
+        assertEquals(3, array.length);
+        assertEquals(10, array[0]);
+        assertEquals(11, array[1]);
+        assertEquals(12, array[2]);
+    }
+
+    @Test
+    void testArrayArgument() {
+        int sumArrayIndex = methodInvokerHelper.getMethodIndex("sumArray", int[].class);
+
+        int[] testArray = new int[]{1, 2, 3, 4, 5};
+        Object result = methodInvoker.invoke(sumArrayIndex, entity, new Object[]{testArray});
+
+        assertNotNull(result);
+        assertEquals(15, ((Integer) result).intValue());
+    }
+
+    @Test
+    void testNullArrayArgument() {
+        int sumArrayIndex = methodInvokerHelper.getMethodIndex("sumArray", int[].class);
+
+        Object result = methodInvoker.invoke(sumArrayIndex, entity, new Object[]{null});
+
+        assertNotNull(result);
+        assertEquals(0, ((Integer) result).intValue());
+    }
+
+    @Test
+    void testEmptyArrayArgument() {
+        int sumArrayIndex = methodInvokerHelper.getMethodIndex("sumArray", int[].class);
+
+        int[] emptyArray = new int[0];
+        Object result = methodInvoker.invoke(sumArrayIndex, entity, new Object[]{emptyArray});
+
+        assertNotNull(result);
+        assertEquals(0, ((Integer) result).intValue());
+    }
+
+    @Test
+    void testObjectArgument() {
+        int processObjectIndex = methodInvokerHelper.getMethodIndex("processObject", Object.class);
+
+        Object result = methodInvoker.invoke(processObjectIndex, entity, new Object[]{"test string"});
+        assertEquals("test string", result);
+
+        result = methodInvoker.invoke(processObjectIndex, entity, new Object[]{123});
+        assertEquals("123", result);
+
+        result = methodInvoker.invoke(processObjectIndex, entity, new Object[]{null});
+        assertEquals("null", result);
+    }
+
+    @Test
+    void testMixedArrayReturnType() {
+        int getMixedArrayIndex = methodInvokerHelper.getMethodIndex("getMixedArray");
+
+        entity.setInt(42);
+        entity.setString("hello");
+        entity.setBoolean(true);
+
+        Object result = methodInvoker.invoke(getMixedArrayIndex, entity);
+
+        assertNotNull(result);
+        assertTrue(result instanceof Object[]);
+        Object[] array = (Object[]) result;
+        assertEquals(3, array.length);
+        assertEquals(42, array[0]);
+        assertEquals("hello", array[1]);
+        assertEquals(true, array[2]);
+    }
+
+    @Test
+    void testStringArrayReturnType() {
+        int getStringArrayIndex = methodInvokerHelper.getMethodIndex("getStringArray");
+
+        entity.setString("test");
+        Object result = methodInvoker.invoke(getStringArrayIndex, entity);
+
+        assertNotNull(result);
+        assertTrue(result instanceof String[]);
+        String[] array = (String[]) result;
+        assertEquals(2, array.length);
+        assertEquals("test", array[0]);
+        assertEquals("test2", array[1]);
+    }
+
+    // ==================== 边界索引测试 ====================
+
+    @Test
+    void testFirstValidIndex() {
+        // 测试第一个有效索引 (获取实际的方法索引)
+        int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
+        entity.setInt(123);
+
+        Object result = methodInvoker.invoke(getIntIndex, entity);
+        assertEquals(123, ((Integer) result).intValue());
+    }
+
+    @Test
+    void testLastValidIndex() {
+        // 测试最后一个有效索引
+        // 获取所有方法索引来找到最后一个
+        int voidMethodIndex = methodInvokerHelper.getMethodIndex("voidMethod");
+
+        Object result = methodInvoker.invoke(voidMethodIndex, entity);
+        assertNull(result);
+    }
+
+    // ==================== 递归方法测试 ====================
+
+    @Test
+    void testRecursiveMethod() {
+        int factorialIndex = methodInvokerHelper.getMethodIndex("factorial", int.class);
+
+        // factorial(5) = 120
+        int result = methodInvoker.intInvoke(factorialIndex, entity, 5);
+        assertEquals(120, result);
+
+        // factorial(10) = 3628800
+        result = methodInvoker.intInvoke(factorialIndex, entity, 10);
+        assertEquals(3628800, result);
+
+        // factorial(0) = 1
+        result = methodInvoker.intInvoke(factorialIndex, entity, 0);
+        assertEquals(1, result);
+
+        // factorial(1) = 1
+        result = methodInvoker.intInvoke(factorialIndex, entity, 1);
+        assertEquals(1, result);
+    }
+
+    @Test
+    void testRecursiveMethodEdgeCase() {
+        int factorialIndex = methodInvokerHelper.getMethodIndex("factorial", int.class);
+
+        // factorial(12) = 479001600
+        int result = methodInvoker.intInvoke(factorialIndex, entity, 12);
+        assertEquals(479001600, result);
+    }
+
+    // ==================== 多实例测试 ====================
+
+    @Test
+    void testMultipleInstances() {
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
+
+        TestMethodEntity entity1 = new TestMethodEntity();
+        TestMethodEntity entity2 = new TestMethodEntity();
+
+        methodInvoker.invoke1(setIntIndex, entity1, 100);
+        methodInvoker.invoke1(setIntIndex, entity2, 200);
+
+        assertEquals(100, ((Integer) methodInvoker.invoke(getIntIndex, entity1)).intValue());
+        assertEquals(200, ((Integer) methodInvoker.invoke(getIntIndex, entity2)).intValue());
+    }
+
+    // ==================== 混合使用场景测试 ====================
+
+    @Test
+    void testMixedInvokeWithArrayAndPrimitives() {
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int getArrayIndex = methodInvokerHelper.getMethodIndex("getIntArray");
+        int sumArrayIndex = methodInvokerHelper.getMethodIndex("sumArray", int[].class);
+
+        // 设置值
+        methodInvoker.invoke1(setIntIndex, entity, 5);
+
+        // 获取数组
+        int[] array = (int[]) methodInvoker.invoke(getArrayIndex, entity);
+        assertArrayEquals(new int[]{5, 6, 7}, array);
+
+        // 对数组求和
+        int sum = ((Integer) methodInvoker.invoke(sumArrayIndex, entity, new Object[]{array})).intValue();
+        assertEquals(18, sum);
+    }
+
+    // ==================== 空参数测试补充 ====================
+
+    @Test
+    void testEmptyObjectArrayInInvoke1() {
+        int setIntIndex = methodInvokerHelper.getMethodIndex("setInt", int.class);
+        int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
+
+        // 使用 invoke1 设置值
+        methodInvoker.invoke1(setIntIndex, entity, 42);
+        assertEquals(42, ((Integer) methodInvoker.invoke(getIntIndex, entity)).intValue());
     }
 }
