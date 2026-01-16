@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * 针对无参方法的极速字节码实现（极致优化版）
+ * 针对无参方法的极速字节码实现
  * API: Object invoke(int index, Object instance)
  *
  * @author ZIJIDELU

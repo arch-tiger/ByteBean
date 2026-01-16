@@ -34,6 +34,14 @@ public class MethodP1ByteCode implements Implementation {
 
             String owner = Type.getInternalName(targetClass);
 
+            // ============================================================
+            // 【关键优化】0. 预加载并强转 instance
+            // 注意：Slot 3 被 arg 占用，所以这里必须存入 Slot 4
+            // ============================================================
+            mv.visitVarInsn(Opcodes.ALOAD, 2); // Slot 2: Object instance
+            mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
+            mv.visitVarInsn(Opcodes.ASTORE, 4); // Slot 4: TargetClass instance (Casted)
+
             // --- 1. 加载 index 并构建 TableSwitch ---
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
@@ -55,7 +63,6 @@ public class MethodP1ByteCode implements Implementation {
 
                 mv.visitLabel(labels[i]);
 
-                // 过滤非单参方法
                 if (method.getParameterCount() != 1) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
@@ -63,12 +70,13 @@ public class MethodP1ByteCode implements Implementation {
 
                 Class<?> paramType = method.getParameterTypes()[0];
 
-                // A: 加载 instance 并强转
-                mv.visitVarInsn(Opcodes.ALOAD, 2);
-                mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
+                // A: 【优化】直接从 Slot 4 加载已强转的 instance
+                mv.visitVarInsn(Opcodes.ALOAD, 4);
 
-                // B: 加载 arg 并使用 AsmUtil 进行参数适配 (拆箱或强转)
+                // B: 加载 arg (Slot 3)
                 mv.visitVarInsn(Opcodes.ALOAD, 3);
+
+                // C: 参数适配 (必须在 Case 内部，因为类型不同)
                 AsmUtil.unboxOrCast(mv, paramType);
 
                 mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, owner,
@@ -84,7 +92,7 @@ public class MethodP1ByteCode implements Implementation {
                 mv.visitInsn(Opcodes.ARETURN);
             }
 
-            // --- 3. Default Case (异常处理) ---
+            // --- 3. Default Case ---
             mv.visitLabel(defaultLabel);
             AsmUtil.throwIAEForMethod(mv);
 
