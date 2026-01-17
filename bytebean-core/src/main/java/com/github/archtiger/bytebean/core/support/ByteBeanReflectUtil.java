@@ -75,6 +75,11 @@ public class ByteBeanReflectUtil {
 
         List<Method> methodList = new ArrayList<>();
         for (Method method : methods) {
+            // 跳过 java.lang.Object
+            if (method.getDeclaringClass() == Object.class) {
+                continue;
+            }
+
             // 跳过静态方法
             if (Modifier.isStatic(method.getModifiers())) {
                 continue;
