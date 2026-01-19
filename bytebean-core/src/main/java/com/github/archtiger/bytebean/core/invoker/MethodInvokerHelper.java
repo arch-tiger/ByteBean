@@ -3,16 +3,15 @@ package com.github.archtiger.bytebean.core.invoker;
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import com.github.archtiger.bytebean.core.invoker.method.MethodHandleInvoker;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerGenerator;
+import com.github.archtiger.bytebean.core.model.MethodGroup;
+import com.github.archtiger.bytebean.core.model.MethodIdentify;
 import com.github.archtiger.bytebean.core.model.MethodInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanConstant;
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * 方法访问助手
@@ -38,14 +37,19 @@ public final class MethodInvokerHelper extends MethodInvoker {
      * 创建方法访问助手
      */
     public static MethodInvokerHelper of(Class<?> targetClass) {
-        List<Method> methods = ByteBeanReflectUtil.getMethods(targetClass);
-        if (methods.isEmpty()) {
+        MethodGroup methodGroup = MethodGroup.of(targetClass);
+        if (!methodGroup.ok()) {
             return null;
         }
+        String[] methodNames = new String[methodGroup.methodAllList().size()];
+        Class<?>[][] methodParamTypes = new Class<?>[methodGroup.methodAllList().size()][];
+        for (int i = 0; i < methodGroup.methodAllList().size(); i++) {
+            MethodIdentify methodIdentify = methodGroup.methodAllList().get(i);
+            methodNames[i] = methodIdentify.method().getName();
+            methodParamTypes[i] = methodIdentify.method().getParameterTypes();
+        }
 
-        String[] methodNames = methods.stream().map(Method::getName).toArray(String[]::new);
-        Class<?>[][] methodParamTypes = methods.stream().map(Method::getParameterTypes).toArray(Class[][]::new);
-        if (methods.size() > ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
+        if (methodGroup.methodAllList().size() > ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
             MethodHandleInvoker methodHandleInvoker = MethodHandleInvoker.of(targetClass);
             return new MethodInvokerHelper(methodHandleInvoker, methodNames, methodParamTypes);
         }

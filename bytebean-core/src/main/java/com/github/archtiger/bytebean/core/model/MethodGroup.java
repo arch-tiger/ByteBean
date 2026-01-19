@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public record MethodGroup(
         boolean ok,
-        List<MethodIdentify> methodIdentifyList,
+        List<MethodIdentify> methodAllList,
         List<MethodIdentify> method0List,
         List<MethodIdentify> method1List,
         List<MethodIdentify> method2List,
@@ -72,7 +72,7 @@ public record MethodGroup(
         }
 
         // 对每个特化表内部排序：按 方法名 + 参数类型 + 参数数量
-        Comparator<Method> methodComparator = Comparator
+        final Comparator<Method> methodComparator = Comparator
                 .comparing(Method::getName)
                 .thenComparing(m -> Type.getMethodDescriptor(m));
 
@@ -84,68 +84,43 @@ public record MethodGroup(
         method5List.sort(methodComparator);
         otherMethodList.sort(methodComparator);
 
+        final AtomicInteger globalIndex = new AtomicInteger(0);
+
+        List<MethodIdentify> identifyMethodAllList = new ArrayList<>();
+
+        List<MethodIdentify> identifyMethod0List = method0List.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
+        List<MethodIdentify> identifyMethod1List = method1List.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
+        List<MethodIdentify> identifyMethod2List = method2List.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
+        List<MethodIdentify> identifyMethod3List = method3List.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
+        List<MethodIdentify> identifyMethod4List = method4List.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
+        List<MethodIdentify> identifyMethod5List = method5List.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
+        List<MethodIdentify> identifyOtherMethodList = otherMethodList.stream()
+                .map(method -> new MethodIdentify(method, globalIndex.getAndIncrement()))
+                .toList();
         // 按顺序将特化表加入总表，确保索引连续
-        List<MethodIdentify> methodIdentifyList = new ArrayList<>();
-        List<MethodIdentify> identifyMethod0List = new ArrayList<>();
-        List<MethodIdentify> identifyMethod1List = new ArrayList<>();
-        List<MethodIdentify> identifyMethod2List = new ArrayList<>();
-        List<MethodIdentify> identifyMethod3List = new ArrayList<>();
-        List<MethodIdentify> identifyMethod4List = new ArrayList<>();
-        List<MethodIdentify> identifyMethod5List = new ArrayList<>();
-
-        AtomicInteger globalIndex = new AtomicInteger(0);
-
-        // 添加0参数方法（索引连续）
-        for (Method method : method0List) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-            identifyMethod0List.add(identify);
-        }
-
-        // 添加1参数方法（索引连续）
-        for (Method method : method1List) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-            identifyMethod1List.add(identify);
-        }
-
-        // 添加2参数方法（索引连续）
-        for (Method method : method2List) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-            identifyMethod2List.add(identify);
-        }
-
-        // 添加3参数方法（索引连续）
-        for (Method method : method3List) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-            identifyMethod3List.add(identify);
-        }
-
-        // 添加4参数方法（索引连续）
-        for (Method method : method4List) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-            identifyMethod4List.add(identify);
-        }
-
-        // 添加5参数方法（索引连续）
-        for (Method method : method5List) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-            identifyMethod5List.add(identify);
-        }
-
-        // 添加其他方法（超过5个参数）
-        for (Method method : otherMethodList) {
-            MethodIdentify identify = new MethodIdentify(method, globalIndex.getAndIncrement());
-            methodIdentifyList.add(identify);
-        }
+        identifyMethodAllList.addAll(identifyMethod0List);
+        identifyMethodAllList.addAll(identifyMethod1List);
+        identifyMethodAllList.addAll(identifyMethod2List);
+        identifyMethodAllList.addAll(identifyMethod3List);
+        identifyMethodAllList.addAll(identifyMethod4List);
+        identifyMethodAllList.addAll(identifyMethod5List);
+        identifyMethodAllList.addAll(identifyOtherMethodList);
 
         return new MethodGroup(
                 true,
-                methodIdentifyList,
+                identifyMethodAllList,
                 identifyMethod0List.isEmpty() ? Collections.emptyList() : identifyMethod0List,
                 identifyMethod1List.isEmpty() ? Collections.emptyList() : identifyMethod1List,
                 identifyMethod2List.isEmpty() ? Collections.emptyList() : identifyMethod2List,

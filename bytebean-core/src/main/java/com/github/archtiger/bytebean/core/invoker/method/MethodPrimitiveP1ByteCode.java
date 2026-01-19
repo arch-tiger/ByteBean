@@ -63,7 +63,7 @@ public final class MethodPrimitiveP1ByteCode implements Implementation {
             }
 
             if (!identifyMethodList.isEmpty()) {
-                mv.visitTableSwitchInsn(0, identifyMethodList.size() - 1, defaultLabel, labels);
+                mv.visitTableSwitchInsn(identifyMethodList.get(0).index(), identifyMethodList.get(identifyMethodList.size() - 1).index(), defaultLabel, labels);
             } else {
                 mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
             }

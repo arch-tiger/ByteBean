@@ -63,13 +63,13 @@ class MethodGroupTest {
         Set<Method> allMethods = new HashSet<>();
         MethodIdentify[] methodToIndexMap = new MethodIdentify[100]; // 简单映射
 
-        // 首先从 methodIdentifyList 收集所有方法及其索引
-        for (MethodIdentify mi : group.methodIdentifyList()) {
+        // 首先从 methodAllList 收集所有方法及其索引
+        for (MethodIdentify mi : group.methodAllList()) {
             allMethods.add(mi.method());
             methodToIndexMap[mi.index()] = mi;
         }
 
-        // 验证所有特化列表中的方法索引与 methodIdentifyList 一致
+        // 验证所有特化列表中的方法索引与 methodAllList 一致
         verifyIndexConsistency(group.method0List(), "method0List", methodToIndexMap);
         verifyIndexConsistency(group.method1List(), "method1List", methodToIndexMap);
         verifyIndexConsistency(group.method2List(), "method2List", methodToIndexMap);
@@ -86,7 +86,7 @@ class MethodGroupTest {
             int index = mi.index();
             MethodIdentify reference = methodToIndexMap[index];
             if (reference == null) {
-                fail(String.format("索引 %d 在列表 '%s' 中无效，不在 methodIdentifyList 中", index, listName));
+                fail(String.format("索引 %d 在列表 '%s' 中无效，不在 methodAllList 中", index, listName));
             }
             if (!reference.method().equals(mi.method())) {
                 fail(String.format("索引 %d 在列表 '%s' 中对应的方法不一致，期望: %s，实际: %s",
@@ -103,13 +103,13 @@ class MethodGroupTest {
         MethodGroup group = MethodGroup.of(TestClass.class);
         assertTrue(group.ok());
 
-        List<MethodIdentify> allMethods = group.methodIdentifyList();
+        List<MethodIdentify> allMethods = group.methodAllList();
 
         // 验证索引从0开始且连续
         for (int i = 0; i < allMethods.size(); i++) {
             MethodIdentify mi = allMethods.get(i);
             assertEquals(i, mi.index(),
-                    String.format("methodIdentifyList 中的索引不连续，期望 %d，实际 %d，方法: %s",
+                    String.format("methodAllList 中的索引不连续，期望 %d，实际 %d，方法: %s",
                             i, mi.index(), mi.method().getName()));
         }
     }
@@ -164,13 +164,13 @@ class MethodGroupTest {
                 .findFirst()
                 .orElseThrow();
 
-        // 在 methodIdentifyList 中找到相同的方法
-        MethodIdentify sameMethod1InIdentifyList = group.methodIdentifyList().stream()
+        // 在 methodAllList 中找到相同的方法
+        MethodIdentify sameMethod1InIdentifyList = group.methodAllList().stream()
                 .filter(mi -> mi.method().equals(overloadedInMethod1.method()))
                 .findFirst()
                 .orElseThrow();
 
-        MethodIdentify sameMethod2InIdentifyList = group.methodIdentifyList().stream()
+        MethodIdentify sameMethod2InIdentifyList = group.methodAllList().stream()
                 .filter(mi -> mi.method().equals(overloadedInMethod2.method()))
                 .findFirst()
                 .orElseThrow();
@@ -179,9 +179,9 @@ class MethodGroupTest {
         int index1 = overloadedInMethod1.index();
         int index2 = overloadedInMethod2.index();
         assertEquals(index1, sameMethod1InIdentifyList.index(),
-                "方法在 method1List 和 methodIdentifyList 中的索引应该一致");
+                "方法在 method1List 和 methodAllList 中的索引应该一致");
         assertEquals(index2, sameMethod2InIdentifyList.index(),
-                "方法在 method2List 和 methodIdentifyList 中的索引应该一致");
+                "方法在 method2List 和 methodAllList 中的索引应该一致");
     }
 
     /**
@@ -233,19 +233,19 @@ class MethodGroupTest {
         // 收集所有索引
         Set<Integer> allIndices = new HashSet<>();
 
-        for (MethodIdentify mi : group.methodIdentifyList()) {
+        for (MethodIdentify mi : group.methodAllList()) {
             assertFalse(allIndices.contains(mi.index()),
                     String.format("全局索引 %d 重复，方法: %s", mi.index(), mi.method().getName()));
             allIndices.add(mi.index());
         }
 
         // 验证全局索引范围
-        assertEquals(allIndices.size(), group.methodIdentifyList().size(),
+        assertEquals(allIndices.size(), group.methodAllList().size(),
                 "全局索引数量应该与方法数量一致");
 
         // 验证最大索引
         int maxIndex = allIndices.stream().max(Integer::compare).orElse(-1);
-        assertEquals(group.methodIdentifyList().size() - 1, maxIndex,
+        assertEquals(group.methodAllList().size() - 1, maxIndex,
                 "最大索引应该等于方法数量减1");
     }
 }
