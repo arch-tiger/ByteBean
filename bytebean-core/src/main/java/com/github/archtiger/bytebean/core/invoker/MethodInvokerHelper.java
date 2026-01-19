@@ -27,7 +27,8 @@ public final class MethodInvokerHelper extends MethodInvoker {
 
     private MethodInvokerHelper(MethodInvoker methodInvoker,
                                 String[] methodNames,
-                                Class<?>[][] methodParamTypes) {
+                                Class<?>[][] methodParamTypes
+    ) {
         this.methodNames = methodNames;
         this.methodParamTypes = methodParamTypes;
         this.methodInvoker = methodInvoker;
@@ -41,6 +42,7 @@ public final class MethodInvokerHelper extends MethodInvoker {
         if (methods.isEmpty()) {
             return null;
         }
+
         String[] methodNames = methods.stream().map(Method::getName).toArray(String[]::new);
         Class<?>[][] methodParamTypes = methods.stream().map(Method::getParameterTypes).toArray(Class[][]::new);
         if (methods.size() > ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
@@ -52,6 +54,7 @@ public final class MethodInvokerHelper extends MethodInvoker {
         if (!generate.ok()) {
             return null;
         }
+
         try {
             MethodInvoker methodInvoker = generate.methodInvokerClass().getDeclaredConstructor().newInstance();
             return new MethodInvokerHelper(methodInvoker, methodNames, methodParamTypes);
@@ -100,6 +103,26 @@ public final class MethodInvokerHelper extends MethodInvoker {
     @Override
     public Object invoke1(int index, Object instance, Object arg) {
         return methodInvoker.invoke1(index, instance, arg);
+    }
+
+    @Override
+    public Object invoke2(int index, Object instance, Object arg1, Object arg2) {
+        return methodInvoker.invoke2(index, instance, arg1, arg2);
+    }
+
+    @Override
+    public Object invoke3(int index, Object instance, Object arg1, Object arg2, Object arg3) {
+        return methodInvoker.invoke3(index, instance, arg1, arg2, arg3);
+    }
+
+    @Override
+    public Object invoke4(int index, Object instance, Object arg1, Object arg2, Object arg3, Object arg4) {
+        return methodInvoker.invoke4(index, instance, arg1, arg2, arg3, arg4);
+    }
+
+    @Override
+    public Object invoke5(int index, Object instance, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5) {
+        return methodInvoker.invoke5(index, instance, arg1, arg2, arg3, arg4, arg5);
     }
 
     @Override

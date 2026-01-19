@@ -14,7 +14,7 @@ import java.util.List;
  * @author ArchTiger
  * @date 2026/1/16 19:46
  */
-public class MethodHandleInvoker extends MethodInvoker {
+public final class MethodHandleInvoker extends MethodInvoker {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private final MethodHandle[] methodHandles;
 
@@ -32,7 +32,8 @@ public class MethodHandleInvoker extends MethodInvoker {
             for (int i = 0; i < size; i++) {
                 Method method = methods.get(i);
                 try {
-                    methodHandles[i] = lookup.unreflect(method);
+                    MethodHandle methodHandle = lookup.unreflect(method);
+                    methodHandles[i] = methodHandle;
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
@@ -86,6 +87,42 @@ public class MethodHandleInvoker extends MethodInvoker {
     public Object invoke1(int index, Object instance, Object arg) {
         try {
             return methodHandles[index].invoke(instance, arg);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Object invoke2(int index, Object instance, Object arg1, Object arg2) {
+        try {
+            return methodHandles[index].invoke(instance, arg1, arg2);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Object invoke3(int index, Object instance, Object arg1, Object arg2, Object arg3) {
+        try {
+            return methodHandles[index].invoke(instance, arg1, arg2, arg3);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Object invoke4(int index, Object instance, Object arg1, Object arg2, Object arg3, Object arg4) {
+        try {
+            return methodHandles[index].invoke(instance, arg1, arg2, arg3, arg4);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Object invoke5(int index, Object instance, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5) {
+        try {
+            return methodHandles[index].invoke(instance, arg1, arg2, arg3, arg4, arg5);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -203,3 +240,4 @@ public class MethodHandleInvoker extends MethodInvoker {
         }
     }
 }
+

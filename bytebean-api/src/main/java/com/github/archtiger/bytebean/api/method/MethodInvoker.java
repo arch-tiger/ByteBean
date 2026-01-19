@@ -17,9 +17,18 @@ public abstract class MethodInvoker {
      */
     public abstract Object invoke(int index, Object instance, Object... arguments);
 
-    public abstract Object invoke1(int index, Object instance, Object arg);
-
     public abstract Object invoke(int index, Object instance);
+
+    public abstract Object invoke1(int index, Object instance, Object arg1);
+
+    public abstract Object invoke2(int index, Object instance, Object arg1, Object arg2);
+
+    public abstract Object invoke3(int index, Object instance, Object arg1, Object arg2, Object arg3);
+
+    public abstract Object invoke4(int index, Object instance, Object arg1, Object arg2, Object arg3, Object arg4);
+
+    public abstract Object invoke5(int index, Object instance, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5);
+
 
     /**
      * 调用指定索引的方法，返回 int 类型结果
