@@ -152,6 +152,52 @@ class TestMethodEntity {
         return a + b + c;
     }
 
+    public String concatenateFour(String a, String b, String c, String d) {
+        return a + b + c + d;
+    }
+
+    public String concatenateFive(String a, String b, String c, String d, String e) {
+        return a + b + c + d + e;
+    }
+
+    public int addThreeInts(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    public int addFourInts(int a, int b, int c, int d) {
+        return a + b + c + d;
+    }
+
+    public int addFiveInts(int a, int b, int c, int d, int e) {
+        return a + b + c + d + e;
+    }
+
+    public void setTwoInts(int a, int b) {
+        this.intValue = a;
+        this.longValue = b;
+    }
+
+    public void setThreeInts(int a, int b, int c) {
+        this.intValue = a;
+        this.longValue = b;
+        this.floatValue = c;
+    }
+
+    public void setFourInts(int a, int b, int c, int d) {
+        this.intValue = a;
+        this.longValue = b;
+        this.floatValue = c;
+        this.doubleValue = d;
+    }
+
+    public void setFiveInts(int a, int b, int c, int d, int e) {
+        this.intValue = a;
+        this.longValue = b;
+        this.floatValue = c;
+        this.doubleValue = d;
+        this.booleanValue = (e > 0);
+    }
+
     public int addMixed(int a, long b, double c) {
         return (int) (a + b + c);
     }

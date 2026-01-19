@@ -1513,6 +1513,158 @@ class MethodHandleInvokerTest {
         assertEquals(42, ((Integer) methodHandleInvoker.invoke(getIntIndex, entity)).intValue());
     }
 
+    // ==================== 2-5 参数方法测试 ====================
+
+    @Test
+    void testInvoke2() {
+        // 测试 invoke2 方法
+        int addTwoIntsIndex = methodInvokerHelper.getMethodIndex("addTwoInts", int.class, int.class);
+        int concatenateIndex = methodInvokerHelper.getMethodIndex("concatenate", String.class, String.class);
+
+        Object result = methodHandleInvoker.invoke2(addTwoIntsIndex, entity, 10, 20); // addTwoInts(int, int)
+        assertNotNull(result);
+        assertEquals(30, ((Integer) result).intValue());
+
+        result = methodHandleInvoker.invoke2(concatenateIndex, entity, "hello", "world"); // concatenate(String, String)
+        assertEquals("helloworld", result);
+    }
+
+    @Test
+    void testInvoke3() {
+        // 测试 invoke3 方法
+        int addThreeIntsIndex = methodInvokerHelper.getMethodIndex("addThreeInts", int.class, int.class, int.class);
+        int concatenateThreeIndex = methodInvokerHelper.getMethodIndex("concatenateThree", String.class, String.class, String.class);
+
+        Object result = methodHandleInvoker.invoke3(addThreeIntsIndex, entity, 1, 2, 3); // addThreeInts(int, int, int)
+        assertNotNull(result);
+        assertEquals(6, ((Integer) result).intValue());
+
+        result = methodHandleInvoker.invoke3(concatenateThreeIndex, entity, "a", "b", "c"); // concatenateThree(String, String, String)
+        assertEquals("abc", result);
+    }
+
+    @Test
+    void testInvoke4() {
+        // 测试 invoke4 方法
+        int addFourIntsIndex = methodInvokerHelper.getMethodIndex("addFourInts", int.class, int.class, int.class, int.class);
+        int concatenateFourIndex = methodInvokerHelper.getMethodIndex("concatenateFour", String.class, String.class, String.class, String.class);
+
+        Object result = methodHandleInvoker.invoke4(addFourIntsIndex, entity, 1, 2, 3, 4); // addFourInts(int, int, int, int)
+        assertNotNull(result);
+        assertEquals(10, ((Integer) result).intValue());
+
+        result = methodHandleInvoker.invoke4(concatenateFourIndex, entity, "a", "b", "c", "d"); // concatenateFour(String, String, String, String)
+        assertEquals("abcd", result);
+    }
+
+    @Test
+    void testInvoke5() {
+        // 测试 invoke5 方法
+        int addFiveIntsIndex = methodInvokerHelper.getMethodIndex("addFiveInts", int.class, int.class, int.class, int.class, int.class);
+        int concatenateFiveIndex = methodInvokerHelper.getMethodIndex("concatenateFive", String.class, String.class, String.class, String.class, String.class);
+
+        Object result = methodHandleInvoker.invoke5(addFiveIntsIndex, entity, 1, 2, 3, 4, 5); // addFiveInts(int, int, int, int, int)
+        assertNotNull(result);
+        assertEquals(15, ((Integer) result).intValue());
+
+        result = methodHandleInvoker.invoke5(concatenateFiveIndex, entity, "a", "b", "c", "d", "e"); // concatenateFive(String, String, String, String, String)
+        assertEquals("abcde", result);
+    }
+
+    @Test
+    void testInvoke2WithVoidReturn() {
+        // 测试 invoke2 的 void 返回方法
+        int setTwoIntsIndex = methodInvokerHelper.getMethodIndex("setTwoInts", int.class, int.class);
+
+        Object result = methodHandleInvoker.invoke2(setTwoIntsIndex, entity, 100, 200);
+        assertNull(result);
+
+        // 验证值被正确设置
+        assertEquals(100, entity.getInt());
+        assertEquals(200L, entity.getLong());
+    }
+
+    @Test
+    void testInvoke3WithVoidReturn() {
+        // 测试 invoke3 的 void 返回方法
+        int setThreeIntsIndex = methodInvokerHelper.getMethodIndex("setThreeInts", int.class, int.class, int.class);
+
+        Object result = methodHandleInvoker.invoke3(setThreeIntsIndex, entity, 1, 2, 3);
+        assertNull(result);
+
+        // 验证值被正确设置
+        assertEquals(1, entity.getInt());
+        assertEquals(2L, entity.getLong());
+        assertEquals(3.0f, entity.getFloat(), 0.0001f);
+    }
+
+    @Test
+    void testInvoke4WithVoidReturn() {
+        // 测试 invoke4 的 void 返回方法
+        int setFourIntsIndex = methodInvokerHelper.getMethodIndex("setFourInts", int.class, int.class, int.class, int.class);
+
+        Object result = methodHandleInvoker.invoke4(setFourIntsIndex, entity, 1, 2, 3, 4);
+        assertNull(result);
+
+        // 验证值被正确设置
+        assertEquals(1, entity.getInt());
+        assertEquals(2L, entity.getLong());
+        assertEquals(3.0f, entity.getFloat(), 0.0001f);
+        assertEquals(4.0, entity.getDouble(), 0.000001);
+    }
+
+    @Test
+    void testInvoke5WithVoidReturn() {
+        // 测试 invoke5 的 void 返回方法
+        int setFiveIntsIndex = methodInvokerHelper.getMethodIndex("setFiveInts", int.class, int.class, int.class, int.class, int.class);
+
+        Object result = methodHandleInvoker.invoke5(setFiveIntsIndex, entity, 1, 2, 3, 4, 5);
+        assertNull(result);
+
+        // 验证值被正确设置
+        assertEquals(1, entity.getInt());
+        assertEquals(2L, entity.getLong());
+        assertEquals(3.0f, entity.getFloat(), 0.0001f);
+        assertEquals(4.0, entity.getDouble(), 0.000001);
+        assertEquals(true, entity.getBoolean()); // 5 > 0, 所以 booleanValue = true
+    }
+
+    @Test
+    void testInvoke2MixedTypes() {
+        // 测试 invoke2 的混合类型
+        int concatenateIndex = methodInvokerHelper.getMethodIndex("concatenate", String.class, String.class);
+
+        Object result = methodHandleInvoker.invoke2(concatenateIndex, entity, "test", "123");
+        assertEquals("test123", result);
+    }
+
+    @Test
+    void testInvoke3MixedTypes() {
+        // 测试 invoke3 的混合类型
+        int addMixedIndex = methodInvokerHelper.getMethodIndex("addMixed", int.class, long.class, double.class);
+
+        Object result = methodHandleInvoker.invoke3(addMixedIndex, entity, 1, 2L, 3.0);
+        assertEquals(6, ((Integer) result).intValue());
+    }
+
+    @Test
+    void testIndexOutOfBoundsInvoke2To5() {
+        // 测试 invoke2-invoke5 的索引越界
+        int addTwoIntsIndex = methodInvokerHelper.getMethodIndex("addTwoInts", int.class, int.class);
+
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke2(-1, entity, 1, 2));
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke2(1000, entity, 1, 2));
+
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke3(-1, entity, 1, 2, 3));
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke3(1000, entity, 1, 2, 3));
+
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke4(-1, entity, 1, 2, 3, 4));
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke4(1000, entity, 1, 2, 3, 4));
+
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke5(-1, entity, 1, 2, 3, 4, 5));
+        assertThrows(IllegalArgumentException.class, () -> methodHandleInvoker.invoke5(1000, entity, 1, 2, 3, 4, 5));
+    }
+
     // ==================== 大量方法对象测试 ====================
 
     @Test

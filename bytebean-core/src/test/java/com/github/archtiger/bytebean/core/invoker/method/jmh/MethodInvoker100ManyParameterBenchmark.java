@@ -121,7 +121,7 @@ public class MethodInvoker100ManyParameterBenchmark {
     @Benchmark
     public void test_MethodInvokerHelper_Setter(Blackhole bh) throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
-            methodInvokerHelper.invoke(methodInvokerHelperSetterIndex, entity, V1, V2, V3, V4, V5);
+            methodInvokerHelper.invoke5(methodInvokerHelperSetterIndex, entity, V1, V2, V3, V4, V5);
         }
         bh.consume(entity);
     }
