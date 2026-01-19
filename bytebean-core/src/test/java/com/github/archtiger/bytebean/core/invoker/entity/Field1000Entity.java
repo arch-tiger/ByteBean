@@ -3014,4 +3014,12 @@ public class Field1000Entity {
     public void setField999(Integer field999) { this.field999 = field999; }
     public Integer getField1000() { return field1000; }
     public void setField1000(Integer field1000) { this.field1000 = field1000; }
+
+    public void setFiveFields_1_5(Integer f1, Integer f2, Integer f3, Integer f4, Integer f5) {
+        this.field1 = f1;
+        this.field2 = f2;
+        this.field3 = f3;
+        this.field4 = f4;
+        this.field5 = f5;
+    }
 }

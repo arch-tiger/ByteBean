@@ -910,4 +910,12 @@ public class Field300Entity {
     public void setField299(Integer field299) { this.field299 = field299; }
     public Integer getField300() { return field300; }
     public void setField300(Integer field300) { this.field300 = field300; }
+
+    public void setFiveFields_1_5(Integer f1, Integer f2, Integer f3, Integer f4, Integer f5) {
+        this.field1 = f1;
+        this.field2 = f2;
+        this.field3 = f3;
+        this.field4 = f4;
+        this.field5 = f5;
+    }
 }

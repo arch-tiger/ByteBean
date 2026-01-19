@@ -1515,4 +1515,12 @@ public class Field500Entity {
     public void setField499(Integer field499) { this.field499 = field499; }
     public Integer getField500() { return field500; }
     public void setField500(Integer field500) { this.field500 = field500; }
+
+    public void setFiveFields_1_5(Integer f1, Integer f2, Integer f3, Integer f4, Integer f5) {
+        this.field1 = f1;
+        this.field2 = f2;
+        this.field3 = f3;
+        this.field4 = f4;
+        this.field5 = f5;
+    }
 }
