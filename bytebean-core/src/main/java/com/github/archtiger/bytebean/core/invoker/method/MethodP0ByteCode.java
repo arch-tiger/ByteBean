@@ -1,5 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
+import com.github.archtiger.bytebean.core.model.MethodIdentify;
 import com.github.archtiger.bytebean.core.support.AsmUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
@@ -21,11 +22,11 @@ import java.util.List;
 public class MethodP0ByteCode implements Implementation {
 
     private final Class<?> targetClass;
-    private final List<Method> methods;
+    private final List<MethodIdentify> methodIdentifyList;
 
-    public MethodP0ByteCode(Class<?> targetClass, List<Method> methods) {
+    public MethodP0ByteCode(Class<?> targetClass, List<MethodIdentify> methodIdentifyList) {
         this.targetClass = targetClass;
-        this.methods = methods;
+        this.methodIdentifyList = methodIdentifyList;
     }
 
     @Override
@@ -47,20 +48,22 @@ public class MethodP0ByteCode implements Implementation {
 
             // --- 2. 构建 TableSwitch ---
             Label defaultLabel = new Label();
-            Label[] labels = new Label[methods.size()];
+            Label[] labels = new Label[methodIdentifyList.size()];
             for (int i = 0; i < labels.length; i++) {
                 labels[i] = new Label();
             }
 
-            if (!methods.isEmpty()) {
-                mv.visitTableSwitchInsn(0, methods.size() - 1, defaultLabel, labels);
+            if (!methodIdentifyList.isEmpty()) {
+                mv.visitTableSwitchInsn(methodIdentifyList.get(0).index(), methodIdentifyList.get(methodIdentifyList.size() - 1).index(), defaultLabel, labels);
             } else {
                 mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
             }
 
             // --- 3. 生成 Case 逻辑 ---
-            for (int i = 0; i < methods.size(); i++) {
-                Method method = methods.get(i);
+            for (int i = 0; i < methodIdentifyList.size(); i++) {
+                MethodIdentify methodIdentify = methodIdentifyList.get(i);
+                Method method = methodIdentify.method();
+
                 mv.visitLabel(labels[i]);
 
                 // 只处理无参方法

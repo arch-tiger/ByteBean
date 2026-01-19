@@ -1,5 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
+import com.github.archtiger.bytebean.core.model.MethodIdentify;
 import com.github.archtiger.bytebean.core.support.AsmUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
@@ -20,11 +21,13 @@ import java.util.List;
 public final class MethodByteCode implements Implementation {
 
     private final Class<?> targetClass;
-    private final List<Method> methods;
+    private final List<MethodIdentify> methodIdentifyList;
 
-    public MethodByteCode(Class<?> targetClass, List<Method> methods) {
+
+
+    public MethodByteCode(Class<?> targetClass, List<MethodIdentify> methodIdentifyList) {
         this.targetClass = targetClass;
-        this.methods = methods;
+        this.methodIdentifyList = methodIdentifyList;
     }
 
     @Override
@@ -47,13 +50,13 @@ public final class MethodByteCode implements Implementation {
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
             Label defaultLabel = new Label();
-            Label[] labels = new Label[methods.size()];
+            Label[] labels = new Label[methodIdentifyList.size()];
             for (int i = 0; i < labels.length; i++) {
                 labels[i] = new Label();
             }
 
-            if (!methods.isEmpty()) {
-                mv.visitTableSwitchInsn(0, methods.size() - 1, defaultLabel, labels);
+            if (!methodIdentifyList.isEmpty()) {
+                mv.visitTableSwitchInsn(0, methodIdentifyList.size() - 1, defaultLabel, labels);
             } else {
                 mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
             }
@@ -61,8 +64,9 @@ public final class MethodByteCode implements Implementation {
             // ============================================================
             // 3. 生成 Case 分支
             // ============================================================
-            for (int i = 0; i < methods.size(); i++) {
-                Method method = methods.get(i);
+            for (int i = 0; i < methodIdentifyList.size(); i++) {
+                MethodIdentify methodIdentify = methodIdentifyList.get(i);
+                Method method = methodIdentify.method();
                 mv.visitLabel(labels[i]);
 
                 // 加载强转后的 Target Instance

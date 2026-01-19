@@ -1,5 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
+import com.github.archtiger.bytebean.core.model.MethodIdentify;
 import com.github.archtiger.bytebean.core.support.AsmUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
@@ -19,12 +20,12 @@ import java.util.List;
  */
 public final class MethodPrimitiveP1ByteCode implements Implementation {
     private final Class<?> targetClass;
-    private final List<Method> methods;
+    private final List<MethodIdentify> identifyMethodList;
     private final Class<?> primitiveType;
 
-    public MethodPrimitiveP1ByteCode(Class<?> targetClass, List<Method> methods, Class<?> primitiveType) {
+    public MethodPrimitiveP1ByteCode(Class<?> targetClass, List<MethodIdentify> identifyMethodList, Class<?> primitiveType) {
         this.targetClass = targetClass;
-        this.methods = methods;
+        this.identifyMethodList = identifyMethodList;
         this.primitiveType = primitiveType;
     }
 
@@ -56,13 +57,13 @@ public final class MethodPrimitiveP1ByteCode implements Implementation {
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
             Label defaultLabel = new Label();
-            Label[] labels = new Label[methods.size()];
+            Label[] labels = new Label[identifyMethodList.size()];
             for (int i = 0; i < labels.length; i++) {
                 labels[i] = new Label();
             }
 
-            if (!methods.isEmpty()) {
-                mv.visitTableSwitchInsn(0, methods.size() - 1, defaultLabel, labels);
+            if (!identifyMethodList.isEmpty()) {
+                mv.visitTableSwitchInsn(0, identifyMethodList.size() - 1, defaultLabel, labels);
             } else {
                 mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
             }
@@ -70,8 +71,8 @@ public final class MethodPrimitiveP1ByteCode implements Implementation {
             // ============================================================
             // 4. 生成 Case 分支
             // ============================================================
-            for (int i = 0; i < methods.size(); i++) {
-                Method method = methods.get(i);
+            for (int i = 0; i < identifyMethodList.size(); i++) {
+                Method method = identifyMethodList.get(i).method();
                 mv.visitLabel(labels[i]);
 
                 // 【必须保留】防御性检查
