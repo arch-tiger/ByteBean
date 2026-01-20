@@ -27,7 +27,7 @@ class FieldInvokerTest {
     @BeforeEach
     void setUp() throws Exception {
         fieldInvokerHelper = FieldInvokerHelper.of(TestEntity.class);
-        fieldInvoker = fieldInvokerHelper.getFieldInvoker();
+        fieldInvoker = fieldInvokerHelper;
         entity = new TestEntity();
     }
 

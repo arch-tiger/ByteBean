@@ -1,9 +1,9 @@
 package com.github.archtiger.bytebean.core.invoker.field;
 
+import com.github.archtiger.bytebean.api.field.FieldInvoker;
 import com.github.archtiger.bytebean.core.model.FieldInvokerResult;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;
-import com.github.archtiger.bytebean.api.field.FieldInvoker;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +15,7 @@ import java.lang.reflect.Modifier;
  * @author archtiger
  * @datetime 2026/01/13 17:00
  */
-public class FieldInvokerHelper {
+public class FieldInvokerHelper extends FieldInvoker {
     private final FieldInvoker fieldInvoker;
     private final String[] fieldNames;
     private final int[] modifiers;
@@ -44,15 +44,6 @@ public class FieldInvokerHelper {
         }
 
         return new FieldInvokerHelper(fieldInvokerResult);
-    }
-
-    /**
-     * 获取字段访问器
-     *
-     * @return 字段访问器
-     */
-    public FieldInvoker getFieldInvoker() {
-        return fieldInvoker;
     }
 
     /**
@@ -112,29 +103,93 @@ public class FieldInvokerHelper {
         return fieldSetterIndex;
     }
 
-    /**
-     * 获取字段值
-     *
-     * @param instance  实例对象
-     * @param fieldName 字段名
-     * @return 字段值
-     */
-    public Object get(Object instance, String fieldName) {
-        int fieldGetterIndex = getFieldGetterIndexOrThrow(fieldName);
-
-        return fieldInvoker.get(fieldGetterIndex, instance);
+    @Override
+    public Object get(int index, Object instance) {
+        return fieldInvoker.get(index, instance);
     }
 
-    /**
-     * 设置字段值
-     *
-     * @param instance  实例对象
-     * @param fieldName 字段名
-     * @param value     字段值
-     */
-    public void set(Object instance, String fieldName, Object value) {
-        int fieldSetterIndex = getFieldSetterIndexOrThrow(fieldName);
+    @Override
+    public void set(int index, Object instance, Object value) {
+        fieldInvoker.set(index, instance, value);
+    }
 
-        fieldInvoker.set(fieldSetterIndex, instance, value);
+    @Override
+    public byte getByte(int index, Object instance) {
+        return fieldInvoker.getByte(index, instance);
+    }
+
+    @Override
+    public short getShort(int index, Object instance) {
+        return fieldInvoker.getShort(index, instance);
+    }
+
+    @Override
+    public int getInt(int index, Object instance) {
+        return fieldInvoker.getInt(index, instance);
+    }
+
+    @Override
+    public long getLong(int index, Object instance) {
+        return fieldInvoker.getLong(index, instance);
+    }
+
+    @Override
+    public float getFloat(int index, Object instance) {
+        return fieldInvoker.getFloat(index, instance);
+    }
+
+    @Override
+    public double getDouble(int index, Object instance) {
+        return fieldInvoker.getDouble(index, instance);
+    }
+
+    @Override
+    public boolean getBoolean(int index, Object instance) {
+        return fieldInvoker.getBoolean(index, instance);
+    }
+
+    @Override
+    public char getChar(int index, Object instance) {
+        return fieldInvoker.getChar(index, instance);
+    }
+
+    @Override
+    public void setByte(int index, Object instance, byte value) {
+        fieldInvoker.setByte(index, instance, value);
+    }
+
+    @Override
+    public void setShort(int index, Object instance, short value) {
+        fieldInvoker.setShort(index, instance, value);
+    }
+
+    @Override
+    public void setInt(int index, Object instance, int value) {
+        fieldInvoker.setInt(index, instance, value);
+    }
+
+    @Override
+    public void setLong(int index, Object instance, long value) {
+        fieldInvoker.setLong(index, instance, value);
+    }
+
+    @Override
+    public void setFloat(int index, Object instance, float value) {
+        fieldInvoker.setFloat(index, instance, value);
+    }
+
+    @Override
+    public void setDouble(int index, Object instance, double value) {
+        fieldInvoker.setDouble(index, instance, value);
+    }
+
+    @Override
+    public void setBoolean(int index, Object instance, boolean value) {
+        fieldInvoker.setBoolean(index, instance, value);
+    }
+
+    @Override
+    public void setChar(int index, Object instance, char value) {
+        fieldInvoker.setChar(index, instance, value);
     }
 }

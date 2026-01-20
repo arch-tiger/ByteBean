@@ -1,10 +1,9 @@
 package com.github.archtiger.bytebean.core.invoker.constructor;
 
-import cn.hutool.core.util.ClassUtil;
+import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;
-import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +15,7 @@ import java.util.Arrays;
  * @author ZIJIDELU
  * @datetime 2026/1/13 11:32
  */
-public class ConstructorInvokerHelper {
+public class ConstructorInvokerHelper extends ConstructorInvoker {
     private final ConstructorInvoker constructorInvoker;
     private final Class<?>[][] constructorParameterTypes;
 
@@ -46,15 +45,6 @@ public class ConstructorInvokerHelper {
         }
 
         return new ConstructorInvokerHelper(constructorInvokerResult);
-    }
-
-    /**
-     * 获取构造器访问实例
-     *
-     * @return 构造器访问实例
-     */
-    public ConstructorInvoker getConstructorInvoker() {
-        return constructorInvoker;
     }
 
     /**
@@ -88,16 +78,13 @@ public class ConstructorInvokerHelper {
         return constructorIndex;
     }
 
-    /**
-     * 创建新实例
-     *
-     * @param args 构造器参数
-     * @return 新实例
-     */
-    public Object newInstance(Object... args) {
-        int constructorIndex = getConstructorIndexOrThrow(ClassUtil.getClasses(args));
-
-        return constructorInvoker.newInstance(constructorIndex, args);
+    @Override
+    public Object newInstance(int index, Object... args) {
+        return constructorInvoker.newInstance(index, args);
     }
 
+    @Override
+    public Object newInstance() {
+        return constructorInvoker.newInstance();
+    }
 }

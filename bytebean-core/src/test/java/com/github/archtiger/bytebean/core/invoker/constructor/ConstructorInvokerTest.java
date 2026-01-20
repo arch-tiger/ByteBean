@@ -26,7 +26,7 @@ class ConstructorInvokerTest {
     @BeforeEach
     void setUp() {
         constructorInvokerHelper = ConstructorInvokerHelper.of(TestConstructorEntity.class);
-        constructorInvoker = constructorInvokerHelper.getConstructorInvoker();
+        constructorInvoker = constructorInvokerHelper;
     }
 
 
