@@ -1,6 +1,5 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
-import com.github.archtiger.bytebean.core.invoker.MethodInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.entity.Field300Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

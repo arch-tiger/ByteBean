@@ -1,6 +1,5 @@
 package com.github.archtiger.bytebean.core.invoker.field;
 
-import com.github.archtiger.bytebean.core.invoker.FieldInvokerHelper;
 import com.github.archtiger.bytebean.api.field.FieldInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

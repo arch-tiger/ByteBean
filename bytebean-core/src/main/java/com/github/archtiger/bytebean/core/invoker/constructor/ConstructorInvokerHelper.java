@@ -1,7 +1,6 @@
-package com.github.archtiger.bytebean.core.invoker;
+package com.github.archtiger.bytebean.core.invoker.constructor;
 
 import cn.hutool.core.util.ClassUtil;
-import com.github.archtiger.bytebean.core.invoker.constructor.ConstructorInvokerGenerator;
 import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;

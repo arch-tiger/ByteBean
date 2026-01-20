@@ -1,8 +1,6 @@
-package com.github.archtiger.bytebean.core.invoker;
+package com.github.archtiger.bytebean.core.invoker.method;
 
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
-import com.github.archtiger.bytebean.core.invoker.method.MethodHandleInvoker;
-import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerGenerator;
 import com.github.archtiger.bytebean.core.model.MethodGroup;
 import com.github.archtiger.bytebean.core.model.MethodIdentify;
 import com.github.archtiger.bytebean.core.model.MethodInvokerResult;

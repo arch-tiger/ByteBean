@@ -2,7 +2,7 @@ package com.github.archtiger.bytebean.core.invoker.method.jmh;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.github.archtiger.bytebean.core.invoker.MethodInvokerHelper;
+import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.entity.Field100Entity;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;

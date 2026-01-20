@@ -1,6 +1,5 @@
-package com.github.archtiger.bytebean.core.invoker;
+package com.github.archtiger.bytebean.core.invoker.field;
 
-import com.github.archtiger.bytebean.core.invoker.field.FieldInvokerGenerator;
 import com.github.archtiger.bytebean.core.model.FieldInvokerResult;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;

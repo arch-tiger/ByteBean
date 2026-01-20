@@ -1,6 +1,5 @@
 package com.github.archtiger.bytebean.core.invoker.constructor;
 
-import com.github.archtiger.bytebean.core.invoker.ConstructorInvokerHelper;
 import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
