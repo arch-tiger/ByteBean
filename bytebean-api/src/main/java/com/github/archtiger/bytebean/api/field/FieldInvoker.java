@@ -1,7 +1,7 @@
 package com.github.archtiger.bytebean.api.field;
 
 /**
- * 字段访问器接口，定义了对类字段的通用访问方法。
+ * 字段访问器，定义了对类字段的通用访问方法。
  *
  * @author ZIJIDELU
  * @datetime 2026/1/10 22:02
