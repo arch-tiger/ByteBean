@@ -20,15 +20,10 @@ public class FieldInvokerHelper extends FieldInvoker {
     private final String[] fieldNames;
     private final int[] modifiers;
 
-    private FieldInvokerHelper(FieldInvokerResult fieldInvokerResult) {
-        this.fieldNames = fieldInvokerResult.fields().stream().map(Field::getName).toArray(String[]::new);
-        this.modifiers = fieldInvokerResult.fields().stream().mapToInt(Field::getModifiers).toArray();
-        try {
-            this.fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+    private FieldInvokerHelper(FieldInvoker fieldInvoker, String[] fieldNames, int[] modifiers) {
+        this.fieldInvoker = fieldInvoker;
+        this.fieldNames = fieldNames;
+        this.modifiers = modifiers;
     }
 
     /**
@@ -42,8 +37,16 @@ public class FieldInvokerHelper extends FieldInvoker {
         if (!fieldInvokerResult.ok()) {
             return null;
         }
+        String[] fieldNames = fieldInvokerResult.fields().stream().map(Field::getName).toArray(String[]::new);
+        int[] modifiers = fieldInvokerResult.fields().stream().mapToInt(Field::getModifiers).toArray();
+        try {
+            FieldInvoker fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
+            return new FieldInvokerHelper(fieldInvoker, fieldNames, modifiers);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 
-        return new FieldInvokerHelper(fieldInvokerResult);
     }
 
     /**

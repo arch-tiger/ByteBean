@@ -39,6 +39,7 @@ public final class MethodInvokerHelper extends MethodInvoker {
         if (!methodGroup.ok()) {
             return null;
         }
+
         String[] methodNames = new String[methodGroup.methodAllList().size()];
         Class<?>[][] methodParamTypes = new Class<?>[methodGroup.methodAllList().size()][];
         for (int i = 0; i < methodGroup.methodAllList().size(); i++) {

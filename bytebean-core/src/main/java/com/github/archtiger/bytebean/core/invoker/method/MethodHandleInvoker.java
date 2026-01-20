@@ -1,12 +1,11 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+import com.github.archtiger.bytebean.core.model.MethodGroup;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * 基于MethodHandle的方法调用器（高性能优化版本）
@@ -25,12 +24,11 @@ public final class MethodHandleInvoker extends MethodInvoker {
 
     public static MethodHandleInvoker of(Class<?> targetClass) {
         try {
-            List<Method> methods = ByteBeanReflectUtil.getMethods(targetClass);
+            MethodGroup methodGroup = MethodGroup.of(targetClass);
             MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(targetClass, LOOKUP);
-            int size = methods.size();
-            MethodHandle[] methodHandles = new MethodHandle[size];
-            for (int i = 0; i < size; i++) {
-                Method method = methods.get(i);
+            MethodHandle[] methodHandles = new MethodHandle[methodGroup.methodAllList().size()];
+            for (int i = 0; i < methodGroup.methodAllList().size(); i++) {
+                Method method = methodGroup.methodAllList().get(i).method();
                 try {
                     MethodHandle methodHandle = lookup.unreflect(method);
                     methodHandles[i] = methodHandle;

@@ -19,17 +19,9 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
     private final ConstructorInvoker constructorInvoker;
     private final Class<?>[][] constructorParameterTypes;
 
-    private ConstructorInvokerHelper(ConstructorInvokerResult constructorInvokerResult) {
-        this.constructorParameterTypes = constructorInvokerResult.constructors()
-                .stream()
-                .map(Constructor::getParameterTypes)
-                .toArray(Class[][]::new);
-        try {
-            this.constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+    private ConstructorInvokerHelper(ConstructorInvoker constructorInvoker, Class<?>[][] constructorParameterTypes) {
+        this.constructorInvoker = constructorInvoker;
+        this.constructorParameterTypes = constructorParameterTypes;
     }
 
     /**
@@ -44,7 +36,18 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
             return null;
         }
 
-        return new ConstructorInvokerHelper(constructorInvokerResult);
+        Class<?>[][] constructorParameterTypes = constructorInvokerResult.constructors()
+                .stream()
+                .map(Constructor::getParameterTypes)
+                .toArray(Class[][]::new);
+        try {
+            ConstructorInvoker constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
+            return new ConstructorInvokerHelper(constructorInvoker, constructorParameterTypes);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     /**
