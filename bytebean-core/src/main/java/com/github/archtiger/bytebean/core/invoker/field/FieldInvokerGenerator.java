@@ -6,8 +6,11 @@ import com.github.archtiger.bytebean.core.model.FieldInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
+import net.bytebuddy.description.modifier.TypeManifestation;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.jar.asm.ClassWriter;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -52,6 +55,7 @@ public final class FieldInvokerGenerator {
             // 步骤3: 使用 ByteBuddy 动态生成类
             final Class<? extends FieldInvoker> invokerClass = new ByteBuddy()
                     .subclass(FieldInvoker.class)
+                    .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
                     // 设置生成类的名称
                     .name(invokerName)
                     // 定义 get 方法: Object get(int index, Object instance)
@@ -117,6 +121,10 @@ public final class FieldInvokerGenerator {
                     .defineMethod("setChar", void.class, Visibility.PUBLIC)
                     .withParameters(int.class, Object.class, char.class)
                     .intercept(new PrimitiveFieldSetterImpl(targetClass, fields, char.class))
+                    // 自动计算
+                    .visit(new AsmVisitorWrapper.ForDeclaredMethods()
+                            .writerFlags(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+                    )
                     // 生成字节码
                     .make()
                     .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
