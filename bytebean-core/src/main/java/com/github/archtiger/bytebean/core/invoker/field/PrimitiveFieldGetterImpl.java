@@ -27,61 +27,60 @@ public final class PrimitiveFieldGetterImpl implements Implementation {
     public ByteCodeAppender appender(Target implementationTarget) {
         return (mv, ctx, md) -> {
             String owner = Type.getInternalName(targetClass);
-            String generatedClassName = implementationTarget.getInstrumentedType().getInternalName();
 
+            // ============================================================
+            // 步骤1: 将 instance 强制转换为目标类型
+            // ============================================================
             // slot: 0=this, 1=index, 2=instance, 3=castedInstance
             mv.visitVarInsn(Opcodes.ALOAD, 2);
             mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
             mv.visitVarInsn(Opcodes.ASTORE, 3);
 
+            // ============================================================
+            // 步骤2: 加载索引并生成 switch
+            // ============================================================
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
-            // default label
             Label defaultLabel = new Label();
             Label[] labels = new Label[fields.size()];
             for (int i = 0; i < labels.length; i++) labels[i] = new Label();
 
             mv.visitTableSwitchInsn(0, fields.size() - 1, defaultLabel, labels);
 
-            // case 0..N
+            // ============================================================
+            // 步骤3: 生成 case 分支
+            // ============================================================
             for (int i = 0; i < fields.size(); i++) {
                 Field f = fields.get(i);
                 mv.visitLabel(labels[i]);
-                mv.visitFrame(Opcodes.F_NEW, 4, new Object[]{
-                        generatedClassName,
-                        Opcodes.INTEGER,
-                        "java/lang/Object",
-                        owner
-                }, 0, new Object[0]);
 
-                // 只处理指定基本类型的字段，其他类型跳转到 default 分支
+                // 类型校验：只处理指定基本类型的字段，其他跳转到 default
                 if (f.getType() != primitiveType) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
                 }
 
+                // 读取字段值
                 mv.visitVarInsn(Opcodes.ALOAD, 3);
-
                 String desc = Type.getDescriptor(f.getType());
                 mv.visitFieldInsn(Opcodes.GETFIELD, owner, f.getName(), desc);
 
-                // 根据基本类型选择对应的 RETURN 指令
+                // 根据基本类型选择对应的 RETURN 指令 (IRETURN, LRETURN, FRETURN, DRETURN)
                 mv.visitInsn(AsmUtil.getReturnOpcode(primitiveType));
             }
 
-            // default
+            // ============================================================
+            // 步骤4: 处理 default 分支
+            // ============================================================
             mv.visitLabel(defaultLabel);
-            mv.visitFrame(Opcodes.F_NEW, 4, new Object[]{
-                    generatedClassName,
-                    Opcodes.INTEGER,
-                    "java/lang/Object",
-                    owner
-            }, 0, new Object[0]);
 
             // 抛出 IllegalArgumentException 异常
             AsmUtil.throwIAEForField(mv);
 
-            return new ByteCodeAppender.Size(4, 4); // maxStack=4, maxLocals=4
+            // ============================================================
+            // 返回 Size.ZERO
+            // ============================================================
+            return ByteCodeAppender.Size.ZERO;
         };
     }
 

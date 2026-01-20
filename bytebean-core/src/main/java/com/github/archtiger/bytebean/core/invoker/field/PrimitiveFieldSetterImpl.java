@@ -29,46 +29,48 @@ public final class PrimitiveFieldSetterImpl implements Implementation {
     public ByteCodeAppender appender(Target implementationTarget) {
         return (mv, ctx, md) -> {
             String owner = Type.getInternalName(targetClass);
-            String generatedClassName = implementationTarget.getInstrumentedType().getInternalName();
 
-            // 计算 value 参数的 slot 大小和 castedInstance 的 slot 位置
+            // ============================================================
+            // 步骤1: 计算局部变量表位置并转换 instance
+            // ============================================================
+            // 方法签名: void set(int index, Object instance, <primitive> value)
+            // 局部变量表布局:
+            //   slot 0: this
+            //   slot 1: int index
+            //   slot 2: Object instance
+            //   slot 3: <primitive> value (注意: long/double 占用 slot 3 和 4)
+
+            // 计算基本类型 value 占用的 slot 数量 (1 或 2)
             int valueSlotSize = ByteCodeSizeUtil.slotSize(primitiveType);
-            int castedInstanceSlot = 3 + valueSlotSize; // value 占 slot 3 (或 3-4)，castedInstance 在 value 之后
-            int maxLocals = castedInstanceSlot + 1; // castedInstance 占 1 个 slot
+            // 计算存放 castedInstance 的 slot 索引 (跳过 value 占用的 slot)
+            int castedInstanceSlot = 3 + valueSlotSize;
 
-            // slot: 0=this, 1=index, 2=instance, 3=value(primitive, 可能占2个slot), castedInstanceSlot=castedInstance
             mv.visitVarInsn(Opcodes.ALOAD, 2);
             mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
             mv.visitVarInsn(Opcodes.ASTORE, castedInstanceSlot);
 
+            // ============================================================
+            // 步骤2: 加载索引并生成 switch
+            // ============================================================
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
-            // default label
             Label defaultLabel = new Label();
             Label[] labels = new Label[fields.size()];
             for (int i = 0; i < labels.length; i++) labels[i] = new Label();
 
             mv.visitTableSwitchInsn(0, fields.size() - 1, defaultLabel, labels);
 
-            // case 0..N
+            // ============================================================
+            // 步骤3: 生成 case 分支
+            // ============================================================
             for (int i = 0; i < fields.size(); i++) {
                 Field f = fields.get(i);
                 mv.visitLabel(labels[i]);
-                // 获取基本类型的 Frame 描述符
-                // Frame locals 参数是描述符数组的长度（long/double 在 Frame 中只占一个元素）
-                Object primitiveFrameType = getPrimitiveFrameType(primitiveType);
-                mv.visitFrame(Opcodes.F_NEW, 5, new Object[]{
-                        generatedClassName,
-                        Opcodes.INTEGER,
-                        "java/lang/Object",
-                        primitiveFrameType,
-                        owner
-                }, 0, new Object[0]);
 
                 final boolean notPrimitive = f.getType() != primitiveType;
                 final boolean isFinalField = Modifier.isFinal(f.getModifiers());
 
-                // reject: non-primitive or final field
+                // 拒绝处理: 类型不匹配 或 final 字段
                 if (notPrimitive || isFinalField) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
@@ -77,52 +79,30 @@ public final class PrimitiveFieldSetterImpl implements Implementation {
                 // 加载目标对象引用
                 mv.visitVarInsn(Opcodes.ALOAD, castedInstanceSlot);
 
-                // 加载基本类型的 value 参数
+                // 加载基本类型的 value 参数 (从 slot 3 开始)
                 mv.visitVarInsn(AsmUtil.getLoadOpcode(primitiveType), 3);
 
-                // 设置字段值
+                // 设置字段值 (PUTFIELD)
                 String desc = Type.getDescriptor(f.getType());
                 mv.visitFieldInsn(Opcodes.PUTFIELD, owner, f.getName(), desc);
 
-                // void 方法使用 RETURN
+                // 返回
                 mv.visitInsn(Opcodes.RETURN);
             }
 
-            // default
+            // ============================================================
+            // 步骤4: 处理 default 分支
+            // ============================================================
             mv.visitLabel(defaultLabel);
-            Object primitiveFrameType = getPrimitiveFrameType(primitiveType);
-            // Frame locals 参数是描述符数组的长度（long/double 在 Frame 中只占一个元素）
-            mv.visitFrame(Opcodes.F_NEW, 5, new Object[]{
-                    generatedClassName,
-                    Opcodes.INTEGER,
-                    "java/lang/Object",
-                    primitiveFrameType,
-                    owner
-            }, 0, new Object[0]);
 
             // 抛出 IllegalArgumentException 异常
             AsmUtil.throwIAEForField(mv);
 
-            // maxStack = 4 (PUTFIELD路径需要2, throwIAE需要4)
-            // maxLocals 根据基本类型计算: 对于 long/double 为 6，其他为 5
-            return new ByteCodeAppender.Size(4, maxLocals);
+            // ============================================================
+            // 返回 Size.ZERO
+            // ============================================================
+            return ByteCodeAppender.Size.ZERO;
         };
-    }
-
-    /**
-     * 获取基本类型的 Frame 描述符
-     */
-    private static Object getPrimitiveFrameType(Class<?> type) {
-        if (type == long.class) {
-            return Opcodes.LONG;
-        } else if (type == float.class) {
-            return Opcodes.FLOAT;
-        } else if (type == double.class) {
-            return Opcodes.DOUBLE;
-        } else {
-            // byte, short, int, char, boolean 都使用 INTEGER
-            return Opcodes.INTEGER;
-        }
     }
 
     @Override
