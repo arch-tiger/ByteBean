@@ -21,11 +21,11 @@ import java.util.List;
  * @author ZIJIDELU
  * @datetime 2026/1/11 21:44
  */
-public final class ConstructorInvokerImpl implements Implementation {
+public final class ConstructorByteCode implements Implementation {
     private final Class<?> targetClass;
     private final List<Constructor<?>> constructors;
 
-    public ConstructorInvokerImpl(Class<?> targetClass, List<Constructor<?>> constructors) {
+    public ConstructorByteCode(Class<?> targetClass, List<Constructor<?>> constructors) {
         this.targetClass = targetClass;
         this.constructors = constructors;
     }
@@ -34,7 +34,6 @@ public final class ConstructorInvokerImpl implements Implementation {
     public ByteCodeAppender appender(Target implementationTarget) {
         return (mv, ctx, md) -> {
             String owner = Type.getInternalName(targetClass);
-            String generatedClassName = implementationTarget.getInstrumentedType().getInternalName();
 
             // ============================================================
             // 方法签名: Object newInstance(int index, Object... args)
@@ -68,17 +67,6 @@ public final class ConstructorInvokerImpl implements Implementation {
                 mv.visitLabel(labels[i]);
 
                 // ========================================================
-                // 步骤3.1: 插入 StackMapFrame
-                // ========================================================
-                mv.visitFrame(Opcodes.F_NEW, 3,
-                        new Object[]{
-                                generatedClassName,
-                                Opcodes.INTEGER,
-                                "[Ljava/lang/Object;"
-                        },
-                        0, new Object[0]);
-
-                // ========================================================
                 // 步骤3.2: 在堆上分配新对象
                 // ========================================================
                 // NEW 指令: 在堆上分配一个新对象，类型为 owner（目标类）
@@ -95,12 +83,18 @@ public final class ConstructorInvokerImpl implements Implementation {
                     // 加载 Object[] args
                     mv.visitVarInsn(Opcodes.ALOAD, 2);
                     // 加载数组索引 j
-                    mv.visitIntInsn(Opcodes.BIPUSH, j);
+                    switch (j) {
+                        case 0 -> mv.visitInsn(Opcodes.ICONST_0);
+                        case 1 -> mv.visitInsn(Opcodes.ICONST_1);
+                        case 2 -> mv.visitInsn(Opcodes.ICONST_2);
+                        case 3 -> mv.visitInsn(Opcodes.ICONST_3);
+                        case 4 -> mv.visitInsn(Opcodes.ICONST_4);
+                        case 5 -> mv.visitInsn(Opcodes.ICONST_5);
+                        default -> mv.visitIntInsn(Opcodes.BIPUSH, j);
+                    }
                     // AALOAD: 从数组中加载元素 args[j]
                     mv.visitInsn(Opcodes.AALOAD);
                     // 自动拆箱或类型转换
-                    // 如果参数是基本类型，会调用对应的包装类的 valueOf 方法进行拆箱
-                    // 如果参数是引用类型，会进行 CHECKCAST 类型检查
                     AsmUtil.unboxOrCast(mv, paramTypes[j]);
                 }
 
@@ -108,7 +102,6 @@ public final class ConstructorInvokerImpl implements Implementation {
                 // 步骤3.4: 调用构造器 <init>
                 // ========================================================
                 // INVOKESPECIAL 指令: 调用构造器方法
-                // 参数顺序依次从栈顶取（由上面的循环生成）
                 mv.visitMethodInsn(
                         Opcodes.INVOKESPECIAL,
                         owner,
@@ -128,63 +121,14 @@ public final class ConstructorInvokerImpl implements Implementation {
             // 步骤4: 处理 default 分支（索引越界）
             // ============================================================
             mv.visitLabel(defaultLabel);
-            mv.visitFrame(Opcodes.F_NEW, 3,
-                    new Object[]{
-                            generatedClassName,
-                            Opcodes.INTEGER,
-                            "[Ljava/lang/Object;"
-                    },
-                    0, new Object[0]);
 
             // 抛出 IllegalArgumentException 异常
             AsmUtil.throwIAEForConstructor(mv);
 
             // ============================================================
-            // 步骤5: 计算并返回方法的栈和局部变量大小
+            // 返回 Size.ZERO，由 ByteBuddy 自动计算栈和局部变量大小
             // ============================================================
-            // 计算最大栈深度和局部变量数量
-            int maxStack = 0;
-            int maxLocals = 3; // this + index + args
-
-            // 遍历所有构造器，找出最大的栈深度需求
-            // 参考 ByteCodeSizeUtil.forConstructorInvoker 和 MethodInvokerImpl 的实现
-            for (Constructor<?> constructor : constructors) {
-                Class<?>[] params = constructor.getParameterTypes();
-
-                // NEW + DUP = 2 (对象引用)
-                int constructorStack = 2;
-
-                // 参数加载和拆箱
-                // 参考 ByteCodeSizeUtil.forMethodInvoker 的计算方式
-                for (Class<?> param : params) {
-                    // 参数值本身占用的栈空间
-                    constructorStack += Type.getType(param).getSize();
-                    // 拆箱操作需要额外栈空间
-                    if (param.isPrimitive()) {
-                        constructorStack += 1; // CHECKCAST + valueOf 调用
-                    }
-                }
-
-                // 额外计算 Object[] args 加载栈空间
-                // 参考 ByteCodeSizeUtil.forMethodInvoker: 如果有参数，需要额外栈空间
-                if (params.length > 0) {
-                    // 在加载参数时，需要 ALOAD args(1) + BIPUSH index(1) + AALOAD(1)
-                    // 但这些是顺序执行的，栈空间可以复用
-                    // 参考 forMethodInvoker 的实现，只加 2 (ALOAD args + BIPUSH index)
-                    constructorStack += 2;
-                }
-
-                if (constructorStack > maxStack) {
-                    maxStack = constructorStack;
-                }
-            }
-
-            // throwIAE 也需要栈空间，确保足够
-            if (maxStack < 4) {
-                maxStack = 4;
-            }
-
-            return new ByteCodeAppender.Size(maxStack, maxLocals);
+            return ByteCodeAppender.Size.ZERO;
         };
     }
 

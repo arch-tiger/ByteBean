@@ -28,6 +28,7 @@ class ConstructorInvokerSimpleTest {
 
     @Test
     void testNoArgsConstructor() {
+        assertTrue(constructorInvoker.newInstance() instanceof TestConstructorEntity);
         // 测试无参构造器
         Object instance = constructorInvoker.newInstance(constructorInvokerHelper.getConstructorIndex());
         assertNotNull(instance);

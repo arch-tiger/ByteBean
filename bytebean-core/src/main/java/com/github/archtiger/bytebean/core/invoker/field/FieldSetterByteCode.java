@@ -12,11 +12,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-public final class FieldSetterImpl implements Implementation {
+public final class FieldSetterByteCode implements Implementation {
     private final Class<?> targetClass;
     private final List<Field> fields;
 
-    public FieldSetterImpl(Class<?> targetClass, List<Field> fields) {
+    public FieldSetterByteCode(Class<?> targetClass, List<Field> fields) {
         this.targetClass = targetClass;
         this.fields = fields;
     }

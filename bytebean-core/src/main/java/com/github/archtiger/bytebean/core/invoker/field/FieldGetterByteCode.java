@@ -11,74 +11,79 @@ import net.bytebuddy.jar.asm.Type;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public final class PrimitiveFieldGetterImpl implements Implementation {
-
+public final class FieldGetterByteCode implements Implementation {
     private final Class<?> targetClass;
     private final List<Field> fields;
-    private final Class<?> primitiveType;
 
-    public PrimitiveFieldGetterImpl(Class<?> targetClass, List<Field> fields, Class<?> primitiveType) {
+    public FieldGetterByteCode(Class<?> targetClass, List<Field> fields) {
         this.targetClass = targetClass;
         this.fields = fields;
-        this.primitiveType = primitiveType;
     }
 
     @Override
     public ByteCodeAppender appender(Target implementationTarget) {
         return (mv, ctx, md) -> {
+            // 获取目标类的内部名称（ASM 格式）
             String owner = Type.getInternalName(targetClass);
 
             // ============================================================
-            // 步骤1: 将 instance 强制转换为目标类型
+            // 步骤1: 将参数中的 instance 强制转换为目标类型
+            // 放在 switch 外部，避免在 case 内部重复进行类型检查
             // ============================================================
-            // slot: 0=this, 1=index, 2=instance, 3=castedInstance
-            mv.visitVarInsn(Opcodes.ALOAD, 2);
-            mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
-            mv.visitVarInsn(Opcodes.ASTORE, 3);
+            // 方法签名: Object get(int index, Object instance)
+            // 局部变量表:
+            //   slot 0: this
+            //   slot 1: int index
+            //   slot 2: Object instance
+            //   slot 3: Target castedInstance
+
+            mv.visitVarInsn(Opcodes.ALOAD, 2);          // 加载 instance
+            mv.visitTypeInsn(Opcodes.CHECKCAST, owner); // 类型转换检查
+            mv.visitVarInsn(Opcodes.ASTORE, 3);         // 存储转换后的对象
 
             // ============================================================
-            // 步骤2: 加载索引并生成 switch
+            // 步骤2: 加载索引参数
             // ============================================================
             mv.visitVarInsn(Opcodes.ILOAD, 1);
 
+            // 创建 switch 分支标签
             Label defaultLabel = new Label();
             Label[] labels = new Label[fields.size()];
             for (int i = 0; i < labels.length; i++) labels[i] = new Label();
 
+            // ============================================================
+            // 步骤3: 生成 tableswitch 指令
+            // ============================================================
             mv.visitTableSwitchInsn(0, fields.size() - 1, defaultLabel, labels);
 
             // ============================================================
-            // 步骤3: 生成 case 分支
+            // 步骤4: 生成各个 case 分支
             // ============================================================
             for (int i = 0; i < fields.size(); i++) {
                 Field f = fields.get(i);
                 mv.visitLabel(labels[i]);
 
-                // 类型校验：只处理指定基本类型的字段，其他跳转到 default
-                if (f.getType() != primitiveType) {
-                    mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
-                    continue;
-                }
-
-                // 读取字段值
+                // 读取字段值 (直接使用 slot 3 中已转换好的对象)
                 mv.visitVarInsn(Opcodes.ALOAD, 3);
-                String desc = Type.getDescriptor(f.getType());
-                mv.visitFieldInsn(Opcodes.GETFIELD, owner, f.getName(), desc);
+                mv.visitFieldInsn(Opcodes.GETFIELD,
+                        owner, f.getName(), Type.getDescriptor(f.getType()));
 
-                // 根据基本类型选择对应的 RETURN 指令 (IRETURN, LRETURN, FRETURN, DRETURN)
-                mv.visitInsn(AsmUtil.getReturnOpcode(primitiveType));
+                // 基本类型装箱
+                AsmUtil.boxIfNeeded(mv, f.getType());
+
+                // 返回结果
+                mv.visitInsn(Opcodes.ARETURN);
             }
 
             // ============================================================
-            // 步骤4: 处理 default 分支
+            // 步骤5: 处理 default 分支（索引越界）
             // ============================================================
             mv.visitLabel(defaultLabel);
 
-            // 抛出 IllegalArgumentException 异常
             AsmUtil.throwIAEForField(mv);
 
             // ============================================================
-            // 返回 Size.ZERO
+            // 返回 Size.ZERO，由 ByteBuddy 自动计算栈映射和局部变量表大小
             // ============================================================
             return ByteCodeAppender.Size.ZERO;
         };
@@ -86,6 +91,7 @@ public final class PrimitiveFieldGetterImpl implements Implementation {
 
     @Override
     public InstrumentedType prepare(InstrumentedType instrumentedType) {
+        // 预处理阶段，不修改类型信息，直接返回
         return instrumentedType;
     }
 }

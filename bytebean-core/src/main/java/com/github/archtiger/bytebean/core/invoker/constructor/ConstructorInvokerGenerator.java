@@ -6,8 +6,11 @@ import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.asm.AsmVisitorWrapper;
+import net.bytebuddy.description.modifier.TypeManifestation;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.jar.asm.ClassWriter;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
@@ -54,13 +57,22 @@ public final class ConstructorInvokerGenerator {
             // 步骤3: 使用 ByteBuddy 动态生成类
             Class<? extends ConstructorInvoker> invokerClass = new ByteBuddy()
                     .subclass(ConstructorInvoker.class)
+                    .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
                     // 设置生成类的名称
                     .name(invokerName)
-                    // 定义 newInstance 方法: Object newInstance(int index, Object target, Object... args)
+                    // 定义 newInstance 方法: Object newInstance(int index, Object... args)
                     .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
                     .withParameters(int.class, Object[].class)
                     // 使用 ConstructorAccessImpl 作为方法实现的字节码生成器
-                    .intercept(new ConstructorInvokerImpl(targetClass, constructors))
+                    .intercept(new ConstructorByteCode(targetClass, constructors))
+                    // 定义 newInstance 方法: Object newInstance()
+                    .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
+                    // 使用 ConstructorAccessImpl 作为方法实现的字节码生成器
+                    .intercept(new ConstructorP0ByteCode(targetClass))
+                    // 自动计算
+                    .visit(new AsmVisitorWrapper.ForDeclaredMethods()
+                            .writerFlags(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+                    )
                     // 生成字节码
                     .make()
                     .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)

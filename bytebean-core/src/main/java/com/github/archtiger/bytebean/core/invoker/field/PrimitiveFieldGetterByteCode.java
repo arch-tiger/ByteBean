@@ -1,7 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.field;
 
 import com.github.archtiger.bytebean.core.support.AsmUtil;
-import com.github.archtiger.bytebean.core.support.ByteCodeSizeUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -10,16 +9,15 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
-public final class PrimitiveFieldSetterImpl implements Implementation {
+public final class PrimitiveFieldGetterByteCode implements Implementation {
 
     private final Class<?> targetClass;
     private final List<Field> fields;
     private final Class<?> primitiveType;
 
-    public PrimitiveFieldSetterImpl(Class<?> targetClass, List<Field> fields, Class<?> primitiveType) {
+    public PrimitiveFieldGetterByteCode(Class<?> targetClass, List<Field> fields, Class<?> primitiveType) {
         this.targetClass = targetClass;
         this.fields = fields;
         this.primitiveType = primitiveType;
@@ -31,23 +29,12 @@ public final class PrimitiveFieldSetterImpl implements Implementation {
             String owner = Type.getInternalName(targetClass);
 
             // ============================================================
-            // 步骤1: 计算局部变量表位置并转换 instance
+            // 步骤1: 将 instance 强制转换为目标类型
             // ============================================================
-            // 方法签名: void set(int index, Object instance, <primitive> value)
-            // 局部变量表布局:
-            //   slot 0: this
-            //   slot 1: int index
-            //   slot 2: Object instance
-            //   slot 3: <primitive> value (注意: long/double 占用 slot 3 和 4)
-
-            // 计算基本类型 value 占用的 slot 数量 (1 或 2)
-            int valueSlotSize = ByteCodeSizeUtil.slotSize(primitiveType);
-            // 计算存放 castedInstance 的 slot 索引 (跳过 value 占用的 slot)
-            int castedInstanceSlot = 3 + valueSlotSize;
-
+            // slot: 0=this, 1=index, 2=instance, 3=castedInstance
             mv.visitVarInsn(Opcodes.ALOAD, 2);
             mv.visitTypeInsn(Opcodes.CHECKCAST, owner);
-            mv.visitVarInsn(Opcodes.ASTORE, castedInstanceSlot);
+            mv.visitVarInsn(Opcodes.ASTORE, 3);
 
             // ============================================================
             // 步骤2: 加载索引并生成 switch
@@ -67,27 +54,19 @@ public final class PrimitiveFieldSetterImpl implements Implementation {
                 Field f = fields.get(i);
                 mv.visitLabel(labels[i]);
 
-                final boolean notPrimitive = f.getType() != primitiveType;
-                final boolean isFinalField = Modifier.isFinal(f.getModifiers());
-
-                // 拒绝处理: 类型不匹配 或 final 字段
-                if (notPrimitive || isFinalField) {
+                // 类型校验：只处理指定基本类型的字段，其他跳转到 default
+                if (f.getType() != primitiveType) {
                     mv.visitJumpInsn(Opcodes.GOTO, defaultLabel);
                     continue;
                 }
 
-                // 加载目标对象引用
-                mv.visitVarInsn(Opcodes.ALOAD, castedInstanceSlot);
-
-                // 加载基本类型的 value 参数 (从 slot 3 开始)
-                mv.visitVarInsn(AsmUtil.getLoadOpcode(primitiveType), 3);
-
-                // 设置字段值 (PUTFIELD)
+                // 读取字段值
+                mv.visitVarInsn(Opcodes.ALOAD, 3);
                 String desc = Type.getDescriptor(f.getType());
-                mv.visitFieldInsn(Opcodes.PUTFIELD, owner, f.getName(), desc);
+                mv.visitFieldInsn(Opcodes.GETFIELD, owner, f.getName(), desc);
 
-                // 返回
-                mv.visitInsn(Opcodes.RETURN);
+                // 根据基本类型选择对应的 RETURN 指令 (IRETURN, LRETURN, FRETURN, DRETURN)
+                mv.visitInsn(AsmUtil.getReturnOpcode(primitiveType));
             }
 
             // ============================================================
