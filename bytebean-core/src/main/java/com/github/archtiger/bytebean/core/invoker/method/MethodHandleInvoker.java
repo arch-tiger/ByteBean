@@ -25,12 +25,12 @@ public final class MethodHandleInvoker extends MethodInvoker {
     public static MethodHandleInvoker of(Class<?> targetClass) {
         try {
             MethodGroup methodGroup = MethodGroup.of(targetClass);
-            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(targetClass, LOOKUP);
+            MethodHandles.Lookup privateLookup = MethodHandles.privateLookupIn(targetClass, LOOKUP);
             MethodHandle[] methodHandles = new MethodHandle[methodGroup.methodAllList().size()];
             for (int i = 0; i < methodGroup.methodAllList().size(); i++) {
                 Method method = methodGroup.methodAllList().get(i).method();
                 try {
-                    MethodHandle methodHandle = lookup.unreflect(method);
+                    MethodHandle methodHandle = privateLookup.unreflect(method);
                     methodHandles[i] = methodHandle;
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);

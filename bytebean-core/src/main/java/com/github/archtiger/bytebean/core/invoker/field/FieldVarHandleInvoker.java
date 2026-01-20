@@ -26,8 +26,9 @@ public final class FieldVarHandleInvoker extends FieldInvoker {
         List<Field> fields = ByteBeanReflectUtil.getFields(targetClass);
         VarHandle[] varHandles = new VarHandle[fields.size()];
         try {
+            MethodHandles.Lookup privateLookup = MethodHandles.privateLookupIn(targetClass, LOOKUP);
             for (int i = 0; i < varHandles.length; i++) {
-                varHandles[i] = LOOKUP.findVarHandle(targetClass, fields.get(i).getName(), fields.get(i).getType());
+                varHandles[i] = privateLookup.findVarHandle(targetClass, fields.get(i).getName(), fields.get(i).getType());
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);

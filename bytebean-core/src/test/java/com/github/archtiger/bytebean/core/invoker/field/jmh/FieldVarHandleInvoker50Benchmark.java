@@ -46,18 +46,27 @@ public class FieldVarHandleInvoker50Benchmark {
      */
     private FieldAccess reflectasmAccess;
     private int reflectasmFieldIndex;
+    private int reflectasmFirstFieldIndex;
+    private int reflectasmMiddleFieldIndex;
+    private int reflectasmLastFieldIndex;
 
     /**
      * VarHandle 方式：使用 FieldVarHandleInvoker
      */
     private FieldVarHandleInvoker varHandleInvoker;
     private int varHandleFieldIndex;
+    private int varHandleFirstFieldIndex;
+    private int varHandleMiddleFieldIndex;
+    private int varHandleLastFieldIndex;
 
     /**
      * FieldInvokerHelper 方式：使用 FieldInvokerHelper
      */
     private FieldInvokerHelper fieldInvokerHelper;
     private int fieldInvokerFieldIndex;
+    private int fieldInvokerFirstFieldIndex;
+    private int fieldInvokerMiddleFieldIndex;
+    private int fieldInvokerLastFieldIndex;
 
     @Setup(Level.Trial)
     public void setup() throws Exception {
@@ -70,12 +79,21 @@ public class FieldVarHandleInvoker50Benchmark {
         // 初始化 ReflectASM
         reflectasmAccess = FieldAccess.get(JMH50PublicFieldTestEntity.class);
         reflectasmFieldIndex = reflectasmAccess.getIndex("field25");
+        reflectasmFirstFieldIndex = reflectasmAccess.getIndex("field1");
+        reflectasmMiddleFieldIndex = reflectasmAccess.getIndex("field25");
+        reflectasmLastFieldIndex = reflectasmAccess.getIndex("field50");
 
         // 初始化 VarHandle
         varHandleInvoker = FieldVarHandleInvoker.of(JMH50PublicFieldTestEntity.class);
         fieldInvokerHelper = FieldInvokerHelper.of(JMH50PublicFieldTestEntity.class);
         fieldInvokerFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field25");
+        fieldInvokerFirstFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field1");
+        fieldInvokerMiddleFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field25");
+        fieldInvokerLastFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field50");
         varHandleFieldIndex = fieldInvokerFieldIndex; // 同一个索引
+        varHandleFirstFieldIndex = fieldInvokerFirstFieldIndex;
+        varHandleMiddleFieldIndex = fieldInvokerMiddleFieldIndex;
+        varHandleLastFieldIndex = fieldInvokerLastFieldIndex;
     }
 
     /**
@@ -222,47 +240,47 @@ public class FieldVarHandleInvoker50Benchmark {
      */
     @Benchmark
     public Object fieldVarHandleInvokerGetFirstField() {
-        return varHandleInvoker.get(0, entity);
+        return varHandleInvoker.get(varHandleFirstFieldIndex, entity);
     }
 
     @Benchmark
     public Object fieldVarHandleInvokerGetMiddleField() {
-        return varHandleInvoker.get(24, entity);
+        return varHandleInvoker.get(varHandleMiddleFieldIndex, entity);
     }
 
     @Benchmark
     public Object fieldVarHandleInvokerGetLastField() {
-        return varHandleInvoker.get(49, entity);
+        return varHandleInvoker.get(varHandleLastFieldIndex, entity);
     }
 
     @Benchmark
     public Object fieldInvokerHelperGetFirstField() {
-        return fieldInvokerHelper.get(0, entity);
+        return fieldInvokerHelper.get(fieldInvokerFirstFieldIndex, entity);
     }
 
     @Benchmark
     public Object fieldInvokerHelperGetMiddleField() {
-        return fieldInvokerHelper.get(24, entity);
+        return fieldInvokerHelper.get(fieldInvokerMiddleFieldIndex, entity);
     }
 
     @Benchmark
     public Object fieldInvokerHelperGetLastField() {
-        return fieldInvokerHelper.get(49, entity);
+        return fieldInvokerHelper.get(fieldInvokerLastFieldIndex, entity);
     }
 
     @Benchmark
     public Object reflectasmGetFirstField() {
-        return reflectasmAccess.get(entity, 0);
+        return reflectasmAccess.get(entity, reflectasmFirstFieldIndex);
     }
 
     @Benchmark
     public Object reflectasmGetMiddleField() {
-        return reflectasmAccess.get(entity, reflectasmAccess.getIndex("field25"));
+        return reflectasmAccess.get(entity, reflectasmMiddleFieldIndex);
     }
 
     @Benchmark
     public Object reflectasmGetLastField() {
-        return reflectasmAccess.get(entity, reflectasmAccess.getIndex("field50"));
+        return reflectasmAccess.get(entity, reflectasmLastFieldIndex);
     }
 
     /**
