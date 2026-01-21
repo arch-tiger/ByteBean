@@ -2,7 +2,7 @@ package com.github.archtiger.bytebean.core.invoker.field.jmh;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.esotericsoftware.reflectasm.FieldAccess;
-import com.github.archtiger.bytebean.core.invoker.entity.Field500Entity;
+import com.github.archtiger.bytebean.core.invoker.entity.Field1000Entity;
 import com.github.archtiger.bytebean.core.invoker.field.FieldInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.field.FieldVarHandleInvoker;
 import org.openjdk.jmh.annotations.*;
@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 字段访问性能基准测试 - 500字段实体
+ * 字段访问性能基准测试 - 1000字段实体
  *
  * @author ZIJIDELU
  * @datetime 2026/1/21
@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 5, time = 2)
 @Fork(1)
 @State(Scope.Benchmark)
-public class FieldVarHandleInvoker500Benchmark {
+public class FieldInvokerHelper1000Benchmark {
 
-    private Field500Entity entity;
+    private Field1000Entity entity;
     private Field standardReflectionField;
     private FieldAccess reflectasmAccess;
     private int reflectasmFieldIndex;
@@ -46,23 +46,23 @@ public class FieldVarHandleInvoker500Benchmark {
 
     @Setup(Level.Trial)
     public void setup() throws Exception {
-        entity = new Field500Entity();
+        entity = new Field1000Entity();
 
-        standardReflectionField = Field500Entity.class.getDeclaredField("field250");
+        standardReflectionField = Field1000Entity.class.getDeclaredField("field1");
         standardReflectionField.setAccessible(true);
 
-        reflectasmAccess = FieldAccess.get(Field500Entity.class);
-        reflectasmFieldIndex = reflectasmAccess.getIndex("field250");
+        reflectasmAccess = FieldAccess.get(Field1000Entity.class);
+        reflectasmFieldIndex = reflectasmAccess.getIndex("field1");
         reflectasmFirstFieldIndex = reflectasmAccess.getIndex("field1");
-        reflectasmMiddleFieldIndex = reflectasmAccess.getIndex("field250");
-        reflectasmLastFieldIndex = reflectasmAccess.getIndex("field500");
+        reflectasmMiddleFieldIndex = reflectasmAccess.getIndex("field1");
+        reflectasmLastFieldIndex = reflectasmAccess.getIndex("field1000");
 
-        varHandleInvoker = FieldVarHandleInvoker.of(Field500Entity.class);
-        fieldInvokerHelper = FieldInvokerHelper.of(Field500Entity.class);
-        fieldInvokerFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field250");
+        varHandleInvoker = FieldVarHandleInvoker.of(Field1000Entity.class);
+        fieldInvokerHelper = FieldInvokerHelper.of(Field1000Entity.class);
+        fieldInvokerFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field1");
         fieldInvokerFirstFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field1");
-        fieldInvokerMiddleFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field250");
-        fieldInvokerLastFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field500");
+        fieldInvokerMiddleFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field1");
+        fieldInvokerLastFieldIndex = fieldInvokerHelper.getFieldGetterIndex("field1000");
         varHandleFieldIndex = fieldInvokerFieldIndex;
         varHandleFirstFieldIndex = fieldInvokerFirstFieldIndex;
         varHandleMiddleFieldIndex = fieldInvokerMiddleFieldIndex;
@@ -111,16 +111,16 @@ public class FieldVarHandleInvoker500Benchmark {
 
     @Benchmark
     public void reflectUtilGetMultipleFields() throws IllegalAccessException {
-        ReflectUtil.getFieldValue(entity, "field250");
-        ReflectUtil.setFieldValue(entity, "field250", 1);
-        ReflectUtil.getFieldValue(entity, "field250");
-        ReflectUtil.setFieldValue(entity, "field250", 2);
-        ReflectUtil.getFieldValue(entity, "field250");
-        ReflectUtil.setFieldValue(entity, "field250", 3);
-        ReflectUtil.getFieldValue(entity, "field250");
-        ReflectUtil.setFieldValue(entity, "field250", 4);
-        ReflectUtil.getFieldValue(entity, "field250");
-        ReflectUtil.setFieldValue(entity, "field250", 5);
+        ReflectUtil.getFieldValue(entity, "field1");
+        ReflectUtil.setFieldValue(entity, "field1", 1);
+        ReflectUtil.getFieldValue(entity, "field1");
+        ReflectUtil.setFieldValue(entity, "field1", 2);
+        ReflectUtil.getFieldValue(entity, "field1");
+        ReflectUtil.setFieldValue(entity, "field1", 3);
+        ReflectUtil.getFieldValue(entity, "field1");
+        ReflectUtil.setFieldValue(entity, "field1", 4);
+        ReflectUtil.getFieldValue(entity, "field1");
+        ReflectUtil.setFieldValue(entity, "field1", 5);
     }
 
     @Benchmark
@@ -226,12 +226,12 @@ public class FieldVarHandleInvoker500Benchmark {
 
     @Benchmark
     public Object reflectUtilGet() {
-        return ReflectUtil.getFieldValue(entity, "field250");
+        return ReflectUtil.getFieldValue(entity, "field1");
     }
 
     @Benchmark
     public void reflectUtilSet() {
-        ReflectUtil.setFieldValue(entity, "field250", 999);
+        ReflectUtil.setFieldValue(entity, "field1", 999);
     }
 
     @Benchmark
@@ -268,13 +268,13 @@ public class FieldVarHandleInvoker500Benchmark {
 
     @Benchmark
     public Object reflectUtilMixedOperations() {
-        ReflectUtil.setFieldValue(entity, "field250", 100);
-        Object result = ReflectUtil.getFieldValue(entity, "field250");
-        ReflectUtil.setFieldValue(entity, "field250", 200);
-        return ReflectUtil.getFieldValue(entity, "field250");
+        ReflectUtil.setFieldValue(entity, "field1", 100);
+        Object result = ReflectUtil.getFieldValue(entity, "field1");
+        ReflectUtil.setFieldValue(entity, "field1", 200);
+        return ReflectUtil.getFieldValue(entity, "field1");
     }
 
     public static void main(String[] args) throws Exception {
-        org.openjdk.jmh.Main.main(new String[]{FieldVarHandleInvoker500Benchmark.class.getName()});
+        org.openjdk.jmh.Main.main(new String[]{FieldInvokerHelper1000Benchmark.class.getName()});
     }
 }

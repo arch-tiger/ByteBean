@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 5, time = 2)
 @Fork(1)
 @State(Scope.Benchmark)
-public class FieldVarHandleInvoker200Benchmark {
+public class FieldInvokerHelper200Benchmark {
 
     private Field200Entity entity;
     private Field standardReflectionField;
@@ -275,6 +275,6 @@ public class FieldVarHandleInvoker200Benchmark {
     }
 
     public static void main(String[] args) throws Exception {
-        org.openjdk.jmh.Main.main(new String[]{FieldVarHandleInvoker200Benchmark.class.getName()});
+        org.openjdk.jmh.Main.main(new String[]{FieldInvokerHelper200Benchmark.class.getName()});
     }
 }
