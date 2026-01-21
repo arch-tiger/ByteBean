@@ -5,7 +5,6 @@ import com.esotericsoftware.reflectasm.MethodAccess;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.entity.Field10Entity;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.infra.Blackhole;
 
 import java.lang.reflect.Method;
 import java.lang.invoke.MethodHandle;
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * MethodInvoker性能测试 - 10字段版本
- * 只测试 getter 和 setter 调用，对比6种方式的性能
+ * 只测试 getter 和 setter 调用，对比5种方式的性能
  * 所有字段均为对象类型（Integer）
  *
  * @author ZIJIDELU
@@ -33,8 +32,6 @@ public class MethodInvoker10Benchmark {
     private static final int TEST_COUNT = 10;
     
     private Field10Entity entity;
-    
-    // ========== Direct Call ==========
     
     // ========== MethodHandle ==========
     private List<MethodHandle> methodHandleGetters;
@@ -124,138 +121,90 @@ public class MethodInvoker10Benchmark {
         }
     }
     
-    // ==================== Direct Call ====================
-    
-    @Benchmark
-    public void test_DirectCall_Getter(Blackhole bh) {
-        // 调用10个不同的getter方法
-        Integer result = entity.getField1();
-        bh.consume(result);
-        result = entity.getField2();
-        bh.consume(result);
-        result = entity.getField3();
-        bh.consume(result);
-        result = entity.getField4();
-        bh.consume(result);
-        result = entity.getField5();
-        bh.consume(result);
-        result = entity.getField6();
-        bh.consume(result);
-        result = entity.getField7();
-        bh.consume(result);
-        result = entity.getField8();
-        bh.consume(result);
-        result = entity.getField9();
-        bh.consume(result);
-        result = entity.getField10();
-        bh.consume(result);
-    }
-    
-    @Benchmark
-    public void test_DirectCall_Setter(Blackhole bh) {
-        // 调用10个不同的setter方法
-        Integer value = testValue;
-        entity.setField1(value);
-        entity.setField2(value);
-        entity.setField3(value);
-        entity.setField4(value);
-        entity.setField5(value);
-        entity.setField6(value);
-        entity.setField7(value);
-        entity.setField8(value);
-        entity.setField9(value);
-        entity.setField10(value);
-    }
-    
     // ==================== MethodHandle ====================
-    
+
     @Benchmark
-    public void test_MethodHandle_Getter(Blackhole bh) throws Throwable {
+    public void test_MethodHandle_Getter() throws Throwable {
         for (int i = 0; i < TEST_COUNT; i++) {
             MethodHandle getter = methodHandleGetters.get(i);
-            Object result = getter.invoke((Object) entity);
-            bh.consume(result);
+            Object result = getter.invoke(entity);
         }
     }
-    
+
     @Benchmark
-    public void test_MethodHandle_Setter(Blackhole bh) throws Throwable {
+    public void test_MethodHandle_Setter() throws Throwable {
         for (int i = 0; i < TEST_COUNT; i++) {
             MethodHandle setter = methodHandleSetters.get(i);
             setter.invoke(entity, testValue);
         }
     }
-    
+
     // ==================== Reflection ====================
-    
+
     @Benchmark
-    public void test_Reflection_Getter(Blackhole bh) throws Exception {
+    public void test_Reflection_Getter() throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             Method getter = reflectionGetters.get(i);
             Object result = getter.invoke(entity);
-            bh.consume(result);
         }
     }
-    
+
     @Benchmark
-    public void test_Reflection_Setter(Blackhole bh) throws Exception {
+    public void test_Reflection_Setter() throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             Method setter = reflectionSetters.get(i);
             setter.invoke(entity, testValue);
         }
     }
-    
+
     // ==================== ReflectASM ====================
-    
+
     @Benchmark
-    public void test_ReflectASM_Getter(Blackhole bh) {
+    public void test_ReflectASM_Getter() {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = reflectasmGetterIndexes.get(i);
             Object result = reflectasmMethodAccess.invoke(entity, index);
-            bh.consume(result);
         }
     }
-    
+
     @Benchmark
-    public void test_ReflectASM_Setter(Blackhole bh) {
+    public void test_ReflectASM_Setter() {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = reflectasmSetterIndexes.get(i);
             reflectasmMethodAccess.invoke(entity, index, testValue);
         }
     }
-    
+
     // ==================== MethodInvokerHelper (varargs) ====================
-    
+
     @Benchmark
-    public void test_MethodInvokerHelper_Getter_Varargs(Blackhole bh) throws Exception {
+    public void test_MethodInvokerHelper_Getter_Varargs() throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperGetterIndexes.get(i);
             Object result = methodInvokerHelper.invoke(index, entity);
-            bh.consume(result);
         }
     }
-    
+
     @Benchmark
-    public void test_MethodInvokerHelper_Setter_Varargs(Blackhole bh) throws Exception {
+    public void test_MethodInvokerHelper_Setter_Varargs() throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             int index = methodInvokerHelperSetterIndexes.get(i);
             methodInvokerHelper.invoke1(index, entity, testValue);
         }
     }
-    
+
     // ==================== Hutool ReflectUtil ====================
-    
+
     @Benchmark
-    public void test_Hutool_Getter(Blackhole bh) throws Exception {
+    public void test_Hutool_Getter() throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             Method getter = hutoolGetters.get(i);
             Object result = ReflectUtil.invoke(entity, getter);
-            bh.consume(result);
         }
     }
-    
+
     @Benchmark
-    public void test_Hutool_Setter(Blackhole bh) throws Exception {
+    public void test_Hutool_Setter() throws Exception {
         for (int i = 0; i < TEST_COUNT; i++) {
             Method setter = hutoolSetters.get(i);
             ReflectUtil.invoke(entity, setter, testValue);
@@ -265,9 +214,7 @@ public class MethodInvoker10Benchmark {
     @TearDown(Level.Trial)
     public void tearDown() {
         entity = null;
-        
-        // Direct Call - 无需清理
-        
+
         // MethodHandle
         methodHandleGetters = null;
         methodHandleSetters = null;
