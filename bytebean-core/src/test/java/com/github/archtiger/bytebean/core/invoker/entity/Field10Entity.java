@@ -14,16 +14,16 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Field10Entity {
-    private Integer field1;
-    private Integer field2;
-    private Integer field3;
-    private Integer field4;
-    private Integer field5;
-    private Integer field6;
-    private Integer field7;
-    private Integer field8;
-    private Integer field9;
-    private Integer field10;
+    public Integer field1;
+    public Integer field2;
+    public Integer field3;
+    public Integer field4;
+    public Integer field5;
+    public Integer field6;
+    public Integer field7;
+    public Integer field8;
+    public Integer field9;
+    public Integer field10;
 
     public static void main(String[] args) {
         ByteBeanReflectUtil.getMethods(Field10Entity.class).forEach(System.out::println);
