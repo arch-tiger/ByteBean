@@ -48,23 +48,23 @@ public final class MethodInvokerHelper extends MethodInvoker {
             methodParamTypes[i] = methodIdentify.method().getParameterTypes();
         }
 
-        if (methodGroup.methodAllList().size() > ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
-            MethodHandleInvoker methodHandleInvoker = MethodHandleInvoker.of(targetClass);
-            return new MethodInvokerHelper(methodHandleInvoker, methodNames, methodParamTypes);
+        // 若方法数量小于等于阈值,则使用 MethodInvokerGenerator 生成 MethodInvoker 实现类
+        if (methodGroup.methodAllList().size() <= ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
+            MethodInvokerResult generate = MethodInvokerGenerator.generate(targetClass);
+            if (generate.ok()) {
+                try {
+                    MethodInvoker methodInvoker = generate.methodInvokerClass().getDeclaredConstructor().newInstance();
+                    return new MethodInvokerHelper(methodInvoker, methodNames, methodParamTypes);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
-        MethodInvokerResult generate = MethodInvokerGenerator.generate(targetClass);
-        if (!generate.ok()) {
-            return null;
-        }
-
-        try {
-            MethodInvoker methodInvoker = generate.methodInvokerClass().getDeclaredConstructor().newInstance();
-            return new MethodInvokerHelper(methodInvoker, methodNames, methodParamTypes);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        // 否则,使用 MethodHandleInvoker 实现类
+        MethodHandleInvoker methodHandleInvoker = MethodHandleInvoker.of(targetClass);
+        return new MethodInvokerHelper(methodHandleInvoker, methodNames, methodParamTypes);
     }
 
     /**

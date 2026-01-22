@@ -26,6 +26,7 @@ public record MethodGroup(
         List<MethodIdentify> method4List,
         List<MethodIdentify> method5List
 ) {
+    private static final ClassValue<MethodGroup> CACHE = new SimpleClassValue<>(MethodGroup::doCreate);
     private static final MethodGroup FAIL_METHOD_GROUP = new MethodGroup(
             false,
             Collections.emptyList(),
@@ -37,7 +38,7 @@ public record MethodGroup(
             Collections.emptyList()
     );
 
-    public static MethodGroup of(Class<?> targetClass) {
+    private static MethodGroup doCreate(Class<?> targetClass) {
         List<Method> methods = ByteBeanReflectUtil.getMethods(targetClass);
         if (methods.isEmpty()) {
             return FAIL_METHOD_GROUP;
@@ -128,5 +129,9 @@ public record MethodGroup(
                 identifyMethod4List.isEmpty() ? Collections.emptyList() : identifyMethod4List,
                 identifyMethod5List.isEmpty() ? Collections.emptyList() : identifyMethod5List
         );
+    }
+
+    public static MethodGroup of(Class<?> targetClass) {
+        return CACHE.get(targetClass);
     }
 }

@@ -34,52 +34,53 @@ public final class ConstructorInvokerGenerator {
     private ConstructorInvokerGenerator() {
     }
 
+    private static ConstructorInvokerResult doCreate(Class<?> targetClass) {
+
+        // 步骤1: 收集目标类的所有可访问的构造器
+        List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
+
+        // 检查构造器列表是否为空
+        if (constructors.isEmpty()) {
+            return ConstructorInvokerResult.fail();
+        }
+
+        // 步骤2: 构造生成类的全限定名
+        String invokerName = NameUtil.calcInvokerName(targetClass, ConstructorInvoker.class);
+
+        // 步骤3: 使用 ByteBuddy 动态生成类
+        Class<? extends ConstructorInvoker> invokerClass = new ByteBuddy()
+                .subclass(ConstructorInvoker.class)
+                .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
+                // 设置生成类的名称
+                .name(invokerName)
+                // 定义 newInstance 方法: Object newInstance(int index, Object... args)
+                .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
+                .withParameters(int.class, Object[].class)
+                // 使用 ConstructorAccessImpl 作为方法实现的字节码生成器
+                .intercept(new ConstructorByteCode(targetClass, constructors))
+                // 定义 newInstance 方法: Object newInstance()
+                .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
+                // 使用 ConstructorAccessImpl 作为方法实现的字节码生成器
+                .intercept(new ConstructorP0ByteCode(targetClass))
+                // 自动计算
+                .visit(new AsmVisitorWrapper.ForDeclaredMethods()
+                        .writerFlags(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+                )
+                // 生成字节码
+                .make()
+                .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                .getLoaded();
+
+        return ConstructorInvokerResult.success(invokerClass, Collections.unmodifiableList(constructors));
+    }
+
     /**
      * 为目标类生成 ConstructorAccess 接口的实现类
      *
      * @param targetClass 目标类
      * @return 生成的 ConstructorAccess 实现类
      */
-    public static ConstructorInvokerResult generate(Class<?> targetClass) {
-        return CACHE.computeIfAbsent(targetClass, k -> {
-
-            // 步骤1: 收集目标类的所有可访问的构造器
-            List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
-
-            // 检查构造器列表是否为空
-            if (constructors.isEmpty()) {
-                return ConstructorInvokerResult.fail();
-            }
-
-            // 步骤2: 构造生成类的全限定名
-            String invokerName = NameUtil.calcInvokerName(targetClass, ConstructorInvoker.class);
-
-            // 步骤3: 使用 ByteBuddy 动态生成类
-            Class<? extends ConstructorInvoker> invokerClass = new ByteBuddy()
-                    .subclass(ConstructorInvoker.class)
-                    .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
-                    // 设置生成类的名称
-                    .name(invokerName)
-                    // 定义 newInstance 方法: Object newInstance(int index, Object... args)
-                    .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
-                    .withParameters(int.class, Object[].class)
-                    // 使用 ConstructorAccessImpl 作为方法实现的字节码生成器
-                    .intercept(new ConstructorByteCode(targetClass, constructors))
-                    // 定义 newInstance 方法: Object newInstance()
-                    .defineMethod("newInstance", Object.class, Visibility.PUBLIC)
-                    // 使用 ConstructorAccessImpl 作为方法实现的字节码生成器
-                    .intercept(new ConstructorP0ByteCode(targetClass))
-                    // 自动计算
-                    .visit(new AsmVisitorWrapper.ForDeclaredMethods()
-                            .writerFlags(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
-                    )
-                    // 生成字节码
-                    .make()
-                    .load(targetClass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
-                    .getLoaded();
-
-            return ConstructorInvokerResult.success(invokerClass, Collections.unmodifiableList(constructors));
-        });
-
+    static ConstructorInvokerResult generate(Class<?> targetClass) {
+        return CACHE.computeIfAbsent(targetClass, ConstructorInvokerGenerator::doCreate);
     }
 }

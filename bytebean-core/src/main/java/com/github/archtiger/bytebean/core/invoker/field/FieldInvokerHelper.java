@@ -44,24 +44,22 @@ public class FieldInvokerHelper extends FieldInvoker {
         String[] fieldNames = fields.stream().map(Field::getName).toArray(String[]::new);
         int[] modifiers = fields.stream().mapToInt(Field::getModifiers).toArray();
 
-        if (fields.size() > ByteBeanConstant.FIELD_SHARDING_THRESHOLD_VALUE) {
-            FieldVarHandleInvoker fieldVarHandleInvoker = FieldVarHandleInvoker.of(targetClass);
-            return new FieldInvokerHelper(fieldVarHandleInvoker, fieldNames, modifiers);
+        // 若字段数量小于等于阈值，则使用 FieldInvokerGenerator 生成 FieldInvoker
+        if (fields.size() <= ByteBeanConstant.FIELD_SHARDING_THRESHOLD_VALUE) {
+            FieldInvokerResult fieldInvokerResult = FieldInvokerGenerator.generate(targetClass);
+            if (fieldInvokerResult.ok()) {
+                try {
+                    FieldInvoker fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
+                    return new FieldInvokerHelper(fieldInvoker, fieldNames, modifiers);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
-        FieldInvokerResult fieldInvokerResult = FieldInvokerGenerator.generate(targetClass);
-        if (!fieldInvokerResult.ok()) {
-            return null;
-        }
-
-        try {
-            FieldInvoker fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
-            return new FieldInvokerHelper(fieldInvoker, fieldNames, modifiers);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-
+        FieldVarHandleInvoker fieldVarHandleInvoker = FieldVarHandleInvoker.of(targetClass);
+        return new FieldInvokerHelper(fieldVarHandleInvoker, fieldNames, modifiers);
     }
 
     /**
