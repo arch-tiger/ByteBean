@@ -2,6 +2,7 @@ package com.github.archtiger.bytebean.core.invoker.method.jmh;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.esotericsoftware.reflectasm.MethodAccess;
+import com.github.archtiger.bytebean.core.invoker.method.MethodHandleInvoker;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.entity.Field1000Entity;
 import org.openjdk.jmh.annotations.*;
@@ -16,9 +17,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * MethodInvoker性能测试 - 1000字段版本
  * 只测试 getter 和 setter 调用，对比5种方式的性能
- * 所有字段均为对象类型（Integer）
- * 
- * 注意：与其他测试保持一致，不包含 DirectCall 测试
+ * 注意：Field1000Entity 包含多种字段类型，但为了保持测试一致性，
+ * 本测试只使用前100个字段进行setter测试（这些字段都是Integer类型）
  *
  * @author ZIJIDELU
  * @datetime 2026/1/15
@@ -52,71 +52,88 @@ public class MethodInvoker1000Benchmark {
     private MethodInvokerHelper methodInvokerHelper;
     private List<Integer> methodInvokerHelperGetterIndexes;
     private List<Integer> methodInvokerHelperSetterIndexes;
-    
+
+    // ========== MethodHandleInvoker ==========
+    private MethodHandleInvoker methodHandleInvoker;
+    private List<Integer> methodHandleInvokerGetterIndexes;
+    private List<Integer> methodHandleInvokerSetterIndexes;
+
     // ========== Hutool ReflectUtil ==========
     private List<Method> hutoolGetters;
     private List<Method> hutoolSetters;
     
     private Integer testValue = 1000;
-    
+
     @Setup(Level.Trial)
     public void setup() throws Throwable {
         entity = new Field1000Entity();
-        
+
         // 初始化 MethodHandle
         methodHandleGetters = new ArrayList<>(TEST_COUNT);
         methodHandleSetters = new ArrayList<>(TEST_COUNT);
-        
+
         // 初始化反射
         reflectionGetters = new ArrayList<>(TEST_COUNT);
         reflectionSetters = new ArrayList<>(TEST_COUNT);
-        
+
         // 初始化 ReflectASM
         reflectasmMethodAccess = MethodAccess.get(Field1000Entity.class);
         reflectasmGetterIndexes = new ArrayList<>(TEST_COUNT);
         reflectasmSetterIndexes = new ArrayList<>(TEST_COUNT);
-        
+
         // 初始化 MethodInvokerHelper
         methodInvokerHelper = MethodInvokerHelper.of(Field1000Entity.class);
         methodInvokerHelperGetterIndexes = new ArrayList<>(TEST_COUNT);
         methodInvokerHelperSetterIndexes = new ArrayList<>(TEST_COUNT);
-        
+
+        // 初始化 MethodHandleInvoker
+        methodHandleInvoker = MethodHandleInvoker.of(Field1000Entity.class);
+        methodHandleInvokerGetterIndexes = new ArrayList<>(TEST_COUNT);
+        methodHandleInvokerSetterIndexes = new ArrayList<>(TEST_COUNT);
+
         // 初始化 Hutool ReflectUtil
         hutoolGetters = new ArrayList<>(TEST_COUNT);
         hutoolSetters = new ArrayList<>(TEST_COUNT);
-        
+
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        
+
         for (int i = 1; i <= TEST_COUNT; i++) {
             String fieldName = "field" + i;
             String capitalizedName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
             String getterName = "get" + capitalizedName;
             String setterName = "set" + capitalizedName;
-            
-            // 获取反射方法 - 参数类型为 Integer.class
+
+            // 获取反射方法 - 动态检测字段类型
             Method getter = Field1000Entity.class.getMethod(getterName);
-            Method setter = Field1000Entity.class.getMethod(setterName, Integer.class);
+            Class<?> paramType = getter.getReturnType();
+            Method setter = Field1000Entity.class.getMethod(setterName, paramType);
             reflectionGetters.add(getter);
             reflectionSetters.add(setter);
-            
+
             // 获取 MethodHandle
             MethodHandle getterHandle = lookup.unreflect(getter);
             MethodHandle setterHandle = lookup.unreflect(setter);
             methodHandleGetters.add(getterHandle);
             methodHandleSetters.add(setterHandle);
-            
-            // 获取 ReflectASM 索引 - 参数类型为 Integer.class
+
+            // 获取 ReflectASM 索引 - 动态参数类型
             int reflectasmGetterIndex = reflectasmMethodAccess.getIndex(getterName);
-            int reflectasmSetterIndex = reflectasmMethodAccess.getIndex(setterName, Integer.class);
+            int reflectasmSetterIndex = reflectasmMethodAccess.getIndex(setterName, paramType);
             reflectasmGetterIndexes.add(reflectasmGetterIndex);
             reflectasmSetterIndexes.add(reflectasmSetterIndex);
-            
-            // 获取 MethodInvokerHelper 索引 - 参数类型为 Integer.class
+
+            // 获取 MethodInvokerHelper 索引 - 动态参数类型
             int methodInvokerHelperGetterIndex = methodInvokerHelper.getMethodIndex(getterName);
-            int methodInvokerHelperSetterIndex = methodInvokerHelper.getMethodIndex(setterName, Integer.class);
+            int methodInvokerHelperSetterIndex = methodInvokerHelper.getMethodIndex(setterName, paramType);
             methodInvokerHelperGetterIndexes.add(methodInvokerHelperGetterIndex);
             methodInvokerHelperSetterIndexes.add(methodInvokerHelperSetterIndex);
-            
+
+            // 获取 MethodHandleInvoker 索引 - 动态参数类型（从 MethodInvokerHelper 获取）
+            int methodHandleInvokerGetterIndex = methodInvokerHelper.getMethodIndex(getterName);
+            int methodHandleInvokerSetterIndex = methodInvokerHelper.getMethodIndex(setterName, paramType);
+            methodHandleInvokerGetterIndexes.add(methodHandleInvokerGetterIndex);
+            methodHandleInvokerSetterIndexes.add(methodHandleInvokerSetterIndex);
+
             // 获取 Hutool ReflectUtil 方法
             hutoolGetters.add(getter);
             hutoolSetters.add(setter);
@@ -135,7 +152,8 @@ public class MethodInvoker1000Benchmark {
 
     @Benchmark
     public void test_MethodHandle_Setter() throws Throwable {
-        for (int i = 0; i < TEST_COUNT; i++) {
+        // 只测试前100个字段（都是Integer类型）
+        for (int i = 0; i < 100; i++) {
             MethodHandle setter = methodHandleSetters.get(i);
             setter.invoke(entity, testValue);
         }
@@ -153,7 +171,8 @@ public class MethodInvoker1000Benchmark {
 
     @Benchmark
     public void test_Reflection_Setter() throws Exception {
-        for (int i = 0; i < TEST_COUNT; i++) {
+        // 只测试前100个字段（都是Integer类型）
+        for (int i = 0; i < 100; i++) {
             Method setter = reflectionSetters.get(i);
             setter.invoke(entity, testValue);
         }
@@ -171,7 +190,8 @@ public class MethodInvoker1000Benchmark {
 
     @Benchmark
     public void test_ReflectASM_Setter() {
-        for (int i = 0; i < TEST_COUNT; i++) {
+        // 只测试前100个字段（都是Integer类型）
+        for (int i = 0; i < 100; i++) {
             int index = reflectasmSetterIndexes.get(i);
             reflectasmMethodAccess.invoke(entity, index, testValue);
         }
@@ -189,9 +209,29 @@ public class MethodInvoker1000Benchmark {
 
     @Benchmark
     public void test_MethodInvokerHelper_Setter_Varargs() throws Exception {
-        for (int i = 0; i < TEST_COUNT; i++) {
+        // 只测试前100个字段（都是Integer类型）
+        for (int i = 0; i < 100; i++) {
             int index = methodInvokerHelperSetterIndexes.get(i);
             methodInvokerHelper.invoke1(index, entity, testValue);
+        }
+    }
+
+    // ==================== MethodHandleInvoker ====================
+
+    @Benchmark
+    public void test_MethodHandleInvoker_Getter() throws Exception {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            int index = methodHandleInvokerGetterIndexes.get(i);
+            Object result = methodHandleInvoker.invoke(index, entity);
+        }
+    }
+
+    @Benchmark
+    public void test_MethodHandleInvoker_Setter() throws Exception {
+        // 只测试前100个字段（都是Integer类型）
+        for (int i = 0; i < 100; i++) {
+            int index = methodHandleInvokerSetterIndexes.get(i);
+            methodHandleInvoker.invoke1(index, entity, testValue);
         }
     }
 
@@ -207,7 +247,8 @@ public class MethodInvoker1000Benchmark {
 
     @Benchmark
     public void test_Hutool_Setter() throws Exception {
-        for (int i = 0; i < TEST_COUNT; i++) {
+        // 只测试前100个字段（都是Integer类型）
+        for (int i = 0; i < 100; i++) {
             Method setter = hutoolSetters.get(i);
             ReflectUtil.invoke(entity, setter, testValue);
         }
@@ -220,26 +261,31 @@ public class MethodInvoker1000Benchmark {
         // MethodHandle
         methodHandleGetters = null;
         methodHandleSetters = null;
-        
+
         // Reflection
         reflectionGetters = null;
         reflectionSetters = null;
-        
+
         // ReflectASM
         reflectasmMethodAccess = null;
         reflectasmGetterIndexes = null;
         reflectasmSetterIndexes = null;
-        
+
         // MethodInvokerHelper
         methodInvokerHelper = null;
         methodInvokerHelperGetterIndexes = null;
         methodInvokerHelperSetterIndexes = null;
-        
+
+        // MethodHandleInvoker
+        methodHandleInvoker = null;
+        methodHandleInvokerGetterIndexes = null;
+        methodHandleInvokerSetterIndexes = null;
+
         // Hutool ReflectUtil
         hutoolGetters = null;
         hutoolSetters = null;
     }
-    
+
     public static void main(String[] args) throws Exception {
         org.openjdk.jmh.Main.main(new String[]{MethodInvoker1000Benchmark.class.getName()});
     }

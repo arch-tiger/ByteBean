@@ -2,6 +2,7 @@ package com.github.archtiger.bytebean.core.invoker.method.jmh;
 
 import cn.hutool.core.util.ReflectUtil;
 import com.esotericsoftware.reflectasm.MethodAccess;
+import com.github.archtiger.bytebean.core.invoker.method.MethodHandleInvoker;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.entity.Field100Entity;
 import org.openjdk.jmh.annotations.*;
@@ -52,7 +53,12 @@ public class MethodInvoker100Benchmark {
     private MethodInvokerHelper methodInvokerHelper;
     private List<Integer> methodInvokerHelperGetterIndexes;
     private List<Integer> methodInvokerHelperSetterIndexes;
-    
+
+    // ========== MethodHandleInvoker ==========
+    private MethodHandleInvoker methodHandleInvoker;
+    private List<Integer> methodHandleInvokerGetterIndexes;
+    private List<Integer> methodHandleInvokerSetterIndexes;
+
     // ========== Hutool ReflectUtil ==========
     private List<Method> hutoolGetters;
     private List<Method> hutoolSetters;
@@ -80,7 +86,12 @@ public class MethodInvoker100Benchmark {
         methodInvokerHelper = MethodInvokerHelper.of(Field100Entity.class);
         methodInvokerHelperGetterIndexes = new ArrayList<>(TEST_COUNT);
         methodInvokerHelperSetterIndexes = new ArrayList<>(TEST_COUNT);
-        
+
+        // 初始化 MethodHandleInvoker
+        methodHandleInvoker = MethodHandleInvoker.of(Field100Entity.class);
+        methodHandleInvokerGetterIndexes = new ArrayList<>(TEST_COUNT);
+        methodHandleInvokerSetterIndexes = new ArrayList<>(TEST_COUNT);
+
         // 初始化 Hutool ReflectUtil
         hutoolGetters = new ArrayList<>(TEST_COUNT);
         hutoolSetters = new ArrayList<>(TEST_COUNT);
@@ -116,7 +127,13 @@ public class MethodInvoker100Benchmark {
             int methodInvokerHelperSetterIndex = methodInvokerHelper.getMethodIndex(setterName, Integer.class);
             methodInvokerHelperGetterIndexes.add(methodInvokerHelperGetterIndex);
             methodInvokerHelperSetterIndexes.add(methodInvokerHelperSetterIndex);
-            
+
+            // 获取 MethodHandleInvoker 索引 - 参数类型为 Integer.class（从 MethodInvokerHelper 获取）
+            int methodHandleInvokerGetterIndex = methodInvokerHelper.getMethodIndex(getterName);
+            int methodHandleInvokerSetterIndex = methodInvokerHelper.getMethodIndex(setterName, Integer.class);
+            methodHandleInvokerGetterIndexes.add(methodHandleInvokerGetterIndex);
+            methodHandleInvokerSetterIndexes.add(methodHandleInvokerSetterIndex);
+
             // 获取 Hutool ReflectUtil 方法
             hutoolGetters.add(getter);
             hutoolSetters.add(setter);
@@ -195,6 +212,24 @@ public class MethodInvoker100Benchmark {
         }
     }
 
+    // ==================== MethodHandleInvoker ====================
+
+    @Benchmark
+    public void test_MethodHandleInvoker_Getter() throws Exception {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            int index = methodHandleInvokerGetterIndexes.get(i);
+            Object result = methodHandleInvoker.invoke(index, entity);
+        }
+    }
+
+    @Benchmark
+    public void test_MethodHandleInvoker_Setter() throws Exception {
+        for (int i = 0; i < TEST_COUNT; i++) {
+            int index = methodHandleInvokerSetterIndexes.get(i);
+            methodHandleInvoker.invoke1(index, entity, testValue);
+        }
+    }
+
     // ==================== Hutool ReflectUtil ====================
 
     @Benchmark
@@ -234,7 +269,12 @@ public class MethodInvoker100Benchmark {
         methodInvokerHelper = null;
         methodInvokerHelperGetterIndexes = null;
         methodInvokerHelperSetterIndexes = null;
-        
+
+        // MethodHandleInvoker
+        methodHandleInvoker = null;
+        methodHandleInvokerGetterIndexes = null;
+        methodHandleInvokerSetterIndexes = null;
+
         // Hutool ReflectUtil
         hutoolGetters = null;
         hutoolSetters = null;
