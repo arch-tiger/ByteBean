@@ -77,8 +77,18 @@ public record MethodGroup(
                 .comparing(Method::getName)
                 .thenComparing(m -> Type.getMethodDescriptor(m));
 
+        // 针对单参数方法的特殊排序：优先按参数类型排序（基本类型聚集），其次按方法名
+        final Comparator<Method> method1Comparator = (m1, m2) -> {
+            int typeOrder1 = getParamTypeOrder(m1.getParameterTypes()[0]);
+            int typeOrder2 = getParamTypeOrder(m2.getParameterTypes()[0]);
+            if (typeOrder1 != typeOrder2) {
+                return Integer.compare(typeOrder1, typeOrder2);
+            }
+            return methodComparator.compare(m1, m2);
+        };
+
         method0List.sort(methodComparator);
-        method1List.sort(methodComparator);
+        method1List.sort(method1Comparator); // 使用特殊的排序
         method2List.sort(methodComparator);
         method3List.sort(methodComparator);
         method4List.sort(methodComparator);
@@ -129,6 +139,18 @@ public record MethodGroup(
                 identifyMethod4List.isEmpty() ? Collections.emptyList() : identifyMethod4List,
                 identifyMethod5List.isEmpty() ? Collections.emptyList() : identifyMethod5List
         );
+    }
+
+    private static int getParamTypeOrder(Class<?> type) {
+        if (type == int.class) return 1;
+        if (type == long.class) return 2;
+        if (type == float.class) return 3;
+        if (type == double.class) return 4;
+        if (type == boolean.class) return 5;
+        if (type == byte.class) return 6;
+        if (type == short.class) return 7;
+        if (type == char.class) return 8;
+        return 9; // Object or other types
     }
 
     public static MethodGroup of(Class<?> targetClass) {
