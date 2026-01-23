@@ -87,7 +87,17 @@ public record MethodGroup(
             return methodComparator.compare(m1, m2);
         };
 
-        method0List.sort(methodComparator);
+        // 针对无参方法的特殊排序：优先按返回值类型排序（基本类型聚集），其次按方法名
+        final Comparator<Method> method0Comparator = (m1, m2) -> {
+            int typeOrder1 = getReturnTypeOrder(m1.getReturnType());
+            int typeOrder2 = getReturnTypeOrder(m2.getReturnType());
+            if (typeOrder1 != typeOrder2) {
+                return Integer.compare(typeOrder1, typeOrder2);
+            }
+            return methodComparator.compare(m1, m2);
+        };
+
+        method0List.sort(method0Comparator); // 使用特殊的排序
         method1List.sort(method1Comparator); // 使用特殊的排序
         method2List.sort(methodComparator);
         method3List.sort(methodComparator);
@@ -142,6 +152,14 @@ public record MethodGroup(
     }
 
     private static int getParamTypeOrder(Class<?> type) {
+        return getTypeOrder(type);
+    }
+
+    private static int getReturnTypeOrder(Class<?> type) {
+        return getTypeOrder(type);
+    }
+
+    private static int getTypeOrder(Class<?> type) {
         if (type == int.class) return 1;
         if (type == long.class) return 2;
         if (type == float.class) return 3;

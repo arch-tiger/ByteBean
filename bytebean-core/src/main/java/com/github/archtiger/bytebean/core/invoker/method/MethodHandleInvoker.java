@@ -2,7 +2,6 @@ package com.github.archtiger.bytebean.core.invoker.method;
 
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import com.github.archtiger.bytebean.core.model.MethodGroup;
-import com.github.archtiger.bytebean.core.model.MethodIdentify;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -22,74 +21,107 @@ public final class MethodHandleInvoker extends MethodInvoker {
     private static final MethodHandle[] EMPTY_HANDLES = new MethodHandle[0];
     private final MethodHandle[] methodHandles;
 
-    // 基本类型参数优化：紧凑数组 + 偏移量/范围控制
-    // 数组不再是全局大小，而是针对该类型的实际数量
+    // 基本类型参数优化：紧凑数组 + 偏移量
     private final MethodHandle[] int1Handles;
     private final int int1Offset;
-    private final int int1End;
 
     private final MethodHandle[] long1Handles;
     private final int long1Offset;
-    private final int long1End;
 
     private final MethodHandle[] float1Handles;
     private final int float1Offset;
-    private final int float1End;
 
     private final MethodHandle[] double1Handles;
     private final int double1Offset;
-    private final int double1End;
 
     private final MethodHandle[] boolean1Handles;
     private final int boolean1Offset;
-    private final int boolean1End;
 
     private final MethodHandle[] byte1Handles;
     private final int byte1Offset;
-    private final int byte1End;
 
     private final MethodHandle[] short1Handles;
     private final int short1Offset;
-    private final int short1End;
 
     private final MethodHandle[] char1Handles;
     private final int char1Offset;
-    private final int char1End;
+
+    // 基本类型返回值优化：紧凑数组 + 偏移量
+    // 主要优化无参方法（Getter），在 MethodGroup 中已按返回值类型排序
+    private final MethodHandle[] intReturnHandles;
+    private final int intReturnOffset;
+
+    private final MethodHandle[] longReturnHandles;
+    private final int longReturnOffset;
+
+    private final MethodHandle[] floatReturnHandles;
+    private final int floatReturnOffset;
+
+    private final MethodHandle[] doubleReturnHandles;
+    private final int doubleReturnOffset;
+
+    private final MethodHandle[] booleanReturnHandles;
+    private final int booleanReturnOffset;
+
+    private final MethodHandle[] byteReturnHandles;
+    private final int byteReturnOffset;
+
+    private final MethodHandle[] shortReturnHandles;
+    private final int shortReturnOffset;
+
+    private final MethodHandle[] charReturnHandles;
+    private final int charReturnOffset;
 
     private MethodHandleInvoker(MethodHandle[] methodHandles,
-                                MethodHandle[] int1Handles, int int1Offset, int int1End,
-                                MethodHandle[] long1Handles, int long1Offset, int long1End,
-                                MethodHandle[] float1Handles, int float1Offset, int float1End,
-                                MethodHandle[] double1Handles, int double1Offset, int double1End,
-                                MethodHandle[] boolean1Handles, int boolean1Offset, int boolean1End,
-                                MethodHandle[] byte1Handles, int byte1Offset, int byte1End,
-                                MethodHandle[] short1Handles, int short1Offset, int short1End,
-                                MethodHandle[] char1Handles, int char1Offset, int char1End) {
+                                MethodHandle[] int1Handles, int int1Offset,
+                                MethodHandle[] long1Handles, int long1Offset,
+                                MethodHandle[] float1Handles, int float1Offset,
+                                MethodHandle[] double1Handles, int double1Offset,
+                                MethodHandle[] boolean1Handles, int boolean1Offset,
+                                MethodHandle[] byte1Handles, int byte1Offset,
+                                MethodHandle[] short1Handles, int short1Offset,
+                                MethodHandle[] char1Handles, int char1Offset,
+                                MethodHandle[] intReturnHandles, int intReturnOffset,
+                                MethodHandle[] longReturnHandles, int longReturnOffset,
+                                MethodHandle[] floatReturnHandles, int floatReturnOffset,
+                                MethodHandle[] doubleReturnHandles, int doubleReturnOffset,
+                                MethodHandle[] booleanReturnHandles, int booleanReturnOffset,
+                                MethodHandle[] byteReturnHandles, int byteReturnOffset,
+                                MethodHandle[] shortReturnHandles, int shortReturnOffset,
+                                MethodHandle[] charReturnHandles, int charReturnOffset) {
         this.methodHandles = methodHandles;
         this.int1Handles = int1Handles;
         this.int1Offset = int1Offset;
-        this.int1End = int1End;
         this.long1Handles = long1Handles;
         this.long1Offset = long1Offset;
-        this.long1End = long1End;
         this.float1Handles = float1Handles;
         this.float1Offset = float1Offset;
-        this.float1End = float1End;
         this.double1Handles = double1Handles;
         this.double1Offset = double1Offset;
-        this.double1End = double1End;
         this.boolean1Handles = boolean1Handles;
         this.boolean1Offset = boolean1Offset;
-        this.boolean1End = boolean1End;
         this.byte1Handles = byte1Handles;
         this.byte1Offset = byte1Offset;
-        this.byte1End = byte1End;
         this.short1Handles = short1Handles;
         this.short1Offset = short1Offset;
-        this.short1End = short1End;
         this.char1Handles = char1Handles;
         this.char1Offset = char1Offset;
-        this.char1End = char1End;
+        this.intReturnHandles = intReturnHandles;
+        this.intReturnOffset = intReturnOffset;
+        this.longReturnHandles = longReturnHandles;
+        this.longReturnOffset = longReturnOffset;
+        this.floatReturnHandles = floatReturnHandles;
+        this.floatReturnOffset = floatReturnOffset;
+        this.doubleReturnHandles = doubleReturnHandles;
+        this.doubleReturnOffset = doubleReturnOffset;
+        this.booleanReturnHandles = booleanReturnHandles;
+        this.booleanReturnOffset = booleanReturnOffset;
+        this.byteReturnHandles = byteReturnHandles;
+        this.byteReturnOffset = byteReturnOffset;
+        this.shortReturnHandles = shortReturnHandles;
+        this.shortReturnOffset = shortReturnOffset;
+        this.charReturnHandles = charReturnHandles;
+        this.charReturnOffset = charReturnOffset;
     }
 
     public static MethodHandleInvoker of(Class<?> targetClass) {
@@ -104,8 +136,6 @@ public final class MethodHandleInvoker extends MethodInvoker {
             // 由于 MethodGroup 已经按类型排序，我们可以假设相同类型的方法索引是连续的（在 method1List 范围内）
             // 注意：methodAllList = method0List + method1List + ...
             // 所以我们需要遍历 method1List 来确定各类型的范围
-
-            List<MethodIdentify> method1List = methodGroup.method1List();
 
             // 辅助方法：构建紧凑数组
             // 实际上我们可以直接遍历 methodAllList，因为全局索引就是 methodAllList 的索引
@@ -134,6 +164,30 @@ public final class MethodHandleInvoker extends MethodInvoker {
             List<MethodHandle> charList = new ArrayList<>();
             int charStart = -1;
 
+            List<MethodHandle> intReturnList = new ArrayList<>();
+            int intReturnStart = -1;
+
+            List<MethodHandle> longReturnList = new ArrayList<>();
+            int longReturnStart = -1;
+
+            List<MethodHandle> floatReturnList = new ArrayList<>();
+            int floatReturnStart = -1;
+
+            List<MethodHandle> doubleReturnList = new ArrayList<>();
+            int doubleReturnStart = -1;
+
+            List<MethodHandle> booleanReturnList = new ArrayList<>();
+            int booleanReturnStart = -1;
+
+            List<MethodHandle> byteReturnList = new ArrayList<>();
+            int byteReturnStart = -1;
+
+            List<MethodHandle> shortReturnList = new ArrayList<>();
+            int shortReturnStart = -1;
+
+            List<MethodHandle> charReturnList = new ArrayList<>();
+            int charReturnStart = -1;
+
             for (int i = 0; i < size; i++) {
                 Method method = methodGroup.methodAllList().get(i).method();
                 try {
@@ -141,6 +195,49 @@ public final class MethodHandleInvoker extends MethodInvoker {
                     // 核心优化：将MethodHandle适配为通用的 (Object, Object...)Object 类型
                     MethodType genericType = MethodType.genericMethodType(method.getParameterCount() + 1);
                     methodHandles[i] = methodHandle.asType(genericType);
+
+                    // 返回值优化：为返回基本类型的方法创建专用Handle (Object, Object[])Primitive
+                    // 仅优化无参方法 (Getter)，利用 MethodGroup 中的返回值排序特性
+                    if (method.getParameterCount() == 0) {
+                        Class<?> returnType = method.getReturnType();
+                        if (returnType.isPrimitive() && returnType != void.class) {
+                            MethodType objParamType = methodHandle.type();
+                            // 将所有参数类型转为 Object (包括 receiver)
+                            for (int k = 0; k < objParamType.parameterCount(); k++) {
+                                objParamType = objParamType.changeParameterType(k, Object.class);
+                            }
+                            // 保持返回值为基本类型，适配参数
+                            MethodHandle objParamsMh = methodHandle.asType(objParamType);
+                            // 使用 asSpreader 接受 Object[] 参数
+                            MethodHandle spreaderMh = objParamsMh.asSpreader(Object[].class, 0);
+
+                            if (returnType == int.class) {
+                                if (intReturnStart == -1) intReturnStart = i;
+                                intReturnList.add(spreaderMh);
+                            } else if (returnType == long.class) {
+                                if (longReturnStart == -1) longReturnStart = i;
+                                longReturnList.add(spreaderMh);
+                            } else if (returnType == float.class) {
+                                if (floatReturnStart == -1) floatReturnStart = i;
+                                floatReturnList.add(spreaderMh);
+                            } else if (returnType == double.class) {
+                                if (doubleReturnStart == -1) doubleReturnStart = i;
+                                doubleReturnList.add(spreaderMh);
+                            } else if (returnType == boolean.class) {
+                                if (booleanReturnStart == -1) booleanReturnStart = i;
+                                booleanReturnList.add(spreaderMh);
+                            } else if (returnType == byte.class) {
+                                if (byteReturnStart == -1) byteReturnStart = i;
+                                byteReturnList.add(spreaderMh);
+                            } else if (returnType == short.class) {
+                                if (shortReturnStart == -1) shortReturnStart = i;
+                                shortReturnList.add(spreaderMh);
+                            } else if (returnType == char.class) {
+                                if (charReturnStart == -1) charReturnStart = i;
+                                charReturnList.add(spreaderMh);
+                            }
+                        }
+                    }
 
                     // 针对单参数基本类型方法的优化收集
                     if (method.getParameterCount() == 1) {
@@ -180,14 +277,22 @@ public final class MethodHandleInvoker extends MethodInvoker {
             // 构造结果
             return new MethodHandleInvoker(
                     methodHandles,
-                    intList.isEmpty() ? EMPTY_HANDLES : intList.toArray(new MethodHandle[0]), intStart, intStart + intList.size(),
-                    longList.isEmpty() ? EMPTY_HANDLES : longList.toArray(new MethodHandle[0]), longStart, longStart + longList.size(),
-                    floatList.isEmpty() ? EMPTY_HANDLES : floatList.toArray(new MethodHandle[0]), floatStart, floatStart + floatList.size(),
-                    doubleList.isEmpty() ? EMPTY_HANDLES : doubleList.toArray(new MethodHandle[0]), doubleStart, doubleStart + doubleList.size(),
-                    booleanList.isEmpty() ? EMPTY_HANDLES : booleanList.toArray(new MethodHandle[0]), booleanStart, booleanStart + booleanList.size(),
-                    byteList.isEmpty() ? EMPTY_HANDLES : byteList.toArray(new MethodHandle[0]), byteStart, byteStart + byteList.size(),
-                    shortList.isEmpty() ? EMPTY_HANDLES : shortList.toArray(new MethodHandle[0]), shortStart, shortStart + shortList.size(),
-                    charList.isEmpty() ? EMPTY_HANDLES : charList.toArray(new MethodHandle[0]), charStart, charStart + charList.size()
+                    intList.isEmpty() ? EMPTY_HANDLES : intList.toArray(new MethodHandle[0]), intStart,
+                    longList.isEmpty() ? EMPTY_HANDLES : longList.toArray(new MethodHandle[0]), longStart,
+                    floatList.isEmpty() ? EMPTY_HANDLES : floatList.toArray(new MethodHandle[0]), floatStart,
+                    doubleList.isEmpty() ? EMPTY_HANDLES : doubleList.toArray(new MethodHandle[0]), doubleStart,
+                    booleanList.isEmpty() ? EMPTY_HANDLES : booleanList.toArray(new MethodHandle[0]), booleanStart,
+                    byteList.isEmpty() ? EMPTY_HANDLES : byteList.toArray(new MethodHandle[0]), byteStart,
+                    shortList.isEmpty() ? EMPTY_HANDLES : shortList.toArray(new MethodHandle[0]), shortStart,
+                    charList.isEmpty() ? EMPTY_HANDLES : charList.toArray(new MethodHandle[0]), charStart,
+                    intReturnList.isEmpty() ? EMPTY_HANDLES : intReturnList.toArray(new MethodHandle[0]), intReturnStart,
+                    longReturnList.isEmpty() ? EMPTY_HANDLES : longReturnList.toArray(new MethodHandle[0]), longReturnStart,
+                    floatReturnList.isEmpty() ? EMPTY_HANDLES : floatReturnList.toArray(new MethodHandle[0]), floatReturnStart,
+                    doubleReturnList.isEmpty() ? EMPTY_HANDLES : doubleReturnList.toArray(new MethodHandle[0]), doubleReturnStart,
+                    booleanReturnList.isEmpty() ? EMPTY_HANDLES : booleanReturnList.toArray(new MethodHandle[0]), booleanReturnStart,
+                    byteReturnList.isEmpty() ? EMPTY_HANDLES : byteReturnList.toArray(new MethodHandle[0]), byteReturnStart,
+                    shortReturnList.isEmpty() ? EMPTY_HANDLES : shortReturnList.toArray(new MethodHandle[0]), shortReturnStart,
+                    charReturnList.isEmpty() ? EMPTY_HANDLES : charReturnList.toArray(new MethodHandle[0]), charReturnStart
             );
 
         } catch (IllegalAccessException e) {
@@ -280,42 +385,81 @@ public final class MethodHandleInvoker extends MethodInvoker {
 
     @Override
     public int intInvoke(int index, Object instance, Object... arguments) {
-        return (int) invoke(index, instance, arguments);
+        try {
+            return (int) intReturnHandles[index - intReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public long longInvoke(int index, Object instance, Object... arguments) {
-        return (long) invoke(index, instance, arguments);
+        try {
+            return (long) longReturnHandles[index - longReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public float floatInvoke(int index, Object instance, Object... arguments) {
-        return (float) invoke(index, instance, arguments);
+        try {
+            return (float) floatReturnHandles[index - floatReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public double doubleInvoke(int index, Object instance, Object... arguments) {
-        return (double) invoke(index, instance, arguments);
+        try {
+            return (double) doubleReturnHandles[index - doubleReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public boolean booleanInvoke(int index, Object instance, Object... arguments) {
-        return (boolean) invoke(index, instance, arguments);
+        try {
+            return (boolean) booleanReturnHandles[index - booleanReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public byte byteInvoke(int index, Object instance, Object... arguments) {
-        return (byte) invoke(index, instance, arguments);
+        try {
+            return (byte) byteReturnHandles[index - byteReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public short shortInvoke(int index, Object instance, Object... arguments) {
-        return (short) invoke(index, instance, arguments);
+        try {
+            return (short) shortReturnHandles[index - shortReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public char charInvoke(int index, Object instance, Object... arguments) {
-        return (char) invoke(index, instance, arguments);
+        try {
+            return (char) charReturnHandles[index - charReturnOffset].invokeExact(instance, arguments);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override

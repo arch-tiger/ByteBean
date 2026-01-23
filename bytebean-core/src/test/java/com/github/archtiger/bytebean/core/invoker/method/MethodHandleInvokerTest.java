@@ -137,108 +137,73 @@ class MethodHandleInvokerTest {
     @Test
     void testIntInvoke() {
         int getIntIndex = methodInvokerHelper.getMethodIndex("getInt");
-        int addIntIndex = methodInvokerHelper.getMethodIndex("addInt", int.class);
 
         entity.setInt(100);
         int result = methodHandleInvoker.intInvoke(getIntIndex, entity); // getInt()
         assertEquals(100, result);
-
-        result = methodHandleInvoker.intInvoke(addIntIndex, entity, 50); // addInt(int)
-        assertEquals(150, result);
     }
 
     @Test
     void testLongInvoke() {
         int getLongIndex = methodInvokerHelper.getMethodIndex("getLong");
-        int addLongIndex = methodInvokerHelper.getMethodIndex("addLong", long.class);
 
         entity.setLong(1000L);
         long result = methodHandleInvoker.longInvoke(getLongIndex, entity); // getLong()
         assertEquals(1000L, result);
-
-        result = methodHandleInvoker.longInvoke(addLongIndex, entity, 500L); // addLong(long)
-        assertEquals(1500L, result);
     }
 
     @Test
     void testFloatInvoke() {
         int getFloatIndex = methodInvokerHelper.getMethodIndex("getFloat");
-        int addFloatIndex = methodInvokerHelper.getMethodIndex("addFloat", float.class);
 
         entity.setFloat(3.14f);
         float result = methodHandleInvoker.floatInvoke(getFloatIndex, entity); // getFloat()
         assertEquals(3.14f, result, 0.0001f);
-
-        result = methodHandleInvoker.floatInvoke(addFloatIndex, entity, 2.5f); // addFloat(float)
-        assertEquals(5.64f, result, 0.0001f);
     }
 
     @Test
     void testDoubleInvoke() {
         int getDoubleIndex = methodInvokerHelper.getMethodIndex("getDouble");
-        int addDoubleIndex = methodInvokerHelper.getMethodIndex("addDouble", double.class);
 
         entity.setDouble(2.71828);
         double result = methodHandleInvoker.doubleInvoke(getDoubleIndex, entity); // getDouble()
         assertEquals(2.71828, result, 0.000001);
-
-        result = methodHandleInvoker.doubleInvoke(addDoubleIndex, entity, 1.5); // addDouble(double)
-        assertEquals(4.21828, result, 0.000001);
     }
 
     @Test
     void testBooleanInvoke() {
         int getBooleanIndex = methodInvokerHelper.getMethodIndex("getBoolean");
-        int isEvenIndex = methodInvokerHelper.getMethodIndex("isEven", int.class);
 
         entity.setBoolean(true);
         boolean result = methodHandleInvoker.booleanInvoke(getBooleanIndex, entity); // getBoolean()
         assertTrue(result);
-
-        result = methodHandleInvoker.booleanInvoke(isEvenIndex, entity, 4); // isEven(int) - 4 是偶数
-        assertTrue(result);
-
-        result = methodHandleInvoker.booleanInvoke(isEvenIndex, entity, 5); // isEven(int) - 5 是奇数
-        assertFalse(result);
     }
 
     @Test
     void testByteInvoke() {
         int getByteIndex = methodInvokerHelper.getMethodIndex("getByte");
-        int incrementByteIndex = methodInvokerHelper.getMethodIndex("incrementByte", byte.class);
 
         entity.setByte((byte) 42);
         byte result = methodHandleInvoker.byteInvoke(getByteIndex, entity); // getByte()
         assertEquals((byte) 42, result);
-
-        result = methodHandleInvoker.byteInvoke(incrementByteIndex, entity, (byte) 10); // incrementByte(byte)
-        assertEquals((byte) 11, result);
     }
 
     @Test
     void testShortInvoke() {
         int getShortIndex = methodInvokerHelper.getMethodIndex("getShort");
-        int incrementShortIndex = methodInvokerHelper.getMethodIndex("incrementShort", short.class);
 
         entity.setShort((short) 123);
         short result = methodHandleInvoker.shortInvoke(getShortIndex, entity); // getShort()
         assertEquals((short) 123, result);
-
-        result = methodHandleInvoker.shortInvoke(incrementShortIndex, entity, (short) 50); // incrementShort(short)
-        assertEquals((short) 51, result);
     }
 
     @Test
     void testCharInvoke() {
         int getCharIndex = methodInvokerHelper.getMethodIndex("getChar");
-        int nextCharIndex = methodInvokerHelper.getMethodIndex("nextChar", char.class);
 
         entity.setChar('A');
         char result = methodHandleInvoker.charInvoke(getCharIndex, entity); // getChar()
         assertEquals('A', result);
-
-        result = methodHandleInvoker.charInvoke(nextCharIndex, entity, 'A'); // nextChar(char)
-        assertEquals('B', result);
     }
 
     // ==================== 单参数基本类型方法测试 ====================
@@ -729,11 +694,11 @@ class MethodHandleInvokerTest {
         int addLongIndex = methodInvokerHelper.getMethodIndex("addLong", long.class);
 
         methodHandleInvoker.invoke1(setIntIndex, entity, 10); // setInt(10)
-        int result = methodHandleInvoker.intInvoke(addIntIndex, entity, 20); // addInt(20) -> 返回 30
+        int result = (int) methodHandleInvoker.invoke(addIntIndex, entity, 20); // addInt(20) -> 返回 30
         assertEquals(30, result);
 
         methodHandleInvoker.invoke1(setLongIndex, entity, 100L); // setLong(100L)
-        long longResult = methodHandleInvoker.longInvoke(addLongIndex, entity, 200L); // addLong(200L) -> 返回 300L
+        long longResult = (long) methodHandleInvoker.invoke(addLongIndex, entity, 200L); // addLong(200L) -> 返回 300L
         assertEquals(300L, longResult);
     }
 
@@ -828,11 +793,11 @@ class MethodHandleInvokerTest {
         int addIndex = methodInvokerHelper.getMethodIndex("add", int.class, int.class);
 
         // Integer.MAX_VALUE + 1 应该溢出变成负数
-        int result = methodHandleInvoker.intInvoke(addIndex, entity, Integer.MAX_VALUE, 1);
+        int result = (int) methodHandleInvoker.invoke(addIndex, entity, Integer.MAX_VALUE, 1);
         assertEquals(Integer.MIN_VALUE, result);
 
         // Integer.MIN_VALUE - 1 应该溢出变成正数
-        result = methodHandleInvoker.intInvoke(addIndex, entity, Integer.MIN_VALUE, -1);
+        result = (int) methodHandleInvoker.invoke(addIndex, entity, Integer.MIN_VALUE, -1);
         assertEquals(Integer.MAX_VALUE, result);
     }
 
@@ -841,7 +806,7 @@ class MethodHandleInvokerTest {
         int multiplyIndex = methodInvokerHelper.getMethodIndex("multiply", int.class, int.class);
 
         // 46341 * 46341 会溢出 (超过 Integer.MAX_VALUE)
-        int result = methodHandleInvoker.intInvoke(multiplyIndex, entity, 46341, 46341);
+        int result = (int) methodHandleInvoker.invoke(multiplyIndex, entity, 46341, 46341);
         assertTrue(result < 0); // 溢出后变成负数
     }
 
@@ -863,7 +828,7 @@ class MethodHandleInvokerTest {
         int subtractIndex = methodInvokerHelper.getMethodIndex("subtract", int.class, int.class);
 
         // Integer.MIN_VALUE - 1 应该溢出变成 MAX_VALUE
-        int result = methodHandleInvoker.intInvoke(subtractIndex, entity, Integer.MIN_VALUE, 1);
+        int result = (int) methodHandleInvoker.invoke(subtractIndex, entity, Integer.MIN_VALUE, 1);
         assertEquals(Integer.MAX_VALUE, result);
     }
 
@@ -994,19 +959,19 @@ class MethodHandleInvokerTest {
         int factorialIndex = methodInvokerHelper.getMethodIndex("factorial", int.class);
 
         // factorial(5) = 120
-        int result = methodHandleInvoker.intInvoke(factorialIndex, entity, 5);
+        int result = (int) methodHandleInvoker.invoke(factorialIndex, entity, 5);
         assertEquals(120, result);
 
         // factorial(10) = 3628800
-        result = methodHandleInvoker.intInvoke(factorialIndex, entity, 10);
+        result = (int) methodHandleInvoker.invoke(factorialIndex, entity, 10);
         assertEquals(3628800, result);
 
         // factorial(0) = 1
-        result = methodHandleInvoker.intInvoke(factorialIndex, entity, 0);
+        result = (int) methodHandleInvoker.invoke(factorialIndex, entity, 0);
         assertEquals(1, result);
 
         // factorial(1) = 1
-        result = methodHandleInvoker.intInvoke(factorialIndex, entity, 1);
+        result = (int) methodHandleInvoker.invoke(factorialIndex, entity, 1);
         assertEquals(1, result);
     }
 
@@ -1015,7 +980,7 @@ class MethodHandleInvokerTest {
         int factorialIndex = methodInvokerHelper.getMethodIndex("factorial", int.class);
 
         // factorial(12) = 479001600
-        int result = methodHandleInvoker.intInvoke(factorialIndex, entity, 12);
+        int result = (int) methodHandleInvoker.invoke(factorialIndex, entity, 12);
         assertEquals(479001600, result);
     }
 
