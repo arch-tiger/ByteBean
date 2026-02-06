@@ -2,12 +2,15 @@ package com.github.archtiger.bytebean.core.invoker.constructor;
 
 import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
+import com.github.archtiger.bytebean.core.support.ByteBeanConstant;
+import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 构造器访问助手
@@ -31,23 +34,30 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
      * @return ConstructorAccessHelper 实例
      */
     public static ConstructorInvokerHelper of(Class<?> targetClass) {
-        ConstructorInvokerResult constructorInvokerResult = ConstructorInvokerGenerator.generate(targetClass);
-        if (!constructorInvokerResult.ok()) {
-            return null;
-        }
-
-        Class<?>[][] constructorParameterTypes = constructorInvokerResult.constructors()
+        List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
+        Class<?>[][] constructorParameterTypes = constructors
                 .stream()
                 .map(Constructor::getParameterTypes)
                 .toArray(Class[][]::new);
-        try {
-            ConstructorInvoker constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
-            return new ConstructorInvokerHelper(constructorInvoker, constructorParameterTypes);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
+
+        // 构造器数量小于等于阈值时，使用字节码调用
+        if (constructors.size() <= ByteBeanConstant.CONSTRUCTOR_SHARDING_THRESHOLD_VALUE) {
+            ConstructorInvokerResult constructorInvokerResult = ConstructorInvokerGenerator.generate(targetClass);
+            if (!constructorInvokerResult.ok()) {
+                return null;
+            }
+
+            try {
+                ConstructorInvoker constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
+                return new ConstructorInvokerHelper(constructorInvoker, constructorParameterTypes);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
         }
 
+        ConstructorHandleInvoker constructorHandleInvoker = ConstructorHandleInvoker.of(targetClass);
+        return new ConstructorInvokerHelper(constructorHandleInvoker, constructorParameterTypes);
     }
 
     /**

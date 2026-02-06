@@ -3,6 +3,7 @@ package com.github.archtiger.bytebean.core.invoker.constructor;
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
+import com.github.archtiger.bytebean.core.support.ByteBeanConstant;
 import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.support.NameUtil;
 import net.bytebuddy.ByteBuddy;
@@ -38,6 +39,11 @@ public final class ConstructorInvokerGenerator {
 
         // 步骤1: 收集目标类的所有可访问的构造器
         List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
+
+        // 检查构造器数量是否超过阈值
+        if (constructors.size() > ByteBeanConstant.CONSTRUCTOR_SHARDING_THRESHOLD_VALUE){
+            return ConstructorInvokerResult.fail();
+        }
 
         // 检查构造器列表是否为空
         if (constructors.isEmpty()) {

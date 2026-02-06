@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 4. 自动拆装箱功能
  * 5. 索引越界异常
  */
-class ConstructorInvokerSimpleTest {
+class ConstructorInvokerHelperSimpleTest {
     private ConstructorInvoker constructorInvoker;
     private ConstructorInvokerHelper constructorInvokerHelper;
 
