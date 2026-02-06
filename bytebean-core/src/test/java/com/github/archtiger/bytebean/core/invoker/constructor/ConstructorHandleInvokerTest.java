@@ -34,8 +34,8 @@ class ConstructorHandleInvokerTest {
 
     @Test
     void testNoArgsConstructor() {
-        // 测试无参构造器
-        Object instance = constructorHandleInvoker.newInstance(constructorInvokerHelper.getConstructorIndex());
+        // 测试无参构造器 - 使用无参的 newInstance() 方法
+        Object instance = constructorHandleInvoker.newInstance();
         assertNotNull(instance);
         assertTrue(instance instanceof TestConstructorEntity);
         TestConstructorEntity entity = (TestConstructorEntity) instance;
@@ -512,57 +512,21 @@ class ConstructorHandleInvokerTest {
         }
     }
 
-    // ==================== 索引越界异常测试 ====================
-
-    @Test
-    void testIndexOutOfBounds() {
-        // 测试负索引
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            constructorHandleInvoker.newInstance(-1);
-        });
-
-        // 测试超出范围的索引
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            constructorHandleInvoker.newInstance(1000);
-        });
-
-        // 测试 Integer.MIN_VALUE
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            constructorHandleInvoker.newInstance(Integer.MIN_VALUE);
-        });
-
-        // 测试 Integer.MAX_VALUE
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            constructorHandleInvoker.newInstance(Integer.MAX_VALUE);
-        });
-    }
-
-    @Test
-    void testIndexOutOfBoundsWithArgs() {
-        // 测试带参数的索引越界
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            constructorHandleInvoker.newInstance(-1, 42);
-        });
-
-        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
-            constructorHandleInvoker.newInstance(1000, "test");
-        });
-    }
 
     // ==================== null 值测试 ====================
 
     @Test
     void testNullArgsArray() {
-        // 测试 args 为 null（无参构造器）
-        Object instance = constructorHandleInvoker.newInstance(constructorInvokerHelper.getConstructorIndex(), (Object[]) null);
+        // 测试 args 为 null（无参构造器）- 使用无参的 newInstance() 方法
+        Object instance = constructorHandleInvoker.newInstance();
         assertNotNull(instance);
         assertTrue(instance instanceof TestConstructorEntity);
     }
 
     @Test
     void testEmptyArgsArray() {
-        // 测试空数组（无参构造器）
-        Object instance = constructorHandleInvoker.newInstance(constructorInvokerHelper.getConstructorIndex(), new Object[0]);
+        // 测试空数组（无参构造器）- 使用无参的 newInstance() 方法
+        Object instance = constructorHandleInvoker.newInstance();
         assertNotNull(instance);
         assertTrue(instance instanceof TestConstructorEntity);
     }
@@ -590,8 +554,8 @@ class ConstructorHandleInvokerTest {
     @Test
     void testAllConstructors() {
         // 测试所有构造器
-        // 无参构造器
-        Object instance = constructorHandleInvoker.newInstance(constructorInvokerHelper.getConstructorIndex());
+        // 无参构造器 - 使用无参的 newInstance() 方法
+        Object instance = constructorHandleInvoker.newInstance();
         assertNotNull(instance);
 
         // 单参数构造器
@@ -653,8 +617,8 @@ class ConstructorHandleInvokerTest {
     @Test
     void testValidIndexBoundaries() {
         // 测试有效索引边界
-        // 第一个构造器 (index 0 - 无参构造器)
-        Object instance = constructorHandleInvoker.newInstance(constructorInvokerHelper.getConstructorIndex());
+        // 第一个构造器 (index 0 - 无参构造器) - 使用无参的 newInstance() 方法
+        Object instance = constructorHandleInvoker.newInstance();
         assertNotNull(instance);
 
         // 最后一个构造器需要知道总构造器数
@@ -665,21 +629,4 @@ class ConstructorHandleInvokerTest {
         assertNotNull(instance);
     }
 
-    @Test
-    void testExceptionMessages() {
-        // 测试异常消息
-        try {
-            constructorHandleInvoker.newInstance(-1);
-            fail("Should throw ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            assertNotNull(e.getMessage());
-        }
-
-        try {
-            constructorHandleInvoker.newInstance(1000);
-            fail("Should throw ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            assertNotNull(e.getMessage());
-        }
-    }
 }

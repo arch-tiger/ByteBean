@@ -5,6 +5,7 @@ import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
@@ -32,7 +33,8 @@ public final class ConstructorHandleInvoker extends ConstructorInvoker {
             for (int i = 0; i < constructors.size(); i++) {
                 Constructor<?> constructor = constructors.get(i);
                 if (constructor.getParameterCount() == 0) {
-                    constructorHandles[i] = LOOKUP.unreflectConstructor(constructor);
+                    constructorHandles[i] = LOOKUP.unreflectConstructor(constructor)
+                            .asType(MethodType.methodType(Object.class));
                 } else {
                     constructorHandles[i] = LOOKUP.unreflectConstructor(constructor)
                             .asSpreader(Object[].class, constructor.getParameterCount());
