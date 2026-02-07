@@ -1,5 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.field;
 
+import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.field.FieldInvoker;
 import com.github.archtiger.bytebean.core.model.FieldInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanConstant;
@@ -11,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Map;
 
 /**
  * FieldInvokerHelper 类
@@ -19,6 +21,7 @@ import java.util.List;
  * @datetime 2026/01/13 17:00
  */
 public class FieldInvokerHelper extends FieldInvoker {
+    private static final Map<Class<?>, FieldInvokerHelper> FIELD_INVOKER_HELPER_CACHE = new WeakKeyValueConcurrentMap<>();
     private final FieldInvoker fieldInvoker;
     private final String[] fieldNames;
     private final int[] modifiers;
@@ -36,30 +39,33 @@ public class FieldInvokerHelper extends FieldInvoker {
      * @return FieldInvokerHelper 实例，若生成失败则返回 null
      */
     public static FieldInvokerHelper of(Class<?> targetClass) {
-        List<Field> fields = ByteBeanReflectUtil.getFields(targetClass);
-        if (fields.isEmpty()) {
-            return null;
-        }
+        return FIELD_INVOKER_HELPER_CACHE.computeIfAbsent(targetClass, k -> {
+            final List<Field> fields = ByteBeanReflectUtil.getFields(targetClass);
+            if (fields.isEmpty()) {
+                return null;
+            }
 
-        String[] fieldNames = fields.stream().map(Field::getName).toArray(String[]::new);
-        int[] modifiers = fields.stream().mapToInt(Field::getModifiers).toArray();
+            final String[] fieldNames = fields.stream().map(Field::getName).toArray(String[]::new);
+            final int[] modifiers = fields.stream().mapToInt(Field::getModifiers).toArray();
 
-        // 若字段数量小于等于阈值，则使用 FieldInvokerGenerator 生成 FieldInvoker
-        if (fields.size() <= ByteBeanConstant.FIELD_SHARDING_THRESHOLD_VALUE) {
-            FieldInvokerResult fieldInvokerResult = FieldInvokerGenerator.generate(targetClass);
-            if (fieldInvokerResult.ok()) {
-                try {
-                    FieldInvoker fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
-                    return new FieldInvokerHelper(fieldInvoker, fieldNames, modifiers);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    throw new RuntimeException(e);
+            // 若字段数量小于等于阈值，则使用 FieldInvokerGenerator 生成 FieldInvoker
+            if (fields.size() <= ByteBeanConstant.FIELD_SHARDING_THRESHOLD_VALUE) {
+                final FieldInvokerResult fieldInvokerResult = FieldInvokerGenerator.generate(targetClass);
+                if (fieldInvokerResult.ok()) {
+                    try {
+                        final FieldInvoker fieldInvoker = fieldInvokerResult.fieldInvokerClass().getDeclaredConstructor().newInstance();
+                        return new FieldInvokerHelper(fieldInvoker, fieldNames, modifiers);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                             NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        }
 
-        FieldVarHandleInvoker fieldVarHandleInvoker = FieldVarHandleInvoker.of(targetClass);
-        return new FieldInvokerHelper(fieldVarHandleInvoker, fieldNames, modifiers);
+            final FieldVarHandleInvoker fieldVarHandleInvoker = FieldVarHandleInvoker.of(targetClass);
+            return new FieldInvokerHelper(fieldVarHandleInvoker, fieldNames, modifiers);
+        });
+
     }
 
     /**

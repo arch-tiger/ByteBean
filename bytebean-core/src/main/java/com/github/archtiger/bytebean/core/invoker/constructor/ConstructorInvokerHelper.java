@@ -1,5 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.constructor;
 
+import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
 import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.support.ByteBeanConstant;
@@ -11,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 构造器访问助手
@@ -19,6 +21,7 @@ import java.util.List;
  * @datetime 2026/1/13 11:32
  */
 public class ConstructorInvokerHelper extends ConstructorInvoker {
+    private static final Map<Class<?>, ConstructorInvokerHelper> CONSTRUCTOR_INVOKER_HELPER_CACHE = new WeakKeyValueConcurrentMap<>();
     private final ConstructorInvoker constructorInvoker;
     private final Class<?>[][] constructorParameterTypes;
 
@@ -34,30 +37,33 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
      * @return ConstructorAccessHelper 实例
      */
     public static ConstructorInvokerHelper of(Class<?> targetClass) {
-        List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
-        Class<?>[][] constructorParameterTypes = constructors
-                .stream()
-                .map(Constructor::getParameterTypes)
-                .toArray(Class[][]::new);
+        return CONSTRUCTOR_INVOKER_HELPER_CACHE.computeIfAbsent(targetClass, k -> {
+            final List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
+            final Class<?>[][] constructorParameterTypes = constructors
+                    .stream()
+                    .map(Constructor::getParameterTypes)
+                    .toArray(Class[][]::new);
 
-        // 构造器数量小于等于阈值时，使用字节码调用
-        if (constructors.size() <= ByteBeanConstant.CONSTRUCTOR_SHARDING_THRESHOLD_VALUE) {
-            ConstructorInvokerResult constructorInvokerResult = ConstructorInvokerGenerator.generate(targetClass);
-            if (!constructorInvokerResult.ok()) {
-                return null;
+            // 构造器数量小于等于阈值时，使用字节码调用
+            if (constructors.size() <= ByteBeanConstant.CONSTRUCTOR_SHARDING_THRESHOLD_VALUE) {
+                final ConstructorInvokerResult constructorInvokerResult = ConstructorInvokerGenerator.generate(targetClass);
+                if (!constructorInvokerResult.ok()) {
+                    return null;
+                }
+
+                try {
+                    final ConstructorInvoker constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
+                    return new ConstructorInvokerHelper(constructorInvoker, constructorParameterTypes);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
-            try {
-                ConstructorInvoker constructorInvoker = constructorInvokerResult.constructorInvokerClass().getDeclaredConstructor().newInstance();
-                return new ConstructorInvokerHelper(constructorInvoker, constructorParameterTypes);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
-        }
+            final ConstructorHandleInvoker constructorHandleInvoker = ConstructorHandleInvoker.of(targetClass);
+            return new ConstructorInvokerHelper(constructorHandleInvoker, constructorParameterTypes);
+        });
 
-        ConstructorHandleInvoker constructorHandleInvoker = ConstructorHandleInvoker.of(targetClass);
-        return new ConstructorInvokerHelper(constructorHandleInvoker, constructorParameterTypes);
     }
 
     /**

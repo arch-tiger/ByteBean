@@ -1,5 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
+import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
 import com.github.archtiger.bytebean.core.model.MethodGroup;
 import com.github.archtiger.bytebean.core.model.MethodIdentify;
@@ -11,6 +12,7 @@ import com.github.archtiger.bytebean.core.support.ExceptionUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * 方法访问助手
@@ -19,6 +21,7 @@ import java.util.Arrays;
  * @datetime 2026/1/11 21:23
  */
 public final class MethodInvokerHelper extends MethodInvoker {
+    private static final Map<Class<?>, MethodInvokerHelper> METHOD_INVOKER_HELPER_CACHE = new WeakKeyValueConcurrentMap<>();
     private final MethodInvoker methodInvoker;
     private final String[] methodNames;
     private final Class<?>[][] methodParamTypes;
@@ -36,36 +39,39 @@ public final class MethodInvokerHelper extends MethodInvoker {
      * 创建方法访问助手
      */
     public static MethodInvokerHelper of(Class<?> targetClass) {
-        MethodGroup methodGroup = MethodGroup.of(targetClass);
-        if (!methodGroup.ok()) {
-            return null;
-        }
+        return METHOD_INVOKER_HELPER_CACHE.computeIfAbsent(targetClass, k -> {
+            final MethodGroup methodGroup = MethodGroup.of(targetClass);
+            if (!methodGroup.ok()) {
+                return null;
+            }
 
-        String[] methodNames = new String[methodGroup.methodAllList().size()];
-        Class<?>[][] methodParamTypes = new Class<?>[methodGroup.methodAllList().size()][];
-        for (int i = 0; i < methodGroup.methodAllList().size(); i++) {
-            MethodIdentify methodIdentify = methodGroup.methodAllList().get(i);
-            methodNames[i] = methodIdentify.method().getName();
-            methodParamTypes[i] = methodIdentify.method().getParameterTypes();
-        }
+            final String[] methodNames = new String[methodGroup.methodAllList().size()];
+            final Class<?>[][] methodParamTypes = new Class<?>[methodGroup.methodAllList().size()][];
+            for (int i = 0; i < methodGroup.methodAllList().size(); i++) {
+                MethodIdentify methodIdentify = methodGroup.methodAllList().get(i);
+                methodNames[i] = methodIdentify.method().getName();
+                methodParamTypes[i] = methodIdentify.method().getParameterTypes();
+            }
 
-        // 若方法数量小于等于阈值,则使用 MethodInvokerGenerator 生成 MethodInvoker 实现类
-        if (methodGroup.methodAllList().size() <= ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
-            MethodInvokerResult generate = MethodInvokerGenerator.generate(targetClass);
-            if (generate.ok()) {
-                try {
-                    MethodInvoker methodInvoker = generate.methodInvokerClass().getDeclaredConstructor().newInstance();
-                    return new MethodInvokerHelper(methodInvoker, methodNames, methodParamTypes);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    throw new RuntimeException(e);
+            // 若方法数量小于等于阈值,则使用 MethodInvokerGenerator 生成 MethodInvoker 实现类
+            if (methodGroup.methodAllList().size() <= ByteBeanConstant.METHOD_SHARDING_THRESHOLD_VALUE) {
+                final MethodInvokerResult generate = MethodInvokerGenerator.generate(targetClass);
+                if (generate.ok()) {
+                    try {
+                        final MethodInvoker methodInvoker = generate.methodInvokerClass().getDeclaredConstructor().newInstance();
+                        return new MethodInvokerHelper(methodInvoker, methodNames, methodParamTypes);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                             NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        }
 
-        // 否则,使用 MethodHandleInvoker 实现类
-        MethodHandleInvoker methodHandleInvoker = MethodHandleInvoker.of(targetClass);
-        return new MethodInvokerHelper(methodHandleInvoker, methodNames, methodParamTypes);
+            // 否则,使用 MethodHandleInvoker 实现类
+            final MethodHandleInvoker methodHandleInvoker = MethodHandleInvoker.of(targetClass);
+            return new MethodInvokerHelper(methodHandleInvoker, methodNames, methodParamTypes);
+        });
+
     }
 
     /**
