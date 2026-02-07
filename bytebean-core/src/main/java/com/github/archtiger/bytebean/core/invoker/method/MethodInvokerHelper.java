@@ -9,6 +9,7 @@ import com.github.archtiger.bytebean.core.support.ExceptionCode;
 import com.github.archtiger.bytebean.core.support.ExceptionUtil;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -79,6 +80,10 @@ public final class MethodInvokerHelper extends MethodInvoker {
         }
 
         return ExceptionCode.INVALID_INDEX;
+    }
+
+    public int getMethodIndex(Method method) {
+        return getMethodIndex(method.getName(), method.getParameterTypes());
     }
 
     /**
