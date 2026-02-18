@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.extensions;
+package com.github.archtiger.bytebean.extensions.utils;
 
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
