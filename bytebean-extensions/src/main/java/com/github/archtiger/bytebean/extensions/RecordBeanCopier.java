@@ -173,13 +173,45 @@ public final class RecordBeanCopier {
      * @return 复制函数
      */
     private static <O, T> BiFunction<O, T, T> createBeanToRecordCopier(BeanCopierIdentifier identifier) {
+        final MethodInvokerHelper originMethodInvokerHelper = MethodInvokerHelper.of(identifier.originClass());
+        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanGetterMethodMap(identifier.originClass());
         final Constructor<?> maxParameterConstructor = ByteBeanCopierUtil.calcMaxParameterConstructor(identifier.targetClass());
         final Parameter[] parameters = maxParameterConstructor.getParameters();
-        for (Parameter parameter : parameters) {
+        final int[] getterIndexArray = new int[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            final Parameter parameter = parameters[i];
+            // 获取来源对象Getter方法名
+            final String getterName = ByteBeanCopierUtil.calcGetterName(parameter.getName(), parameter.getType());
+            final Method getterMethod = originGetterMethodMap.get(getterName);
+            if (getterMethod == null) {
+                getterIndexArray[i] = ExceptionCode.INVALID_INDEX;
+                continue;
+            }
 
+            // 来源对象Getter方法返回类型与目标参数类型不同时，跳过。
+            if (!getterMethod.getReturnType().equals(parameter.getType())) {
+                getterIndexArray[i] = ExceptionCode.INVALID_INDEX;
+                continue;
+            }
+
+            getterIndexArray[i] = originMethodInvokerHelper.getMethodIndex(getterName);
         }
 
-        return null;
+        final ConstructorInvokerHelper constructorInvokerHelper = ConstructorInvokerHelper.of(identifier.targetClass());
+        final int maxConstructorIndex = constructorInvokerHelper.getConstructorIndex(maxParameterConstructor.getParameterTypes());
+        return (origin, target) -> {
+            final Object[] args = new Object[getterIndexArray.length];
+            for (int i = 0; i < getterIndexArray.length; i++) {
+                final int getterIndex = getterIndexArray[i];
+                if (getterIndex == ExceptionCode.INVALID_INDEX) {
+                    args[i] = null;
+                    continue;
+                }
+
+                args[i] = originMethodInvokerHelper.invoke(getterIndex, origin);
+            }
+            return (T) constructorInvokerHelper.newInstance(maxConstructorIndex, args);
+        };
     }
 
     /**
