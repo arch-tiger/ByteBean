@@ -1,7 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.field;
 
 import com.github.archtiger.bytebean.core.utils.AsmUtil;
-import com.github.archtiger.bytebean.core.utils.ByteCodeSizeUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
@@ -41,7 +40,7 @@ public final class PrimitiveFieldSetterByteCode implements Implementation {
             //   slot 3: <primitive> value (注意: long/double 占用 slot 3 和 4)
 
             // 计算基本类型 value 占用的 slot 数量 (1 或 2)
-            int valueSlotSize = ByteCodeSizeUtil.slotSize(primitiveType);
+            int valueSlotSize = AsmUtil.slotSize(primitiveType);
             // 计算存放 castedInstance 的 slot 索引 (跳过 value 占用的 slot)
             int castedInstanceSlot = 3 + valueSlotSize;
 

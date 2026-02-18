@@ -238,4 +238,17 @@ public class AsmUtil {
         // ============================================================
         mv.visitInsn(Opcodes.ATHROW);
     }
+
+    /**
+     * 返回字段类型在栈上占用的 slot 数量
+     *
+     * @param type 字段类型
+     * @return 字段类型在栈上占用的 slot 数量
+     */
+    public static int slotSize(Class<?> type) {
+        if (type == long.class || type == double.class) {
+            return 2;
+        }
+        return 1;
+    }
 }
