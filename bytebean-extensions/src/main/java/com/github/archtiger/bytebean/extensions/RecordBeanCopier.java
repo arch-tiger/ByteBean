@@ -52,11 +52,20 @@ public final class RecordBeanCopier {
      * 构建 Record 场景复制函数。
      */
     private static <O, T> BiFunction<O, T, T> createCopier(BeanCopierIdentifier identifier) {
-        // 以目标类型决定后续策略。
-        if (identifier.targetClass().isRecord()) {
-            return createTargetRecordCopier(identifier);
+        // 双方均为 Record 时，按 record -> record 路径处理。
+        if (identifier.originClass().isRecord() && identifier.targetClass().isRecord()) {
+            return createRecordToRecordCopier(identifier);
         }
-        return createTargetBeanCopier(identifier);
+        // 来源是 Record，目标是普通 Bean。
+        if (identifier.originClass().isRecord()) {
+            return createRecordToBeanCopier(identifier);
+        }
+        // 来源是普通 Bean，目标是 Record。
+        if (identifier.targetClass().isRecord()) {
+            return createBeanToRecordCopier(identifier);
+        }
+        // 双方均为普通 Bean。
+        return createBeanToBeanCopier(identifier);
     }
 
     /**
@@ -284,8 +293,44 @@ public final class RecordBeanCopier {
      * @return 复制函数
      */
     private static <O, T> BiFunction<O, T, T> createRecordToRecordCopier(BeanCopierIdentifier identifier) {
+        final MethodInvokerHelper originMethodInvokerHelper = MethodInvokerHelper.of(identifier.originClass());
+        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanMethodMap(identifier.originClass());
+        final Constructor<?> maxParameterConstructor = ByteBeanCopierUtil.calcMaxParameterConstructor(identifier.targetClass());
+        final Parameter[] parameters = maxParameterConstructor.getParameters();
+        final int[] getterIndexArray = new int[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            final Parameter parameter = parameters[i];
+            // 获取来源对象Getter方法名
+            final Method getterMethod = originGetterMethodMap.get(parameter.getName());
+            if (getterMethod == null) {
+                getterIndexArray[i] = ExceptionCode.INVALID_INDEX;
+                continue;
+            }
 
-        return null;
+            // 来源对象Getter方法返回类型与目标参数类型不同时，跳过。
+            if (!getterMethod.getReturnType().equals(parameter.getType())) {
+                getterIndexArray[i] = ExceptionCode.INVALID_INDEX;
+                continue;
+            }
+
+            getterIndexArray[i] = originMethodInvokerHelper.getMethodIndex(parameter.getName());
+        }
+
+        final ConstructorInvokerHelper constructorInvokerHelper = ConstructorInvokerHelper.of(identifier.targetClass());
+        final int maxConstructorIndex = constructorInvokerHelper.getConstructorIndex(maxParameterConstructor.getParameterTypes());
+        return (origin, target) -> {
+            final Object[] args = new Object[getterIndexArray.length];
+            for (int i = 0; i < getterIndexArray.length; i++) {
+                final int getterIndex = getterIndexArray[i];
+                if (getterIndex == ExceptionCode.INVALID_INDEX) {
+                    args[i] = null;
+                    continue;
+                }
+
+                args[i] = originMethodInvokerHelper.invoke(getterIndex, origin);
+            }
+            return (T) constructorInvokerHelper.newInstance(maxConstructorIndex, args);
+        };
     }
 
     /**
