@@ -1,7 +1,6 @@
 package com.github.archtiger.bytebean.extensions;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
-import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.archtiger.bytebean.core.invoker.constructor.ConstructorInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerHelper;
@@ -117,27 +116,33 @@ public final class RecordBeanCopier {
         final MethodInvokerHelper originMethodInvokerHelper = MethodInvokerHelper.of(identifier.originClass());
         final MethodInvokerHelper targetMethodInvokerHelper = MethodInvokerHelper.of(identifier.targetClass());
 
-        // 来源对象
-        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanGetterMethodMap(ReflectUtil.getMethods(identifier.originClass()));
+        // 来源对象是Record不需要构建getter前缀
+        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanMethodMap(identifier.originClass());
         // 目标对象
-        final Map<String, Method> targetSetterMethodMap = ByteBeanCopierUtil.calcBeanSetterMethodMap(ReflectUtil.getMethods(identifier.targetClass()));
+        final Map<String, Method> targetSetterMethodMap = ByteBeanCopierUtil.calcBeanSetterMethodMap(identifier.targetClass());
         final List<BeanCopyAction> beanCopyActions = new ArrayList<>();
-        targetSetterMethodMap.forEach((setterName, method) -> {
+
+        targetSetterMethodMap.forEach((setterName, setterMethod) -> {
             final String fieldName = ByteBeanCopierUtil.calcFieldNameWithSetter(setterName);
-            final String getterName = ByteBeanCopierUtil.calcGetterName(fieldName, method.getParameterTypes()[0]);
-            // 来源对象不存在对应 getter 方法时，跳过。
-            if (!originGetterMethodMap.containsKey(getterName)) {
+            // 来源对象Record找不到对应的Getter
+            final Method getterMethod = originGetterMethodMap.get(fieldName);
+            if (getterMethod == null) {
                 return;
             }
 
-            // 目标类型 setter 方法参数类型与来源类型组件类型不同时，跳过。
-            final int originGetterIndex = originMethodInvokerHelper.getMethodIndex(getterName);
+            // 来源对象Record找不到对应的Getter
+            if (!ByteBeanCopierUtil.isMatchGetterAndSetterType(getterMethod, setterMethod)) {
+                return;
+            }
+
+            // 目标类型 setter 找不到对应的 getter 方法时，跳过。
+            final int originGetterIndex = originMethodInvokerHelper.getMethodIndex(fieldName);
             if (originGetterIndex == ExceptionCode.INVALID_INDEX) {
                 return;
             }
 
             // 目标类型 setter 方法参数类型与来源类型组件类型不同时，跳过。
-            final int targetSetterIndex = targetMethodInvokerHelper.getMethodIndex(setterName, method.getParameterTypes()[0]);
+            final int targetSetterIndex = targetMethodInvokerHelper.getMethodIndex(setterName, setterMethod.getParameterTypes()[0]);
             if (targetSetterIndex == ExceptionCode.INVALID_INDEX) {
                 return;
             }

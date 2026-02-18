@@ -54,8 +54,8 @@ public final class ReflectiveBeanCopier {
         final MethodInvokerHelper targetMethodInvokerHelper = MethodInvokerHelper.of(targetClass);
 
         // 提前提取来源 getter 与目标 setter，避免执行阶段再做反射扫描。
-        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanGetterMethodMap(originClass.getMethods());
-        final Map<String, Method> targetSetterMethodMap = ByteBeanCopierUtil.calcBeanSetterMethodMap(targetClass.getMethods());
+        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanGetterMethodMap(originClass);
+        final Map<String, Method> targetSetterMethodMap = ByteBeanCopierUtil.calcBeanSetterMethodMap(targetClass);
 
         // 预计算 getter -> setter 的索引映射，复制时只做调用，不再查找方法。
         final List<BeanCopyAction> beanCopyActions = new ArrayList<>();

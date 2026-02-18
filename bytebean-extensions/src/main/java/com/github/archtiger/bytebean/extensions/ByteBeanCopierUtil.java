@@ -39,8 +39,8 @@ public class ByteBeanCopierUtil {
     /**
      * 计算可用 setter 方法集合。
      */
-    public static Map<String, Method> calcBeanSetterMethodMap(Method[] methods) {
-        return Arrays.stream(methods)
+    public static Map<String, Method> calcBeanSetterMethodMap(Class<?> clazz) {
+        return Arrays.stream(ReflectUtil.getMethods(clazz))
                 .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .filter(e -> e.getDeclaringClass() != Object.class)
                 .filter(ByteBeanCopierUtil::isSetter)
@@ -50,8 +50,8 @@ public class ByteBeanCopierUtil {
     /**
      * 计算可用 getter 方法集合。
      */
-    public static Map<String, Method> calcBeanGetterMethodMap(Method[] methods) {
-        return Arrays.stream(methods)
+    public static Map<String, Method> calcBeanGetterMethodMap(Class<?> clazz) {
+        return Arrays.stream(ReflectUtil.getMethods(clazz))
                 .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .filter(e -> e.getDeclaringClass() != Object.class)
                 .filter(e -> ByteBeanCopierUtil.isGetterWithGet(e) || ByteBeanCopierUtil.isGetterWithIs(e))
@@ -129,4 +129,40 @@ public class ByteBeanCopierUtil {
             return StrUtil.genGetter(fieldName);
         }
     }
+
+    /**
+     * 判断 getter 方法是否匹配 setter 方法。
+     *
+     * @param originGetter 来源对象 getter 方法
+     * @param targetSetter 目标对象 setter 方法
+     * @return 是否匹配
+     */
+    public static boolean isMatchGetterAndSetter(Method originGetter, Method targetSetter) {
+        return isMatchGetterAndSetterName(originGetter, targetSetter) && isMatchGetterAndSetterType(originGetter, targetSetter);
+    }
+
+    /**
+     * 判断 getter 方法名是否匹配 setter 方法名。
+     *
+     * @param originGetter 来源对象 getter 方法
+     * @param targetSetter 目标对象 setter 方法
+     * @return 是否匹配
+     */
+    public static boolean isMatchGetterAndSetterName(Method originGetter, Method targetSetter) {
+        final String getterFieldName = calcFieldNameWithGetter(originGetter.getName());
+        final String setterFieldName = calcFieldNameWithSetter(targetSetter.getName());
+        return getterFieldName.equals(setterFieldName);
+    }
+
+    /**
+     * 判断 getter 方法返回类型是否匹配 setter 方法参数类型。
+     *
+     * @param originGetter 来源对象 getter 方法
+     * @param targetSetter 目标对象 setter 方法
+     * @return 是否匹配
+     */
+    public static boolean isMatchGetterAndSetterType(Method originGetter, Method targetSetter) {
+        return originGetter.getReturnType().equals(targetSetter.getParameterTypes()[0]);
+    }
+
 }
