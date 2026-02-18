@@ -223,8 +223,56 @@ public final class RecordBeanCopier {
      * @return 复制函数
      */
     private static <O, T> BiFunction<O, T, T> createBeanToBeanCopier(BeanCopierIdentifier identifier) {
+        final MethodInvokerHelper originMethodInvokerHelper = MethodInvokerHelper.of(identifier.originClass());
+        final MethodInvokerHelper targetMethodInvokerHelper = MethodInvokerHelper.of(identifier.targetClass());
 
-        return null;
+        // 来源对象是Record不需要构建getter前缀
+        final Map<String, Method> originGetterMethodMap = ByteBeanCopierUtil.calcBeanMethodMap(identifier.originClass());
+        // 目标对象
+        final Map<String, Method> targetSetterMethodMap = ByteBeanCopierUtil.calcBeanSetterMethodMap(identifier.targetClass());
+        final List<BeanCopyAction> beanCopyActions = new ArrayList<>();
+
+        targetSetterMethodMap.forEach((setterName, setterMethod) -> {
+            final String fieldName = ByteBeanCopierUtil.calcFieldNameWithSetter(setterName);
+            final String getterName = ByteBeanCopierUtil.calcGetterName(fieldName, setterMethod.getParameterTypes()[0]);
+            // 来源对象Record找不到对应的Getter
+            final Method getterMethod = originGetterMethodMap.get(getterName);
+            if (getterMethod == null) {
+                return;
+            }
+
+            // 来源对象Record找不到对应的Getter
+            if (!ByteBeanCopierUtil.isMatchGetterAndSetterType(getterMethod, setterMethod)) {
+                return;
+            }
+
+            // 目标类型 setter 找不到对应的 getter 方法时，跳过。
+            final int originGetterIndex = originMethodInvokerHelper.getMethodIndex(getterName);
+            if (originGetterIndex == ExceptionCode.INVALID_INDEX) {
+                return;
+            }
+
+            // 目标类型 setter 方法参数类型与来源类型组件类型不同时，跳过。
+            final int targetSetterIndex = targetMethodInvokerHelper.getMethodIndex(setterName, setterMethod.getParameterTypes()[0]);
+            if (targetSetterIndex == ExceptionCode.INVALID_INDEX) {
+                return;
+            }
+
+            beanCopyActions.add(new BeanCopyAction(originGetterIndex, targetSetterIndex));
+        });
+
+        final BeanCopyAction[] actionArray = beanCopyActions.toArray(new BeanCopyAction[0]);
+
+        return (origin, target) -> {
+            // 仅来源值非 null 时覆盖目标字段。
+            for (BeanCopyAction beanCopyAction : actionArray) {
+                final Object getterValue = originMethodInvokerHelper.invoke(beanCopyAction.originGetterIndex(), origin);
+                if (getterValue != null) {
+                    targetMethodInvokerHelper.invoke1(beanCopyAction.targetSetterIndex(), target, getterValue);
+                }
+            }
+            return target;
+        };
     }
 
     /**
