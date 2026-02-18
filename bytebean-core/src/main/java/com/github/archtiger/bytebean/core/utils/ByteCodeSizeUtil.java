@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.core.support;
+package com.github.archtiger.bytebean.core.utils;
 
 /**
  * 栈大小工具类

@@ -1,6 +1,6 @@
 package com.github.archtiger.bytebean.core.model;
 
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 import net.bytebuddy.jar.asm.Type;
 
 import java.lang.reflect.Method;

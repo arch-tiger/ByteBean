@@ -1,7 +1,7 @@
 package com.github.archtiger.bytebean.core.invoker.constructor;
 
 import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

@@ -1,6 +1,6 @@
 package com.github.archtiger.bytebean.core.invoker.entity;
 
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 import lombok.Getter;
 import lombok.Setter;
 

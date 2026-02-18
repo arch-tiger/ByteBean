@@ -1,7 +1,7 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 
 import java.lang.reflect.Method;
 

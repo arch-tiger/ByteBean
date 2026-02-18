@@ -3,7 +3,7 @@ package com.github.archtiger.bytebean.extensions;
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.core.invoker.constructor.ConstructorInvokerHelper;
 import com.github.archtiger.bytebean.core.invoker.method.MethodInvokerHelper;
-import com.github.archtiger.bytebean.core.support.ExceptionCode;
+import com.github.archtiger.bytebean.core.constant.ExceptionCode;
 import com.github.archtiger.bytebean.extensions.model.BeanCopierIdentifier;
 import com.github.archtiger.bytebean.extensions.model.BeanCopyAction;
 

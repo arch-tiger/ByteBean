@@ -1,7 +1,7 @@
 package com.github.archtiger.bytebean.core.invoker.method;
 
 import com.github.archtiger.bytebean.core.model.MethodIdentify;
-import com.github.archtiger.bytebean.core.support.AsmUtil;
+import com.github.archtiger.bytebean.core.utils.AsmUtil;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;

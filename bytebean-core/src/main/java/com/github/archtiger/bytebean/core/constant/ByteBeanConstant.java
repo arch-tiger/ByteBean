@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.core.support;
+package com.github.archtiger.bytebean.core.constant;
 
 /**
  * 常量
@@ -10,5 +10,5 @@ public interface ByteBeanConstant {
     String INVOKER_NAME_PREFIX = "ByteBean";
     int METHOD_SHARDING_THRESHOLD_VALUE = 400;
     int FIELD_SHARDING_THRESHOLD_VALUE = 500;
-    int CONSTRUCTOR_SHARDING_THRESHOLD_VALUE = 500;
+    int CONSTRUCTOR_SHARDING_THRESHOLD_VALUE = 20;
 }

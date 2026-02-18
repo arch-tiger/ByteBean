@@ -32,6 +32,7 @@ public class ByteBeanCopierUtil {
      */
     public static Map<String, Method> calcBeanMethodMap(Class<?> clazz) {
         return Arrays.stream(ReflectUtil.getMethods(clazz))
+                .filter(e -> e.getDeclaringClass() != Object.class)
                 .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .collect(Collectors.toMap(Method::getName, Function.identity()));
     }
@@ -41,8 +42,8 @@ public class ByteBeanCopierUtil {
      */
     public static Map<String, Method> calcBeanSetterMethodMap(Class<?> clazz) {
         return Arrays.stream(ReflectUtil.getMethods(clazz))
-                .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .filter(e -> e.getDeclaringClass() != Object.class)
+                .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .filter(ByteBeanCopierUtil::isSetter)
                 .collect(Collectors.toMap(Method::getName, Function.identity()));
     }
@@ -52,8 +53,8 @@ public class ByteBeanCopierUtil {
      */
     public static Map<String, Method> calcBeanGetterMethodMap(Class<?> clazz) {
         return Arrays.stream(ReflectUtil.getMethods(clazz))
-                .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .filter(e -> e.getDeclaringClass() != Object.class)
+                .filter(e -> Modifier.isPublic(e.getModifiers()) && !Modifier.isStatic(e.getModifiers()))
                 .filter(e -> ByteBeanCopierUtil.isGetterWithGet(e) || ByteBeanCopierUtil.isGetterWithIs(e))
                 .collect(Collectors.toMap(Method::getName, Function.identity()));
     }

@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.core.support;
+package com.github.archtiger.bytebean.core.utils;
 
 import cn.hutool.core.util.ReflectUtil;
 import net.bytebuddy.jar.asm.Type;

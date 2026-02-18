@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.core.support;
+package com.github.archtiger.bytebean.core.utils;
 
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;

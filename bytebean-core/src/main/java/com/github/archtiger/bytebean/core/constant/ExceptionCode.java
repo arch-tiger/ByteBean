@@ -1,4 +1,4 @@
-package com.github.archtiger.bytebean.core.support;
+package com.github.archtiger.bytebean.core.constant;
 
 /**
  * 异常码

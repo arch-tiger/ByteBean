@@ -1,4 +1,6 @@
-package com.github.archtiger.bytebean.core.support;
+package com.github.archtiger.bytebean.core.utils;
+
+import com.github.archtiger.bytebean.core.constant.ByteBeanConstant;
 
 /**
  * 名称工具类

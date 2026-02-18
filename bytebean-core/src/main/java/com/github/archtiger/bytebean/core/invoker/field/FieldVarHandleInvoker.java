@@ -1,7 +1,7 @@
 package com.github.archtiger.bytebean.core.invoker.field;
 
 import com.github.archtiger.bytebean.api.field.FieldInvoker;
-import com.github.archtiger.bytebean.core.support.ByteBeanReflectUtil;
+import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
