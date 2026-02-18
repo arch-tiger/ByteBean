@@ -82,6 +82,10 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
         return ExceptionCode.INVALID_INDEX;
     }
 
+    public int getConstructorIndex(Constructor<?> constructor) {
+        return getConstructorIndex(constructor.getParameterTypes());
+    }
+
     /**
      * 获取构造器索引或抛出异常
      *
