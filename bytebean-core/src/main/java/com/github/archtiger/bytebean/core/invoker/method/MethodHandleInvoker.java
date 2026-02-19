@@ -11,39 +11,122 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 基于MethodHandle的方法调用器（高性能优化版本）
+ * 基于MethodHandle的方法调用器，为大量方法场景提供高性能调用能力。
+ * <p>
+ * 当类的方法数量超过阈值（默认400）时，使用MethodHandle实现而非字节码生成，
+ * 避免了生成过大字节码导致的类加载性能问题。
+ * <p>
+ * 该实现通过紧凑数组+偏移量的方式优化了基本类型参数和返回值的方法调用，
+ * 减少了内存占用和分支预测失败的概率。
+ * <p>
+ * <b>数据结构：</b>
+ * <ul>
+ *   <li>methodHandles - 通用方法Handle数组</li>
+ *   <li>int1Handles/long1Handles等 - 单基本类型参数方法的紧凑数组</li>
+ *   <li>int1Offset/long1Offset等 - 对应紧凑数组在索引空间的起始偏移量</li>
+ *   <li>intReturnHandles等 - 基本类型返回值方法的紧凑数组</li>
+ * </ul>
  *
  * @author ArchTiger
- * @date 2026/1/16 19:46
+ * @since 1.0.0
  */
 public final class MethodHandleInvoker extends MethodInvoker {
+
+    /**
+     * MethodHandles.Lookup实例，用于创建MethodHandle。
+     */
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
+    /**
+     * 空MethodHandle数组，用于无方法的情况。
+     */
     private static final MethodHandle[] EMPTY_HANDLES = new MethodHandle[0];
+
+    /**
+     * 通用方法Handle数组，按方法索引排列。
+     */
     private final MethodHandle[] methodHandles;
 
     // 基本类型参数优化：紧凑数组 + 偏移量
+
+    /**
+     * 单int参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] int1Handles;
+
+    /**
+     * int1Handles在索引空间的起始偏移量。
+     */
     private final int int1Offset;
 
+    /**
+     * 单long参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] long1Handles;
+
+    /**
+     * long1Handles在索引空间的起始偏移量。
+     */
     private final int long1Offset;
 
+    /**
+     * 单float参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] float1Handles;
+
+    /**
+     * float1Handles在索引空间的起始偏移量。
+     */
     private final int float1Offset;
 
+    /**
+     * 单double参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] double1Handles;
+
+    /**
+     * double1Handles在索引空间的起始偏移量。
+     */
     private final int double1Offset;
 
+    /**
+     * 单boolean参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] boolean1Handles;
+
+    /**
+     * boolean1Handles在索引空间的起始偏移量。
+     */
     private final int boolean1Offset;
 
+    /**
+     * 单byte参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] byte1Handles;
+
+    /**
+     * byte1Handles在索引空间的起始偏移量。
+     */
     private final int byte1Offset;
 
+    /**
+     * 单short参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] short1Handles;
+
+    /**
+     * short1Handles在索引空间的起始偏移量。
+     */
     private final int short1Offset;
 
+    /**
+     * 单char参数方法的MethodHandle紧凑数组。
+     */
     private final MethodHandle[] char1Handles;
+
+    /**
+     * char1Handles在索引空间的起始偏移量。
+     */
     private final int char1Offset;
 
     // 基本类型返回值优化：紧凑数组 + 偏移量
@@ -124,6 +207,12 @@ public final class MethodHandleInvoker extends MethodInvoker {
         this.charReturnOffset = charReturnOffset;
     }
 
+    /**
+     * 创建基于MethodHandle的方法调用器
+     *
+     * @param targetClass 目标类
+     * @return MethodHandleInvoker 实例
+     */
     public static MethodHandleInvoker of(Class<?> targetClass) {
         try {
             MethodGroup methodGroup = MethodGroup.of(targetClass);

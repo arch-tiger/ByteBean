@@ -13,19 +13,36 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * 双参数方法调用字节码实现
- * API: Object invoke(int index, Object instance, Object arg1, Object arg2)
+ * 双参数方法调用字节码实现，为MethodInvoker生成高性能双参数方法调用字节码。
+ * <p>
+ * 该类专门处理双参数方法的调用，通过tableswitch指令实现方法索引到方法调用的快速分发。
+ * 相比通用invoke方法，避免了参数数组的创建开销。
+ * </p>
+ * <p>
+ * <b>API对应：</b> {@code Object invoke(int index, Object instance, Object arg1, Object arg2)}
+ * </p>
  *
  * @author ZIJIDELU
- * @datetime 2026/1/19
+ * @since 1.0.0
  */
 public class MethodP2ByteCode implements Implementation {
 
+    /**
+     * 目标类，用于类型检查和字节码生成。
+     */
     private final Class<?> targetClass;
+
+    /**
+     * 方法标识列表，按索引顺序排列。
+     */
     private final List<MethodIdentify> methodIdentifyList;
 
-
-
+    /**
+     * 创建双参数方法字节码实现
+     *
+     * @param targetClass 目标类
+     * @param methodIdentifyList 方法标识列表
+     */
     public MethodP2ByteCode(Class<?> targetClass, List<MethodIdentify> methodIdentifyList) {
         this.targetClass = targetClass;
         this.methodIdentifyList = methodIdentifyList;

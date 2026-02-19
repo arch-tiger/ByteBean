@@ -15,14 +15,39 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 构造器访问助手
+ * 构造器访问器Helper，提供构造器索引管理和缓存能力。
+ * <p>
+ * 该类继承自{@link ConstructorInvoker}，在提供构造器调用能力的同时，
+ * 维护了构造器参数类型到索引的映射，并支持按目标类进行缓存。
+ * <p>
+ * <b>特点：</b>
+ * <ul>
+ *   <li>使用WeakKeyValueConcurrentMap缓存，避免内存泄漏</li>
+ *   <li>支持通过参数类型获取构造器索引</li>
+ *   <li>支持构造器重载的精确匹配</li>
+ *   <li>根据构造器数量自动选择字节码或MethodHandle实现</li>
+ * </ul>
  *
  * @author ZIJIDELU
- * @datetime 2026/1/13 11:32
+ * @since 1.0.0
  */
 public class ConstructorInvokerHelper extends ConstructorInvoker {
+
+    /**
+     * ConstructorInvokerHelper缓存，按目标Class索引。
+     * 使用WeakKeyValueConcurrentMap确保在目标Class被卸载时自动清除缓存。
+     */
     private static final Map<Class<?>, ConstructorInvokerHelper> CONSTRUCTOR_INVOKER_HELPER_CACHE = new WeakKeyValueConcurrentMap<>();
+
+    /**
+     * 实际的构造器访问器实现，可能是字节码生成或MethodHandle实现。
+     */
     private final ConstructorInvoker constructorInvoker;
+
+    /**
+     * 构造器参数类型数组，按索引顺序排列。
+     * 每个元素是一个Class[]，表示对应索引构造器的参数类型列表。
+     */
     private final Class<?>[][] constructorParameterTypes;
 
     private ConstructorInvokerHelper(ConstructorInvoker constructorInvoker, Class<?>[][] constructorParameterTypes) {
@@ -82,6 +107,12 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
         return ExceptionCode.INVALID_INDEX;
     }
 
+    /**
+     * 获取构造器索引
+     *
+     * @param constructor 构造器对象
+     * @return 构造器索引，若不存在则返回 -1
+     */
     public int getConstructorIndex(Constructor<?> constructor) {
         return getConstructorIndex(constructor.getParameterTypes());
     }
@@ -91,6 +122,7 @@ public class ConstructorInvokerHelper extends ConstructorInvoker {
      *
      * @param paramTypes 构造器参数类型
      * @return 构造器索引
+     * @throws IllegalArgumentException 当构造器不存在时抛出
      */
     public int getConstructorIndexOrThrow(Class<?>... paramTypes) {
         int constructorIndex = getConstructorIndex(paramTypes);

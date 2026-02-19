@@ -14,11 +14,19 @@ import java.util.List;
 
 /**
  * 反射工具类
+ * <p>
+ * 提供获取类中字段、方法和构造器的工具方法。
  *
  * @author ZIJIDELU
- * @datetime 2026/1/13 18:02
+ * @since 1.0.0
  */
 public class ByteBeanReflectUtil {
+
+    /**
+     * 私有构造函数，防止实例化。
+     */
+    private ByteBeanReflectUtil() {
+    }
 
     /**
      * 获取指定类的字段集合

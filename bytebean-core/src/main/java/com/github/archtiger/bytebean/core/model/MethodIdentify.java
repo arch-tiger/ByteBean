@@ -5,8 +5,10 @@ import java.lang.reflect.Method;
 /**
  * 方法唯一标识
  *
+ * @param method 方法对象
+ * @param index 方法索引
  * @author ZIJIDELU
- * @datetime 2026/1/19 18:58
+ * @since 1.0.0
  */
 public record MethodIdentify(
         Method method,

@@ -7,20 +7,39 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.jar.asm.Type;
 
 /**
- * 无参构造器极致优化实现
+ * 无参构造器字节码实现，为ConstructorInvoker生成极致优化的无参构造器调用字节码。
  * <p>
- * 实现 Object newInstance() 方法
+ * 该类专门处理无参构造器的调用，生成最简洁高效的字节码序列。
  * <p>
- * 字节码指令序列:
- * 1. NEW     -> 分配内存
- * 2. DUP     -> 复制引用 (一份用于初始化, 一份用于返回)
- * 3. INVOKESPECIAL -> 调用 <init>
- * 4. ARETURN -> 返回实例
+ * 生成的字节码指令序列：
+ * <ol>
+ *   <li>NEW - 分配对象内存</li>
+ *   <li>DUP - 复制引用（一份用于初始化，一份用于返回）</li>
+ *   <li>INVOKESPECIAL - 调用&lt;init&gt;方法进行初始化</li>
+ *   <li>ARETURN - 返回实例</li>
+ * </ol>
+ * <p>
+ * <b>性能优化：</b>
+ * 相比通用构造器调用，此实现避免了参数数组的创建、索引检查等开销，
+ * 是最快的构造器调用方式。
+ * <p>
+ * <b>API对应：</b> {@code Object newInstance()}
+ *
+ * @author ZIJIDELU
+ * @since 1.0.0
  */
 public final class ConstructorP0ByteCode implements Implementation {
 
+    /**
+     * 目标类，用于字节码生成。
+     */
     private final Class<?> targetClass;
 
+    /**
+     * 构造函数。
+     *
+     * @param targetClass 目标类
+     */
     public ConstructorP0ByteCode(Class<?> targetClass) {
         this.targetClass = targetClass;
     }

@@ -15,15 +15,44 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * 方法访问助手
+ * 方法访问器Helper，提供方法索引管理和缓存能力。
+ * <p>
+ * 该类继承自{@link MethodInvoker}，在提供方法调用能力的同时，
+ * 维护了方法名称和参数类型到索引的映射，并支持按目标类进行缓存。
+ * <p>
+ * <b>特点：</b>
+ * <ul>
+ *   <li>使用WeakKeyValueConcurrentMap缓存，避免内存泄漏</li>
+ *   <li>支持通过方法名和参数类型获取索引</li>
+ *   <li>支持方法重载的精确匹配</li>
+ *   <li>根据方法数量自动选择字节码或MethodHandle实现</li>
+ * </ul>
  *
  * @author ZIJIDELU
- * @datetime 2026/1/11 21:23
+ * @since 1.0.0
  */
 public final class MethodInvokerHelper extends MethodInvoker {
+
+    /**
+     * MethodInvokerHelper缓存，按目标Class索引。
+     * 使用WeakKeyValueConcurrentMap确保在目标Class被卸载时自动清除缓存。
+     */
     private static final Map<Class<?>, MethodInvokerHelper> METHOD_INVOKER_HELPER_CACHE = new WeakKeyValueConcurrentMap<>();
+
+    /**
+     * 实际的方法访问器实现，可能是字节码生成或MethodHandle实现。
+     */
     private final MethodInvoker methodInvoker;
+
+    /**
+     * 方法名称数组，按索引顺序排列。
+     */
     private final String[] methodNames;
+
+    /**
+     * 方法参数类型数组，按索引顺序排列。
+     * 每个元素是一个Class[]，表示对应索引方法的参数类型列表。
+     */
     private final Class<?>[][] methodParamTypes;
 
     private MethodInvokerHelper(MethodInvoker methodInvoker,
@@ -37,6 +66,9 @@ public final class MethodInvokerHelper extends MethodInvoker {
 
     /**
      * 创建方法访问助手
+     *
+     * @param targetClass 目标类
+     * @return MethodInvokerHelper 实例，若生成失败则返回 null
      */
     public static MethodInvokerHelper of(Class<?> targetClass) {
         return METHOD_INVOKER_HELPER_CACHE.computeIfAbsent(targetClass, k -> {
@@ -76,6 +108,10 @@ public final class MethodInvokerHelper extends MethodInvoker {
 
     /**
      * 获取方法索引
+     *
+     * @param methodName 方法名
+     * @param paramTypes 参数类型
+     * @return 方法索引，若不存在则返回 -1
      */
     public int getMethodIndex(String methodName, Class<?>... paramTypes) {
         for (int i = 0, n = methodNames.length; i < n; i++) {
@@ -88,12 +124,23 @@ public final class MethodInvokerHelper extends MethodInvoker {
         return ExceptionCode.INVALID_INDEX;
     }
 
+    /**
+     * 获取方法索引
+     *
+     * @param method 方法对象
+     * @return 方法索引，若不存在则返回 -1
+     */
     public int getMethodIndex(Method method) {
         return getMethodIndex(method.getName(), method.getParameterTypes());
     }
 
     /**
      * 获取方法索引，若不存在则抛出异常
+     *
+     * @param methodName 方法名
+     * @param paramTypes 参数类型
+     * @return 方法索引
+     * @throws IllegalArgumentException 当方法不存在时抛出
      */
     public int getMethodIndexOrThrow(String methodName, Class<?>... paramTypes) {
         int methodIndex = getMethodIndex(methodName, paramTypes);

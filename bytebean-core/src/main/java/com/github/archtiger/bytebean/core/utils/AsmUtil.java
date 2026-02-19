@@ -8,9 +8,15 @@ import net.bytebuddy.jar.asm.Type;
  * 辅助类，用于 ASM 字节码生成时的一些辅助操作
  *
  * @author ZIJIDELU
- * @datetime 2026/1/6 11:12
+ * @since 1.0.0
  */
 public class AsmUtil {
+
+    /**
+     * 私有构造函数，防止实例化。
+     */
+    private AsmUtil() {
+    }
 
 
     /**
@@ -162,7 +168,6 @@ public class AsmUtil {
      * <pre>
      * throw new IllegalArgumentException("Invalid field index: " + index);
      * </pre>
-     * </p>
      *
      * @param mv 方法访问器
      */
@@ -195,7 +200,6 @@ public class AsmUtil {
      * <pre>
      * throw new IllegalArgumentException(messagePrefix + index);
      * </pre>
-     * </p>
      *
      * @param mv            方法访问器
      * @param messagePrefix 错误消息前缀

@@ -27,7 +27,7 @@ import java.util.Map;
  * </p>
  *
  * @author archtiger
- * @datetime 2026/1/6
+ * @since 1.0.0
  */
 public final class FieldInvokerGenerator {
     private static final Map<Class<?>, FieldInvokerResult> CACHE = new WeakKeyValueConcurrentMap<>();

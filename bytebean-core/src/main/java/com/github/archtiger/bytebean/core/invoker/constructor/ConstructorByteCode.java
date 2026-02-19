@@ -19,12 +19,18 @@ import java.util.List;
  * 支持自动拆装箱功能
  *
  * @author ZIJIDELU
- * @datetime 2026/1/11 21:44
+ * @since 1.0.0
  */
 public final class ConstructorByteCode implements Implementation {
     private final Class<?> targetClass;
     private final List<Constructor<?>> constructors;
 
+    /**
+     * 创建构造器字节码实现
+     *
+     * @param targetClass 目标类
+     * @param constructors 构造器列表
+     */
     public ConstructorByteCode(Class<?> targetClass, List<Constructor<?>> constructors) {
         this.targetClass = targetClass;
         this.constructors = constructors;

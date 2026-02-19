@@ -13,18 +13,31 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * 通用方法调用字节码实现
+ * 通用方法调用字节码实现，为MethodInvoker生成高性能方法调用字节码。
  * <p>
+ * 该类使用ASM字节码操作技术，通过tableswitch指令实现方法索引到方法调用的快速分发。
  *
  * @author ZIJIDELU
+ * @since 1.0.0
  */
 public final class MethodByteCode implements Implementation {
 
+    /**
+     * 目标类，用于类型检查和字节码生成。
+     */
     private final Class<?> targetClass;
+
+    /**
+     * 方法标识列表，按索引顺序排列。
+     */
     private final List<MethodIdentify> methodIdentifyList;
 
-
-
+    /**
+     * 创建通用方法字节码实现
+     *
+     * @param targetClass 目标类
+     * @param methodIdentifyList 方法标识列表
+     */
     public MethodByteCode(Class<?> targetClass, List<MethodIdentify> methodIdentifyList) {
         this.targetClass = targetClass;
         this.methodIdentifyList = methodIdentifyList;

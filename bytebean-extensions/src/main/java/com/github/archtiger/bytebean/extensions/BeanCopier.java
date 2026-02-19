@@ -17,13 +17,33 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
- * BeanCopier
- * 支持Record
+ * Bean/Record复制器，提供高性能的对象属性复制功能。
+ * <p>
+ * 该类支持多种复制场景：
+ * <ul>
+ *   <li>Bean -> Bean：通过getter/setter复制属性，null值不覆盖目标值</li>
+ *   <li>Record -> Bean：通过getter/setter复制，null值不覆盖</li>
+ *   <li>Bean -> Record：创建新的Record实例，以来源对象为准重建参数</li>
+ *   <li>Record -> Record：创建新的Record实例，以来源对象为准重建参数</li>
+ * </ul>
+ * <p>
+ * <b>特点：</b>
+ * <ul>
+ *   <li>使用WeakKeyValueConcurrentMap缓存复制函数</li>
+ *   <li>基于MethodInvoker实现高性能方法调用</li>
+ *   <li>自动识别getter/setter方法</li>
+ *   <li>支持null值处理策略</li>
+ * </ul>
  *
  * @author ZIJIDELU
- * @datetime 2026/2/18 13:11
+ * @since 1.0.0
  */
 public final class BeanCopier {
+
+    /**
+     * 复制函数缓存，按来源/目标类型组合索引。
+     * 使用WeakKeyValueConcurrentMap确保在类被卸载时自动清除缓存。
+     */
     private static final Map<BeanCopierIdentifier, BiFunction<?, ?, ?>> BEAN_COPIER_CACHE = new WeakKeyValueConcurrentMap<>();
 
     private BeanCopier() {
@@ -31,13 +51,21 @@ public final class BeanCopier {
     }
 
     /**
-     * 执行 Record 场景复制。
+     * 执行对象属性复制。
+     * <p>
+     * 该方法会自动识别来源对象和目标对象的类型，并使用对应的复制策略：
+     * <ul>
+     *   <li>如果目标不是Record，直接在目标对象上修改并返回</li>
+     *   <li>如果目标是Record（不可变），创建新实例并返回</li>
+     * </ul>
+     * <p>
+     * <b>注意：</b> 在bean->bean或record->bean场景下，来源值为null时不会覆盖目标值。
      *
-     * @param origin 来源对象
-     * @param target 目标对象
+     * @param origin 来源对象，非null
+     * @param target 目标对象，非null
      * @param <O>    来源类型
      * @param <T>    目标类型
-     * @return 复制后的目标对象
+     * @return 复制后的目标对象（对于Record场景是新实例，否则是原target对象）
      */
     @SuppressWarnings("unchecked")
     public static <O, T> T copy(O origin, T target) {
@@ -48,12 +76,12 @@ public final class BeanCopier {
     }
 
     /**
-     * 创建copier
+     * 为指定的来源/目标类对创建复制函数。
      *
-     * @param identifier id
+     * @param identifier 复制器标识符
      * @param <O>        来源类型
      * @param <T>        目标类型
-     * @return copier
+     * @return 复制函数
      */
     private static <O, T> BiFunction<O, T, T> createCopier(BeanCopierIdentifier identifier) {
         // record -> record

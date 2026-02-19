@@ -13,8 +13,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 方法分组，按参数数量分组，保证参数0-5的特化表全局索引连续
  *
+ * @param ok 是否成功
+ * @param methodAllList 所有方法列表
+ * @param method0List 无参方法列表
+ * @param method1List 单参方法列表
+ * @param method2List 双参方法列表
+ * @param method3List 三参方法列表
+ * @param method4List 四参方法列表
+ * @param method5List 五参方法列表
  * @author ZIJIDELU
- * @datetime 2026/1/19 15:07
+ * @since 1.0.0
  */
 public record MethodGroup(
         boolean ok,
@@ -171,6 +179,12 @@ public record MethodGroup(
         return 9; // Object or other types
     }
 
+    /**
+     * 创建方法分组
+     *
+     * @param targetClass 目标类
+     * @return MethodGroup 实例
+     */
     public static MethodGroup of(Class<?> targetClass) {
         return CACHE.get(targetClass);
     }

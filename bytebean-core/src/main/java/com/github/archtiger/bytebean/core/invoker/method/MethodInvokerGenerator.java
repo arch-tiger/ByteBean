@@ -24,10 +24,9 @@ import java.util.stream.Collectors;
  * <p>
  * 为目标类生成一个能够通过索引访问所有方法的辅助类。
  * 使用字节码的 tableswitch 指令实现高效的方法调用，避免反射开销。
- * </p>
  *
  * @author ZIJIDELU
- * @datetime 2026/1/11
+ * @since 1.0.0
  */
 public final class MethodInvokerGenerator {
     private static final Map<Class<?>, MethodInvokerResult> CACHE = new WeakKeyValueConcurrentMap<>();

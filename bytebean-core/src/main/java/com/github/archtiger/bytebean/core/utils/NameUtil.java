@@ -4,11 +4,20 @@ import com.github.archtiger.bytebean.core.constant.ByteBeanConstant;
 
 /**
  * 名称工具类
+ * <p>
+ * 提供生成调用器类名称的工具方法。
  *
  * @author ZIJIDELU
- * @datetime 2026/1/13 16:21
+ * @since 1.0.0
  */
 public class NameUtil {
+
+    /**
+     * 私有构造函数，防止实例化。
+     */
+    private NameUtil() {
+    }
+
     /**
      * 计算调用器名称
      *

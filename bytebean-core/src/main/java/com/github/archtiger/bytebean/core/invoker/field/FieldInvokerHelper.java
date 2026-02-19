@@ -15,15 +15,44 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * FieldInvokerHelper 类
+ * 字段访问器Helper，提供字段索引管理和缓存能力。
+ * <p>
+ * 该类继承自{@link FieldInvoker}，在提供字段读写能力的同时，
+ * 维护了字段名称到索引的映射，并支持按目标类进行缓存。
+ * <p>
+ * <b>特点：</b>
+ * <ul>
+ *   <li>使用WeakKeyValueConcurrentMap缓存，避免内存泄漏</li>
+ *   <li>支持通过字段名获取索引</li>
+ *   <li>当字段不存在或为final时，抛出IllegalArgumentException</li>
+ *   <li>根据字段数量自动选择字节码或VarHandle实现</li>
+ * </ul>
  *
  * @author archtiger
- * @datetime 2026/01/13 17:00
+ * @since 1.0.0
  */
 public class FieldInvokerHelper extends FieldInvoker {
+
+    /**
+     * FieldInvokerHelper缓存，按目标Class索引。
+     * 使用WeakKeyValueConcurrentMap确保在目标Class被卸载时自动清除缓存。
+     */
     private static final Map<Class<?>, FieldInvokerHelper> FIELD_INVOKER_HELPER_CACHE = new WeakKeyValueConcurrentMap<>();
+
+    /**
+     * 实际的字段访问器实现，可能是字节码生成或VarHandle实现。
+     */
     private final FieldInvoker fieldInvoker;
+
+    /**
+     * 字段名称数组，按索引顺序排列。
+     */
     private final String[] fieldNames;
+
+    /**
+     * 字段修饰符数组，按索引顺序排列。
+     * 用于判断字段是否为final、static等。
+     */
     private final int[] modifiers;
 
     private FieldInvokerHelper(FieldInvoker fieldInvoker, String[] fieldNames, int[] modifiers) {
@@ -86,6 +115,10 @@ public class FieldInvokerHelper extends FieldInvoker {
 
     /**
      * 获取字段获取器索引，若不存在则抛出异常
+     *
+     * @param fieldName 字段名
+     * @return 字段获取器索引
+     * @throws IllegalArgumentException 当字段不存在时抛出
      */
     public int getFieldGetterIndexOrThrow(String fieldName) {
         int fieldGetterIndex = getFieldGetterIndex(fieldName);
@@ -115,6 +148,10 @@ public class FieldInvokerHelper extends FieldInvoker {
 
     /**
      * 获取字段设置器索引，若不存在则抛出异常
+     *
+     * @param fieldName 字段名
+     * @return 字段设置器索引
+     * @throws IllegalArgumentException 当字段不存在或为final时抛出
      */
     public int getFieldSetterIndexOrThrow(String fieldName) {
         int fieldSetterIndex = getFieldSetterIndex(fieldName);
