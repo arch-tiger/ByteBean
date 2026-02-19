@@ -2,10 +2,10 @@ package com.github.archtiger.bytebean.core.invoker.method;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.method.MethodInvoker;
+import com.github.archtiger.bytebean.core.constant.ByteBeanConstant;
 import com.github.archtiger.bytebean.core.model.MethodGroup;
 import com.github.archtiger.bytebean.core.model.MethodIdentify;
 import com.github.archtiger.bytebean.core.model.MethodInvokerResult;
-import com.github.archtiger.bytebean.core.constant.ByteBeanConstant;
 import com.github.archtiger.bytebean.core.utils.NameUtil;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.asm.AsmVisitorWrapper;
@@ -34,9 +34,9 @@ public final class MethodInvokerGenerator {
     private MethodInvokerGenerator() {
     }
 
-    private static MethodInvokerResult doCreate(Class<?> targetClass) {
+    private static MethodInvokerResult doCreate(final Class<?> targetClass) {
         // 步骤1: 收集目标类的所有非静态、可访问的方法
-        MethodGroup methodGroup = MethodGroup.of(targetClass);
+        final MethodGroup methodGroup = MethodGroup.of(targetClass);
 
         // 检查方法列表是否为空
         if (!methodGroup.ok()) {
@@ -49,10 +49,17 @@ public final class MethodInvokerGenerator {
         }
 
         // 步骤2: 构造生成类的全限定名
-        String invokerName = NameUtil.calcInvokerName(targetClass, MethodInvoker.class);
+        final String invokerName = NameUtil.calcInvokerName(targetClass, MethodInvoker.class);
+        try {
+            final Class<?> aClass = Class.forName(invokerName, false, targetClass.getClassLoader())
+                    .asSubclass(MethodInvoker.class);
+            return MethodInvokerResult.success((Class<? extends MethodInvoker>) aClass, methodGroup.methodAllList().stream().map(MethodIdentify::method).collect(Collectors.toList()));
+        } catch (ClassNotFoundException e) {
+            // Class not generated yet, continue with ByteBuddy generation.
+        }
 
         // 步骤3: 使用 ByteBuddy 动态生成类
-        Class<? extends MethodInvoker> invokerClass = new ByteBuddy()
+        final Class<? extends MethodInvoker> invokerClass = new ByteBuddy()
                 .subclass(MethodInvoker.class)
                 .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
                 .name(invokerName)

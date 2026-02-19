@@ -2,8 +2,8 @@ package com.github.archtiger.bytebean.core.invoker.field;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.field.FieldInvoker;
-import com.github.archtiger.bytebean.core.model.FieldInvokerResult;
 import com.github.archtiger.bytebean.core.constant.ByteBeanConstant;
+import com.github.archtiger.bytebean.core.model.FieldInvokerResult;
 import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.utils.NameUtil;
 import net.bytebuddy.ByteBuddy;
@@ -35,10 +35,10 @@ public final class FieldInvokerGenerator {
     private FieldInvokerGenerator() {
     }
 
-    private static FieldInvokerResult doCreate(Class<?> targetClass) {
+    private static FieldInvokerResult doCreate(final Class<?> targetClass) {
 
         // 步骤1: 收集目标类的所有非静态字段
-        List<Field> fields = ByteBeanReflectUtil.getFields(targetClass);
+        final List<Field> fields = ByteBeanReflectUtil.getFields(targetClass);
         if (fields.isEmpty()) {
             return FieldInvokerResult.fail();
         }
@@ -49,8 +49,14 @@ public final class FieldInvokerGenerator {
         }
 
         // 步骤2: 构造生成类的全限定名
-        String invokerName = NameUtil.calcInvokerName(targetClass, FieldInvoker.class);
-
+        final String invokerName = NameUtil.calcInvokerName(targetClass, FieldInvoker.class);
+        try {
+            final Class<?> aClass = Class.forName(invokerName, false, targetClass.getClassLoader())
+                    .asSubclass(FieldInvoker.class);
+            return FieldInvokerResult.success((Class<? extends FieldInvoker>) aClass, Collections.unmodifiableList(fields));
+        } catch (ClassNotFoundException e) {
+            // Class not generated yet, continue with ByteBuddy generation.
+        }
         // 步骤3: 使用 ByteBuddy 动态生成类
         final Class<? extends FieldInvoker> invokerClass = new ByteBuddy()
                 .subclass(FieldInvoker.class)

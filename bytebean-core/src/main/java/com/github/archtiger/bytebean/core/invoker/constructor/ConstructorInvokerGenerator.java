@@ -2,8 +2,8 @@ package com.github.archtiger.bytebean.core.invoker.constructor;
 
 import cn.hutool.core.map.reference.WeakKeyValueConcurrentMap;
 import com.github.archtiger.bytebean.api.constructor.ConstructorInvoker;
-import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.constant.ByteBeanConstant;
+import com.github.archtiger.bytebean.core.model.ConstructorInvokerResult;
 import com.github.archtiger.bytebean.core.utils.ByteBeanReflectUtil;
 import com.github.archtiger.bytebean.core.utils.NameUtil;
 import net.bytebuddy.ByteBuddy;
@@ -35,13 +35,13 @@ public final class ConstructorInvokerGenerator {
     private ConstructorInvokerGenerator() {
     }
 
-    private static ConstructorInvokerResult doCreate(Class<?> targetClass) {
+    private static ConstructorInvokerResult doCreate(final Class<?> targetClass) {
 
         // 步骤1: 收集目标类的所有可访问的构造器
-        List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
+        final List<Constructor<?>> constructors = ByteBeanReflectUtil.getConstructors(targetClass);
 
         // 检查构造器数量是否超过阈值
-        if (constructors.size() > ByteBeanConstant.CONSTRUCTOR_SHARDING_THRESHOLD_VALUE){
+        if (constructors.size() > ByteBeanConstant.CONSTRUCTOR_SHARDING_THRESHOLD_VALUE) {
             return ConstructorInvokerResult.fail();
         }
 
@@ -51,10 +51,17 @@ public final class ConstructorInvokerGenerator {
         }
 
         // 步骤2: 构造生成类的全限定名
-        String invokerName = NameUtil.calcInvokerName(targetClass, ConstructorInvoker.class);
+        final String invokerName = NameUtil.calcInvokerName(targetClass, ConstructorInvoker.class);
+        try {
+            final Class<?> aClass = Class.forName(invokerName, false, targetClass.getClassLoader())
+                    .asSubclass(ConstructorInvoker.class);
+            return ConstructorInvokerResult.success((Class<? extends ConstructorInvoker>) aClass, Collections.unmodifiableList(constructors));
+        } catch (ClassNotFoundException e) {
+            // Class not generated yet, continue with ByteBuddy generation.
+        }
 
         // 步骤3: 使用 ByteBuddy 动态生成类
-        Class<? extends ConstructorInvoker> invokerClass = new ByteBuddy()
+        final Class<? extends ConstructorInvoker> invokerClass = new ByteBuddy()
                 .subclass(ConstructorInvoker.class)
                 .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL)
                 // 设置生成类的名称
